@@ -15,8 +15,12 @@ TradeMe is a skilled-trade labor brokerage: it matches independent workers to ge
 | Contractor | A general contractor who registers, lists projects, requests workers, and pays through the system. | — |
 | Internal Representative | Operations staff performing exception handling, escalations, and fallback human channel. Shrinks from 220 across 9 call centers to a single small backup call center. | — |
 | Regulator | A jurisdiction-specific body requiring reports on labor activity, payment flows, and worker certifications on defined cadences. | Varies by jurisdiction |
+| Brokerage | The core business process: matching independent workers to general contractors for a margin, with the company as financial intermediary (CON-003, CON-004). The subject of the system, not merely its context. | — |
+| Front Door | The self-service channel that replaces the 220-representative call-center operation (BG-002). The automation target of the project. | — |
+| Hand-Tuned Matching Policy | The tacit matching knowledge held in 220 representatives' heads for decades (FR-018). Must be captured in an explainable, configurable, auditable form (NFR-005, AC-008). | — |
 | Assignment | The committed allocation of a worker to a project for an agreed duration, with arrival and departure tracked. | — |
 | Matching | The system's selection of the best available worker for a project's needs, per a configurable, explainable policy (NFR-005). | — |
+| Availability Race | The race condition where a worker is matched to one project and, between match and assignment, is picked up by another request (NFR-008, AC-005). Must resolve without losing either request or producing an inconsistent state. | — |
 | Bill Rate | The rate a contractor pays for a worker's time on a project. | — |
 | Expected Rate | The rate a worker lists as their expectation; varies by trade, skill level, experience, project type, location, union membership, and certifications (FR-001). | — |
 | Margin | The difference between what the contractor pays and what the worker receives; the company's revenue (CON-004). | — |
@@ -40,6 +44,7 @@ TradeMe is a skilled-trade labor brokerage: it matches independent workers to ge
 | Fallback Channel | The phone-based human channel for users preferring human interaction (FR-013, NFR-006). | — |
 | Self-Service Channel | Direct software interaction by workers and contractors (NFR-002). | — |
 | Channel Equivalence | The same matching, financial flow, and compliance regardless of channel (NFR-006). | — |
+
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
