@@ -7,7 +7,6 @@
 | Milestone Target | End-of-Inception review |
 
 ## Use-Case Diagram
-
 ```plantuml
 @startuml
 left to right direction
@@ -60,9 +59,11 @@ Contractor --> UC14
 Contractor --> UC15
 Contractor --> UC16
 Contractor --> UC20
+Contractor --> UC21
 Rep --> UC10
 Rep --> UC11
 Rep --> UC14
+Rep --> UC19
 Regulator --> UC13
 Ext --> UC18
 Time --> UC9
@@ -73,7 +74,6 @@ Time --> UC17
 UC15 ..> UC14 : <<include>>
 @enduml
 ```
-
 ## Actors
 
 | ID | Actor | Type | Description |
