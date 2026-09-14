@@ -136,10 +136,11 @@ Cross-lens consolidation notes:
 | 14 | Test Plan | F1 | Reviewer | Minor | "Testing is 30–50% of project cost" is an unsourced quantitative claim. | Mark as [ASSUMPTION — requires validation] with basis, or cite source. | Test Manager |
 
 ## Resolutions and Actions
-
 No prior-iteration findings exist (iteration 1, cycle 1). All 14 findings above are newly recorded this iteration and are **OPEN**.
 
 **Stakeholder sanction: REFUSED.** The stakeholder declined to sanction advancement past LCO and directed: *"You do need to fix all findings even if they are minors before move to the next phase."*
+
+**Stakeholder note (consolidation pass):** On re-consultation for the next iteration, the stakeholder added: *"nothing else to add for this new iteration."* No new requirements, corrections, or priorities beyond the standing directive to fix all findings before advancing to Elaboration.
 
 **Prioritized action items (all blocking per stakeholder directive):**
 
@@ -149,7 +150,6 @@ No prior-iteration findings exist (iteration 1, cycle 1). All 14 findings above 
 | 2 | Fix 9 Minor findings across Vision, UCM, SAD, DC, Risk List, Iteration Plan, Test Plan | Respective owners (see table) | Before re-review |
 | 3 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
 | 4 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
-
 ## Disposition
 
 **No-Go (Conditional).** The LCO milestone is NOT sanctioned for advancement to Elaboration.
