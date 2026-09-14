@@ -20,13 +20,12 @@ Security, licensing, and cross-cutting functional mechanisms. These are NOT use 
 | REQ-006 | Membership-violation detection (contractor bypassing marketplace to hire directly) | CON-005, AC-007 | Cross-cutting mechanism; included by UC-008, UC-017 |
 
 ## Usability
-
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
 | REQ-007 | Self-service channel for workers and contractors | NFR-002 | Replaces representative-mediated interaction |
 | REQ-008 | Mobile accessibility | NFR-001 | Open question: requirement vs nice-to-have (see Openquestion) |
 | REQ-009 | Channel equivalence: same matching, financial flow, compliance across self-service and phone | NFR-006 | |
-| REQ-010 | Low technical literacy is a design concern | [DERIVED — from NFR-002 self-service + legacy has no mobile; awaiting stakeholder confirmation] | Out-of-cycle open question |
+| REQ-010 | Low technical literacy is a design concern | deferred — out-of-cycle open question | Out-of-cycle open question; returns to stakeholder when cycle closes |
 ## Reliability
 
 | ID | Requirement | Source | Notes |
