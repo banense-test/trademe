@@ -243,7 +243,7 @@ end note
 
 ### Iteration 3 — Technical lens (Reviewer) resolutions
 
-**Technical-lens closure (iteration 3): 2 prior findings of this lens resolved.**
+**Technical-lens closure (iteration 3):** 2 prior findings of this lens resolved.
 
 | Artifact | Key | Prior Severity | Lens | Resolution | Evidence |
 |---|---|---|---|---|---|
@@ -257,6 +257,21 @@ end note
 | Priority | Action | Owner | Deadline |
 |---|---|---|---|
 | 1 | Fix Development Case#F3 (bump Document Control to "Draft — iteration 3") | Process Engineer | Before re-review |
+
+---
+
+### Iteration 3 — Business lens (BusinessReviewer) resolutions
+
+**Business-lens closure (iteration 3):** 2 prior findings of this lens resolved.
+
+| Artifact | Key | Prior Severity | Lens | Resolution | Evidence |
+|---|---|---|---|---|---|
+| Use-Case Model | F7 | Minor | BusinessReviewer | Resolved | `Rep --> BUC4` association added to the Business Use-Case Diagram, matching the survey's listing of Internal Representative (STK-003) as a business worker assisting the brokerage process (FR-018). |
+| Use-Case Model | F8 | Minor | BusinessReviewer | Resolved | `Worker --> BUC11` and `Contractor --> BUC11` associations added to the Business Use-Case Diagram, matching the survey's actor list (fallback channel serves workers/contractors, FR-013). |
+
+**Business-lens new findings (iteration 3):** 0. The business sections of the Use-Case Model are complete and derivation-ready.
+
+**Business-lens action items (iteration 3):** none — all prior BusinessReviewer findings are closed.
 ## Disposition
 **No-Go — iteration 2, consolidated across lenses.**
 
