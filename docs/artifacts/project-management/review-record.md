@@ -205,6 +205,79 @@ end note
 - **Test Plan** — Traceability, UML richness, data-source verification pass. The 30–50% cost figure carries [ASSUMPTION — requires validation]; risk-weighted test items trace to R003/R004/R005.
 - **Deployment Model** — Traceability, UML richness pass. Document Control bumped to iteration 3 (F1 resolved).
 - **Development Case** — DC baseline conformance and optional-trigger justification pass (25-role roster, no ownership reassignment, no CORE omission, all FIRED triggers justified on settled ground). One Minor: stale Document Control (F3).
+
+---
+
+### Iteration 3 — Business lens (BusinessReviewer) findings
+
+**Business-lens tally (iteration 3): 0 Critical, 0 Major, 0 Minor — CLEAN.**
+
+The business sections of the Use-Case Model are complete, internally consistent, and derivation-ready. Both prior BusinessReviewer findings (F7, F8) are resolved this iteration. No new defects.
+
+#### BUC Realization & Completeness Coverage Map (business lens)
+
+```plantuml
+@startuml
+title BUC Realization & Completeness Coverage Map — Business Lens (LCO, Inception Iteration 3)
+
+skinparam packageStyle rectangle
+
+package "Business Use Cases (12)" {
+  usecase "BUC-001 Onboard Worker" as B1
+  usecase "BUC-002 Onboard Contractor" as B2
+  usecase "BUC-003 Manage Project Lifecycle" as B3
+  usecase "BUC-004 Broker Worker to Project" as B4
+  usecase "BUC-005 Manage Assignment" as B5
+  usecase "BUC-006 Capture Hours & Compute Wages" as B6
+  usecase "BUC-007 Process Payments" as B7
+  usecase "BUC-008 Manage Membership & Fees" as B8
+  usecase "BUC-009 Track CE & Certifications" as B9
+  usecase "BUC-010 Produce Regulatory Reports" as B10
+  usecase "BUC-011 Handle Exceptions & Fallback" as B11
+  usecase "BUC-012 Detect Fraud & Enforce Membership" as B12
+}
+
+note "PASS = actor-initiated + value-delivering + end-to-end\n+ automation annotation + volatility annotation" as N1
+
+B1 .. N1
+B2 .. N1
+B3 .. N1
+B4 .. N1
+B5 .. N1
+B6 .. N1
+B7 .. N1
+B8 .. N1
+B9 .. N1
+B10 .. N1
+B11 .. N1
+B12 .. N1
+
+note bottom of N1
+  Coverage: 12 of 12 BUCs PASS the completeness test.
+  All carry automation + volatility annotations.
+  Derivation bridge: 12 BUC -> 21 system UC mapping complete.
+  Business rules: BR-001..BR-016 formalized.
+  Prior BR findings F7/F8 RESOLVED this iteration.
+  New BR findings: 0.
+end note
+@enduml
+```
+
+#### Business-lens evaluation notes (per criterion)
+
+| Criterion | Result | Evidence |
+|---|---|---|
+| Scenario Selection | Pass | "Business Modeling Scenario: Revamp" stated with rationale at top of Business Use Cases section |
+| Organizational Coverage | Pass | All 5 stakeholders (STK-001..005) + Time actor represented; Internal Representative correctly classified as business worker |
+| BUC Actor Classification | Pass | All 12 BUCs initiated by external actors or Time; no worker-initiated BUC |
+| Automation Annotation | Pass | Full/Partial automation disposition present on all 12 BUCs |
+| Volatility Annotation | Pass | Volatility level + reason present on all 12 BUCs; 4 High-volatility BUCs flagged as architectural input |
+| UML Presence | Pass | Use-case diagram with organizational boundary + business object model class diagram (workers + entities + control classes) |
+| Business Rule Audit | Pass | BR-001..BR-016 each carry ID, source (CON-NNN), worker/entity constraint, testable condition |
+| Derivation Bridge | Pass | BUC→UC mapping complete (12 BUC → 21 system UC); entity→analysis-class disposition present |
+| Stakeholder Coverage | Pass | Front-office (worker/contractor self-service) and back-office (regulatory reporting, fraud, membership) both modeled |
+
+**Business-lens verdict: Approved.** The business model is a sound, traceable, unambiguous foundation for the System Analyst's derivation of system use cases. No business-lens findings block the LCO milestone.
 ## Resolutions and Actions
 **Iteration 1 (cycle 1):** No prior-iteration findings existed. All 14 findings were newly recorded and OPEN.
 
