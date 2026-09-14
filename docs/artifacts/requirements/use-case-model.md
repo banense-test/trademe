@@ -86,7 +86,6 @@ UC15 ..> UC14 : <<include>>
 | — | Time | Time-trigger | Scheduled triggers for recurring fees (UC-009), payment runs (UC-012), regulatory reports (UC-013), fraud scans (UC-017). |
 
 ## Use-Case Survey
-
 | ID | Use Case | Source | Primary Actor | Priority | Volatility |
 |---|---|---|---|---|---|
 | UC-001 | Register as Worker | FR-001 | Worker | Must | Medium |
@@ -107,16 +106,17 @@ UC15 ..> UC14 : <<include>>
 | UC-016 | Record Rate Adjustments | FR-023 | Worker, Contractor | Should | High |
 | UC-017 | Detect Fraudulent Patterns | FR-016 | Time | Could | High |
 | UC-018 | Integrate with AP Systems | FR-017 | External Integration Partners | Could | High |
-| UC-019 | Project Demand Projection | FR-024 | (business) | Could | High |
+| UC-019 | Project Demand Projection | FR-024 | Internal Representative | Could | High |
 | UC-020 | Priority Capacity Allocation | FR-025 | Contractor | Could | High |
-| UC-021 | Delayed Assignment with Commitment | FR-026 | (system) | Could | High |
+| UC-021 | Delayed Assignment with Commitment | FR-026 | Contractor | Could | High |
 
 **Derivation notes (REFINE, not expansion):**
 - UC-004 realizes three declared requirements: FR-004 (request), FR-018 (matching), FR-019 (assignment). Matching and assignment are system behaviors triggered within the contractor's request — not standalone actor goals — so they are modeled as included sub-flows of UC-004, not separate use cases.
 - UC-006 realizes FR-006 (hours) and FR-007 (wage computation) — wage computation is a system behavior within hours recording.
 - UC-007 realizes FR-008 (course) and FR-009 (certification recording).
 - UC-012 realizes FR-014 (payments) and FR-022 (currency conversion).
-
+- UC-019 (Project Demand Projection, FR-024) is initiated by the Internal Representative (STK-003) — the operations team uses demand projection to proactively recruit for scarce trades. It is a NICE-TO-HAVE (Could) capability.
+- UC-021 (Delayed Assignment with Availability Commitment, FR-026) is initiated by the Contractor — it is a variant of UC-004's assignment flow where the system delays final assignment while committing availability. It is a NICE-TO-HAVE (Could) capability.
 ## Use-Case Specifications
 
 Inception details only the architecturally significant use cases (10-20%). The Requirements Specifier details the remaining flows in Elaboration.
