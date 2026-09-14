@@ -265,7 +265,68 @@ The business lens re-reviewed the Use-Case Model's business sections and closed 
 | 5 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
 | 6 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 ## Disposition
-**No-Go (Conditional) — iteration 2, consolidated across lenses.**
+**No-Go — iteration 2, consolidated across lenses.**
+
+### Management lens (ManagementReviewer)
+
+The management lens re-reviewed the project-management artifacts in iteration 2. Disposition from this lens:
+
+- **Both prior management-lens findings are RESOLVED** (Risk List#F1 Status/Trend columns added; Iteration Plan#F1 Gantt marked "Sequence-only, not a calendar").
+- **1 new Minor finding** recorded (Iteration Plan#F2 — budget box 750k disproven by measured 2,871,727-token actual, not re-sized).
+- **0 Critical, 0 Major** from the management lens this iteration.
+
+The management lens's verdict is **Approved with changes**. All three LCO substantive criteria are MET: scope agreement (21 UCs trace to 26 FRs), risk identification (R001–R006 with magnitude, strategy, mitigation, contingency, Status, Trend), and feasibility (SAD ADR-001 modular monolith, Node.js/TS + PostgreSQL). The 1 new Minor finding is non-blocking on substance but must be fixed per the stakeholder's standing directive.
+
+```plantuml
+@startuml
+title LCO Compliance Table — Inception I2 (Management Reviewer)
+
+class "Scope Agreement" as C1 {
+  status = MET
+  evidence = "21 UCs trace to 26 FRs; Vision/UCM/Supp Spec consistent"
+}
+class "Risk Identification" as C2 {
+  status = MET
+  evidence = "R001-R006 with magnitude, strategy, mitigation, contingency, Status, Trend"
+}
+class "Feasibility" as C3 {
+  status = MET
+  evidence = "SAD ADR-001 modular monolith; Node.js/TS + PostgreSQL"
+}
+class "Project Approval (sanction)" as C4 {
+  status = NOT MET
+  evidence = "5 Minor findings open (stakeholder: fix ALL incl. Minor)"
+}
+
+note bottom of C4
+  Stakeholder directive (I1): "fix all findings
+  even if they are minors before move to next phase."
+  4 prior Minor + 1 new Minor remain open.
+end note
+@enduml
+```
+
+```plantuml
+@startuml
+title Project Health State Machine — LCO (Inception I2)
+
+state "Healthy" as H
+state "At-Risk" as AR
+state "No-Go" as NG
+
+[*] --> AR : 5 Minor findings open\n(blocking per stakeholder directive)
+
+AR --> H : all findings resolved\n+ stakeholder sanction GRANTED
+AR --> NG : Critical/Major unresolved\nor sanction REFUSED
+
+note right of AR
+  Scope: MET
+  Risks: MET (R001-R006)
+  Feasibility: MET
+  Sanction: NOT YET (5 Minor open)
+end note
+@enduml
+```
 
 ### Technical lens (Reviewer)
 
@@ -287,7 +348,11 @@ The business lens re-reviewed the Use-Case Model's business sections in iteratio
 
 The business lens's verdict is **Approved with changes**. The business model is now a sound, traceable, and unambiguous foundation for system use-case derivation: the Revamp scenario is stated, all 12 BUCs are actor-initiated with automation dispositions, the Business Object Model (entities + control classes) is present, and Business Rules BR-001..BR-016 are formalized with testable conditions. The derivation bridge (BUC → system UC, worker → automation disposition, entity → analysis-class disposition) is complete. The 2 remaining Minor findings are diagram/survey consistency gaps that must be fixed per the stakeholder's standing directive but do not impair derivation readiness.
 
-**Overall LCO disposition remains No-Go** pending: (a) the ManagementReviewer lens closing its findings, (b) resolution of the 4 new Minor findings (Deployment Model#F1, Development Case#F2, Use-Case Model#F7, Use-Case Model#F8), and (c) stakeholder re-consultation for sanction. Neither the technical lens nor the business lens has any open Critical or Major finding, and neither blocks advancement on substance.
+### Stakeholder sanction — iteration 2
+
+**Stakeholder sanction: REFUSED.** The stakeholder was consulted with the management lens's Conditional verdict (0 Critical, 0 Major, 5 Minor open) and answered **"No"** — declining to sanction advancement past LCO. The standing directive remains in force: *"You do need to fix all findings even if they are minors before move to the next phase."*
+
+**Overall LCO disposition: No-Go.** All three substantive LCO criteria (scope agreement, risk identification, feasibility) are MET, and no Critical or Major finding remains open from any lens. However, 5 Minor findings remain open (Deployment Model#F1, Development Case#F2, Use-Case Model#F7, Use-Case Model#F8, Iteration Plan#F2), and the stakeholder has refused sanction until ALL findings — including Minors — are resolved. The project does NOT advance to Elaboration; a further remediation iteration is required.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
