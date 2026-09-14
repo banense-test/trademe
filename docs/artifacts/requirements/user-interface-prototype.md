@@ -387,15 +387,15 @@ stop
 ```
 
 ## Validation Feedback
-
 The prototype is validated against the following declared acceptance criteria and NFRs:
 
 | Validation Point | Criterion | Status |
 |---|---|---|
-| Worker registers, matched, assigned, completes, paid end-to-end without representative intervention | AC-003 | Prototype covers register (UC-001) and request (UC-004); hours (UC-006) and payment (UC-012) are downstream flows the prototype links to |
+| Worker registers, matched, assigned, completes, paid end-to-end without representative intervention | AC-003 | Prototype covers register (UC-001), request (UC-004), hours (UC-006), arrival/departure (UC-005), certification (UC-007), membership (UC-008), termination (UC-014), and closure (UC-015); payment (UC-012) is a system-triggered downstream flow the prototype links to |
 | Same scenario in two jurisdictions produces correct tax/certification/reporting | AC-004 | Prototype renders taxonomy/certification from configuration (CON-018); jurisdiction-specific rendering is a configuration concern, not a UI-code concern |
 | Channel equivalence — self-service and phone produce the same outcome | NFR-006 | UC-011 fallback channel performs the same operations; the prototype's flows are the canonical operations the representative mirrors |
 | Mobile accessibility is a must-have | NFR-001, REQ-008 | Prototype targets mobile-first rendering |
+| Interactive-channel responsiveness p95 ≤ 2s | NFR-009, REQ-013 | Storyboards assume each screen transition completes within the 2s ceiling; the search/match/register/hours-entry operations are the latency-sensitive paths |
 
 `[ASSUMPTION — requires validation]` Low technical literacy (REQ-010) is an out-of-cycle open question; the prototype does not yet commit to a low-literacy design treatment until the stakeholder answers it.
 
