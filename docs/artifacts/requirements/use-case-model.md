@@ -116,7 +116,7 @@ UC15 ..> UC14 : <<include>>
 - UC-019 (Project Demand Projection, FR-024) is initiated by the Internal Representative (STK-003) — the operations team uses demand projection to proactively recruit for scarce trades. It is a NICE-TO-HAVE (Could) capability.
 - UC-021 (Delayed Assignment with Availability Commitment, FR-026) is initiated by the Contractor — it is a variant of UC-004's assignment flow where the system delays final assignment while committing availability. It is a NICE-TO-HAVE (Could) capability.
 ## Use-Case Specifications
-Elaboration details ~80% of all use cases. The architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) were detailed in Inception and are refined here; the remaining Must-priority use cases are now fully specified. Should/Could (nice-to-have) use cases remain at survey level pending stakeholder prioritization.
+Elaboration details ~80% of all use cases. The architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) were detailed in Inception and are refined here; the remaining Must-priority use cases are now fully specified with activity diagrams. Should/Could (nice-to-have) use cases remain at survey level pending stakeholder prioritization.
 
 ### UC-001 Register as Worker
 
@@ -130,6 +130,34 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Certification claimed but not verifiable → recorded as self-attested pending verification (verification strategy deferred — out-of-cycle). A2: Trade/skill not in taxonomy → taxonomy extended via configuration (CON-018), not code. |
 | Volatility | Medium — taxonomy and certification frameworks are configurable data (CON-018) |
 
+```plantuml
+@startuml
+title UC-001 Register as Worker — Main + Alternative Flows
+
+|Worker|
+start
+:Provide identity and contact details;
+:List trades, skill level per trade,\ngeographic availability, expected rate;
+:List certifications held;
+
+|System|
+:Validate against configurable taxonomy\nand certification frameworks (CON-018);
+if (Certification verifiable?) then (yes)
+  :Record certification as verified;
+else (no)
+  :Record as self-attested pending verification;
+endif
+if (Trade/skill in taxonomy?) then (yes)
+  :Accept trade/skill;
+else (no)
+  :Extend taxonomy via configuration (CON-018);
+endif
+:Create worker record;
+:Initiate membership (UC-008);
+stop
+@enduml
+```
+
 ### UC-002 Register as Contractor
 
 | Field | Value |
@@ -141,6 +169,21 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. Contractor provides identity and contact details. 2. System creates the contractor record. 3. System initiates membership (UC-008). |
 | Alternatives | None |
 | Volatility | Low — stable registration process |
+
+```plantuml
+@startuml
+title UC-002 Register as Contractor — Main Flow
+
+|Contractor|
+start
+:Provide identity and contact details;
+
+|System|
+:Create contractor record;
+:Initiate membership (UC-008);
+stop
+@enduml
+```
 
 ### UC-003 Create Project Listing
 
@@ -154,6 +197,28 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Project requirement changes → treated as a variation of project creation (FR-003), not a separate operation. |
 | Volatility | Medium — trades vary by jurisdiction; taxonomy configurable (CON-018) |
 
+```plantuml
+@startuml
+title UC-003 Create Project Listing — Main + Alternative Flows
+
+|Contractor|
+start
+:Specify project details\n(trades, skill levels, location, bill rate, duration);
+:Specify per-period trade needs (FR-003);
+
+|System|
+:Validate trades against configurable taxonomy (CON-018);
+if (Trade valid?) then (yes)
+  :Create project listing;
+  stop
+else (no)
+  :Extend taxonomy via configuration (CON-018);
+  :Create project listing;
+  stop
+endif
+@enduml
+```
+
 ### UC-005 Track Assignment Arrival/Departure
 
 | Field | Value |
@@ -165,6 +230,31 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. Worker (or contractor) signals arrival at the project. 2. System records arrival timestamp against the assignment. 3. Worker (or contractor) signals departure. 4. System records departure timestamp. 5. System updates assignment status (workers can come and go on a single project — FR-005). |
 | Alternatives | A1: Departure without return → assignment remains open until termination (UC-014) or project closure (UC-015). |
 | Volatility | Medium |
+
+```plantuml
+@startuml
+title UC-005 Track Assignment Arrival/Departure — Main + Alternative Flows
+
+|Worker / Contractor|
+start
+:Signal arrival at project;
+
+|System|
+:Record arrival timestamp against assignment;
+
+|Worker / Contractor|
+:Signal departure;
+
+|System|
+:Record departure timestamp;
+:Update assignment status (workers can come and go — FR-005);
+if (Departure without return?) then (yes)
+  :Assignment remains open until termination (UC-014)\nor project closure (UC-015);
+else (no)
+endif
+stop
+@enduml
+```
 
 ### UC-006 Record Hours Worked
 
@@ -178,6 +268,33 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Hours exceed assignment duration → flagged for review. A2: Wage below jurisdiction floor → floor applied (CON-008). |
 | Volatility | Medium — wage computation depends on jurisdiction-specific floors/premiums (CON-008, CON-010) |
 
+```plantuml
+@startuml
+title UC-006 Record Hours Worked — Main + Alternative Flows
+
+|Worker|
+start
+:Select assigned project;
+:Record hours worked (date, hours);
+
+|System|
+:Validate hours against assignment;
+if (Hours exceed assignment duration?) then (yes)
+  :Flag for review;
+else (no)
+endif
+:Compute wages from hours and agreed rates (FR-007);
+:Apply jurisdiction minimum wage floor (CON-008);
+:Apply risk premium for high-risk work (CON-010);
+if (Wage below floor?) then (yes)
+  :Apply floor (CON-008);
+else (no)
+endif
+:Record hours and computed wage;
+stop
+@enduml
+```
+
 ### UC-007 Complete Certification Course
 
 | Field | Value |
@@ -189,6 +306,23 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. Worker registers for a course (basic CE tracking — FR-008). 2. Worker attends and completes the course. 3. System records completion. 4. System records the resulting certification on the worker's record (FR-009), so credential status is current for matching and regulatory purposes. |
 | Alternatives | A1: Course delivery/test administration/accreditation → out of scope (deep CE excluded). |
 | Volatility | Medium — certification frameworks jurisdiction-specific (CON-018) |
+
+```plantuml
+@startuml
+title UC-007 Complete Certification Course — Main Flow
+
+|Worker|
+start
+:Register for certification course (FR-008);
+:Attend and complete course;
+
+|System|
+:Record course completion;
+:Record resulting certification on worker record (FR-009);
+:Update credential status for matching and regulatory purposes;
+stop
+@enduml
+```
 
 ### UC-008 Maintain Membership
 
@@ -202,6 +336,23 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Lapsed membership → worker/contractor restricted from new matches until renewed. |
 | Volatility | Low — stable lifecycle |
 
+```plantuml
+@startuml
+title UC-008 Maintain Membership — Lifecycle Flow
+
+start
+:Membership lifecycle event (renewal, lapse);
+if (Renewal?) then (yes)
+  :Update status to renewed;
+else (no — non-payment)
+  :Mark membership lapsed;
+  :Restrict from new matches until renewed;
+endif
+:Enforce membership-violation detection (CON-005, AC-007);
+stop
+@enduml
+```
+
 ### UC-009 Process Recurring Membership Fees
 
 | Field | Value |
@@ -213,6 +364,27 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. System identifies memberships with fees due. 2. System processes the recurring annual fee (FR-011). 3. System records the payment (Money value object — REQ-028). |
 | Alternatives | A1: Payment fails → membership marked lapsed (UC-008). |
 | Volatility | Low |
+
+```plantuml
+@startuml
+title UC-009 Process Recurring Membership Fees — Main + Alternative Flows
+
+|Time|
+start
+:Annual membership fee due;
+
+|System|
+:Identify memberships with fees due;
+:Process recurring annual fee (FR-011);
+if (Payment succeeds?) then (yes)
+  :Record payment (Money value object, REQ-028);
+  stop
+else (no)
+  :Mark membership lapsed (UC-008);
+  stop
+endif
+@enduml
+```
 
 ### UC-010 Resolve Exception Case
 
@@ -226,6 +398,26 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Case requires escalation → routed to a higher authority. |
 | Volatility | Medium — human judgment retained for exceptions |
 
+```plantuml
+@startuml
+title UC-010 Resolve Exception Case — Main + Alternative Flows
+
+|Internal Representative|
+start
+:Access exception case;
+:Apply human judgment to resolve (FR-012);
+if (Requires escalation?) then (yes)
+  :Route to higher authority;
+else (no)
+  :Resolve case;
+endif
+
+|System|
+:Record resolution;
+stop
+@enduml
+```
+
 ### UC-011 Assist via Fallback Channel
 
 | Field | Value |
@@ -237,6 +429,21 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. Representative receives the user's request via phone. 2. Representative performs the same operation the self-service channel would (channel equivalence — NFR-006). 3. System applies the same matching, financial flow, and compliance regardless of channel. |
 | Alternatives | A1: Operation requires self-service-only capability → representative performs on user's behalf. |
 | Volatility | Medium — channel equivalence required (NFR-006) |
+
+```plantuml
+@startuml
+title UC-011 Assist via Fallback Channel — Channel Equivalence Flow
+
+|Internal Representative|
+start
+:Receive user request via phone;
+:Perform same operation as self-service channel;
+
+|System|
+:Apply same matching, financial flow, compliance\nregardless of channel (NFR-006);
+stop
+@enduml
+```
 
 ### UC-015 Close Project
 
@@ -250,6 +457,26 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Alternatives | A1: Workers still assigned → termination flow invoked (UC-014). |
 | Volatility | Medium |
 
+```plantuml
+@startuml
+title UC-015 Close Project — Main + Alternative Flows
+
+|Contractor|
+start
+:Signal project closure (complete or cancelled);
+
+|System|
+:Verify closure request;
+if (Workers still assigned?) then (yes)
+  :Release workers via termination flow (UC-014);
+else (no)
+endif
+:Move project to closed state;
+:Retain records for regulatory retention period (CON-015);
+stop
+@enduml
+```
+
 ### UC-016 Record Rate Adjustments
 
 | Field | Value |
@@ -261,6 +488,24 @@ Elaboration details ~80% of all use cases. The architecturally significant use c
 | Main Flow | 1. Contractor raises offered rate when a project sits idle (FR-023). 2. Worker lowers expected rate when idle to attract matches. 3. System records the adjustment. 4. System does not actively price-set or steer the market beyond the matching policy. |
 | Alternatives | A1: Rate adjustment affects matching → matching policy re-evaluates (UC-004). |
 | Volatility | High — pricing model evolvable (CON-019) |
+
+```plantuml
+@startuml
+title UC-016 Record Rate Adjustments — Main Flow
+
+start
+:Worker or contractor adjusts a rate;
+if (Contractor raising offered rate?) then (yes)
+  :Project idle — raise offered rate to attract candidates (FR-023);
+else (no)
+  :Worker idle — lower expected rate to attract matches (FR-023);
+endif
+:System records the adjustment;
+:System does not actively price-set beyond matching policy;
+:Re-evaluate matching (UC-004);
+stop
+@enduml
+```
 
 ### UC-004 Request Workers for Project (architecturally significant — refined)
 
