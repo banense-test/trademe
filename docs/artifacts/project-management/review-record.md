@@ -231,7 +231,6 @@ The LCA milestone is **NOT YET ACHIEVED**. Sanction to proceed to Construction i
 **No open pull requests exist** to carry a terminal SCM disposition — the Money mechanism was committed directly to `main` (Code Review F1), so there is no PR to approve or request changes on. The disposition is recorded here; the remediation is the Implementer's re-routing action.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Money mechanism (src/domain/money.ts) | ADR-004, CON-004, FR-022 | Implements | CLS-008 (Design Model) |
@@ -243,5 +242,8 @@ The LCA milestone is **NOT YET ACHIEVED**. Sanction to proceed to Construction i
 | Design Model#F2 | ADR-004 (no bare float on monetary path) | DependsOn | Data Model (NUMERIC(6,2)) |
 | Software Architecture Document#F2 | UC-014 (architecturally significant) | DependsOn | Design Model SEQ-004 |
 | Test Case#F1 | CI build (main) | DependsOn | run 34886064517 |
+| Use-Case Model#F9 | FR-023 (rate adjustments), BUC-004 derivation bridge | DependsOn | UC-016 |
+| Use-Case Model#F10 | STK-003 (Internal Representative), BUC-004/005/011/012 | DependsOn | Business Object Model |
 | Issue #1 | Money mechanism incomplete (subtract/convert/ExchangeRate) | DependsOn | TC-009, TC-007 |
 | LCA-T7 | 0 open Critical/Major findings on Money | DependsOn | Money mechanism re-baseline |
+
