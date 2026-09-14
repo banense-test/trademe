@@ -50,7 +50,6 @@ All 25 baseline roles are active. Primary ownership per artifact is per the serv
 
 **Business Modeling roles** (BusinessProcessAnalyst, BusinessReviewer) are active because Business Modeling is active.
 ## Guidelines and Procedures
-
 **Measurement policy (this project):** IARI measures two quantities — tokens consumed, and elapsed time split into agent time vs. human queue time. This project uses them as follows:
 - **Tokens** → cost-boxing decisions: each iteration is cost-boxed; the Project Manager reads token consumption to decide whether an iteration's exit criteria can pass within budget or scope must bend.
 - **Human queue time** → gate risk tracking: every `REQUIRES_USER_INPUT` is a human gate; queue time is measured and reported separately (never added to agent time), and any gate approaching the 14-day ceiling is escalated as a risk in the Risk List (R002 is the standing tension risk).
@@ -58,6 +57,42 @@ All 25 baseline roles are active. Primary ownership per artifact is per the serv
 
 **Process support:** The Process Engineer serves as the process help desk across all iterations. Process questions, tool failures, and template ambiguities are resolved within one iteration cycle; blocking issues escalate immediately.
 
+**Environment discipline workflow (per-iteration loop):**
+
+```plantuml
+@startuml
+title Environment Discipline — Per-Iteration Process Loop (TradeMe)
+
+start
+:Prepare Environment for Iteration;
+note right
+  Verify Development Case deltas for this iteration
+  Confirm tool config (CONTRIBUTING.md, lint, CI)
+  Confirm optional-artifact triggers via get_optional_artifact_triggers
+end note
+:Iteration executes (all disciplines);
+:Support During Iteration;
+note right
+  Process help desk: answer process questions,
+  resolve tool failures, clarify templates
+  within one iteration cycle
+end note
+:Assess iteration outcome;
+note right
+  Read Review Record findings + Iteration Assessment
+  Identify root cause: process gap? tool failure?
+  missing template? inadequate training?
+end note
+if (process change needed?) then (yes)
+  :Revise Development Case delta;
+  :Re-record classification / triggers / version policy;
+else (no)
+  :PRESERVE — no change;
+endif
+:Prepare next iteration;
+stop
+@enduml
+```
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
