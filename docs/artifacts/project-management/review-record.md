@@ -239,6 +239,21 @@ The technical lens re-reviewed all 11 artifacts and closed its 7 prior findings.
 
 **New findings (iteration 2, technical lens):** 2 Minor findings recorded (Deployment Model#F1, Development Case#F2) — see Findings section. Both are Approved-with-changes; neither blocks LCO on substance.
 
+### Iteration 2 — Business Lens (BusinessReviewer) Reconciliation
+
+The business lens re-reviewed the Use-Case Model's business sections and closed all 6 of its prior findings. All 6 are RESOLVED (verified against corrected artifact content):
+
+| Artifact | Key | Prior Severity | Resolution | Evidence |
+|---|---|---|---|---|
+| Use-Case Model | F1 | Major | Resolved | "Business Modeling Scenario: Revamp" statement added at top of Business Use Cases section with rationale (re-engineering manual matching/data-entry into automated self-service front door, preserving core brokerage). |
+| Use-Case Model | F2 | Major | Resolved | BUC-012 "Detect Fraud & Enforce Membership" now has Business Actor(s) = Time (scheduled scan) and Business Worker = Internal Representative (enforcement); no empty actor column. |
+| Use-Case Model | F3 | Minor | Resolved | BUC-007 "Process Payments" reclassified to Time (scheduled payment run); External Integration Partners remain a downstream consumer (BUC7 --> Ext), not the initiator. |
+| Use-Case Model | F4 | Major | Resolved | Business Object Model section added with core entities (Worker, Contractor, Project, Assignment, HoursEntry, Payment, Membership, Course, Certification, RegulatoryReport) and control classes (WageComputation, MatchingPolicy, PricingModel), each carrying <<entity>>/<<control>> disposition. |
+| Use-Case Model | F5 | Major | Resolved | Business Rules section added formalizing BR-001..BR-016, each with stable ID, source constraint (CON-NNN), constrained worker/entity, and testable condition. |
+| Use-Case Model | F6 | Major | Resolved | Business object model class diagram added showing workers + entities + associations + multiplicities. |
+
+**New findings (iteration 2, business lens):** 2 Minor findings recorded (Use-Case Model#F7, Use-Case Model#F8) — see Findings section. Both are diagram/survey consistency gaps (missing associations in the Business Use-Case Diagram); neither blocks LCO on substance.
+
 **Prioritized action items (all blocking per stakeholder directive):**
 
 | Priority | Action | Owner | Deadline |
@@ -246,8 +261,9 @@ The technical lens re-reviewed all 11 artifacts and closed its 7 prior findings.
 | 1 | Fix 5 Major business-lens findings (BM scenario, BUC-012 actor, business entities, business rules, BOM diagram) | Business Process Analyst | Before re-review |
 | 2 | Fix 9 Minor findings across Vision, UCM, SAD, DC, Risk List, Iteration Plan, Test Plan | Respective owners (see table) | Before re-review |
 | 3 | Fix 2 new Minor findings (Deployment Model#F1, Development Case#F2) | Deployment Manager, Process Engineer | Before re-review |
-| 4 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
-| 5 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
+| 4 | Fix 2 new Minor findings (Use-Case Model#F7, Use-Case Model#F8) | Business Process Analyst | Before re-review |
+| 5 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
+| 6 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 ## Disposition
 **No-Go (Conditional) — iteration 2 technical lens.**
 
