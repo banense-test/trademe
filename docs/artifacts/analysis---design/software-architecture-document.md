@@ -48,7 +48,6 @@ The architecturally significant use cases, prioritized by risk + coverage + crit
 These four use cases exercise every architectural view: they span the self-service and fallback channels (Process), the matching/pricing/reporting subsystems (Logical), the multi/single-tenant topology (Deployment), and the retained-data store (Data).
 
 ## Logical View
-
 The system is decomposed into **subsystems that encapsulate areas of change**, not areas of function. Each subsystem corresponds to a "Volatility: High" area identified in the Use-Case Model, or to a stable domain aggregate. Subsystems communicate only through interfaces; no subsystem depends on another's internals.
 
 ```plantuml
@@ -127,7 +126,7 @@ I4 --> APP : auth/authz
 | ID | Subsystem | Encapsulated Change (Volatility) | Key Interfaces (to be specified in Elaboration) |
 |---|---|---|---|
 | COMP-001 | Matching | Matching policy (NFR-005, AC-008); fairness objectives | `match(request) → candidates`, `select(candidates) → best` |
-| COMP-002 | Pricing & Settlement | Pricing model (CON-019); currency (FR-022); tax (CON-009); wage floors/premiums (CON-008, CON-010) | `computeWages(hours, rates)`, `convert(amount, from, to)` |
+| COMP-002 | Pricing & Settlement | Pricing model (CON-019); currency (FR-022); tax (CON-009); wage floors/premiums (CON-008, CON-010); rate adjustments (FR-023, UC-016) | `computeWages(hours, rates)`, `convert(amount, from, to)`, `recordRateAdjustment(party, rate)` |
 | COMP-003 | Regulatory Reporting | Jurisdiction variation (R003, CON-007); format/cadence (CON-014) | `produceReport(jurisdiction, window)` |
 | COMP-004 | Fraud Detection | Detection approach (FR-016, deferred) | `scan(patterns) → alerts` |
 | COMP-005 | Taxonomy & Certification | Trade/skill taxonomy (CON-018); certification frameworks (CON-018) | `resolveTrade(id)`, `verifyCertification(worker, cert)` |
@@ -137,6 +136,8 @@ I4 --> APP : auth/authz
 | COMP-009 | Project | Stable (Low volatility) | `createProject`, `closeProject` |
 
 **Decomposition rationale:** COMP-001, COMP-002, COMP-003, COMP-004 each encapsulate a single "Volatility: High" decision from the Use-Case Model. COMP-005 encapsulates the configurable-data constraint (CON-018). COMP-006 encapsulates integration extensibility (NFR-007). COMP-007 encapsulates the race-condition integrity concern (NFR-008). COMP-008 and COMP-009 are stable domain aggregates. No subsystem is named after a feature or a layer — each is named after the *decision it hides*.
+
+**UC-016 mapping note:** UC-016 "Record Rate Adjustments" (FR-023) is realized by COMP-002 Pricing & Settlement. Rate adjustments — contractors raising offered rates on idle projects, workers lowering expected rates when idle — are recorded by the pricing subsystem, which already owns the rate model and the `recordRateAdjustment` interface. The system records these adjustments but does not actively price-set (FR-023); the pricing model's evolvability (CON-019) is the reason this behavior lives in COMP-002 rather than a separate subsystem.
 
 ## Process View
 
