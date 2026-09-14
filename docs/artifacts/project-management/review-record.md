@@ -274,7 +274,6 @@ However, the derivation bridge is **incomplete**: no business entities are model
 **LCO gate impact:** No Critical findings — the business lens does not block LCO. The five Major findings are Elaboration-bound corrections; the BPA should address them at the start of Elaboration before full realizations are produced.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Review Record (I1) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
@@ -285,3 +284,9 @@ However, the derivation bridge is **incomplete**: no business entities are model
 | Software Architecture Document#F1 | FR-023, UC-016 | DependsOn | Software Architecture Document |
 | Test Plan#F1 | (unsourced cost figure) | DependsOn | Test Plan |
 | Iteration Plan#F1 | IARI cost-boxing mandate | DependsOn | Iteration Plan |
+| Use-Case Model#F1 (BR) | BM scenario (Revamp) | DependsOn | Use-Case Model (Business Use Cases section) |
+| Use-Case Model#F2 (BR) | BUC-012, FR-016, CON-005 | DependsOn | Use-Case Model (Business Use Cases section) |
+| Use-Case Model#F3 (BR) | BUC-007, CON-004, FR-017 | DependsOn | Use-Case Model (Business Use Cases section) |
+| Use-Case Model#F4 (BR) | Derivation bridge (entity side) | DependsOn | Use-Case Model (Business Use Cases section) |
+| Use-Case Model#F5 (BR) | CON-003..CON-019 | DependsOn | Use-Case Model (Business Use Cases section) |
+| Use-Case Model#F6 (BR) | Business object model | DependsOn | Use-Case Model (Business Use Cases section) |
