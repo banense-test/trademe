@@ -289,7 +289,6 @@ The business lens's verdict is **Approved with changes**. The business model is 
 
 **Overall LCO disposition remains No-Go** pending: (a) the ManagementReviewer lens closing its findings, (b) resolution of the 4 new Minor findings (Deployment Model#F1, Development Case#F2, Use-Case Model#F7, Use-Case Model#F8), and (c) stakeholder re-consultation for sanction. Neither the technical lens nor the business lens has any open Critical or Major finding, and neither blocks advancement on substance.
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Review Record (I1 consolidated) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
@@ -300,4 +299,8 @@ The business lens's verdict is **Approved with changes**. The business model is 
 | Risk List#F1 | R001..R006 | DependsOn | Risk List |
 | Iteration Plan#F1 | IARI cost-boxing mandate (§8.1) | DependsOn | Iteration Plan |
 | Test Plan#F1 | anti-fabrication rule | DependsOn | Test Plan |
+| Deployment Model#F1 | Document Control metadata | DependsOn | Deployment Model |
+| Development Case#F2 | Supplementary Specification REQ-010 (open question) | DependsOn | Development Case |
+| Use-Case Model#F7 (BR) | FR-018, BUC-004, STK-003 | DependsOn | Use-Case Model |
+| Use-Case Model#F8 (BR) | FR-013, BUC-011, STK-001, STK-002 | DependsOn | Use-Case Model |
 | Stakeholder sanction (REFUSED) | LCO milestone | DependsOn | Elaboration (blocked) |
