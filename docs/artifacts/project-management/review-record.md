@@ -253,8 +253,7 @@ No prior-iteration findings exist (this is iteration 1, cycle 1). All seven find
 **Open action items:** all seven Minor findings are open. None block LCO. They are recommended corrections for the authors to apply before or during Elaboration; none require stakeholder escalation.
 
 ## Disposition
-
-**Approved with Changes.**
+**Approved with Changes (technical lens).**
 
 The Inception artifacts collectively satisfy the LCO exit criteria:
 - **Vision clarity** — problem statement, root cause, product position, and success criteria are clear and measurable (AC-001, AC-003, AC-004, AC-005).
@@ -263,6 +262,16 @@ The Inception artifacts collectively satisfy the LCO exit criteria:
 - **Stakeholder agreement on scope and feasibility** — declared scope is respected as the ceiling; no scope expansion detected; cross-cutting mechanisms correctly placed in Supplementary Spec; money mechanism (ADR-004) faithfully captures the stakeholder's mandatory decision.
 
 The seven Minor findings are non-blocking corrections. No Critical or Major findings exist, so no stakeholder escalation is required and the LCO gate is not blocked by this lens.
+
+---
+
+**Needs Rework (business modeling lens).**
+
+The business modeling contribution is directionally sound: 12 BUCs correctly model the brokerage at the organization boundary, the business actor/worker classification is largely correct (STK-003 correctly identified as internal business worker), the BUC→UC derivation bridge is present on the worker side (automation disposition annotated for every BUC), and the volatility annotations correctly flag BUC-004/BUC-007/BUC-010/BUC-012 as architectural input.
+
+However, the derivation bridge is **incomplete**: no business entities are modeled (no entity→analysis-class annotations), and business rules are not formalized (no BR-NNN with source/attachment/testable condition). These are the entity and rules halves of the bridge the Requirements discipline needs to derive system classes and enforce business invariants. The scenario selection is also unstated, which leaves the realization-depth expectation unanchored.
+
+**LCO gate impact:** No Critical findings — the business lens does not block LCO. The five Major findings are Elaboration-bound corrections; the BPA should address them at the start of Elaboration before full realizations are produced.
 
 ## Traceability
 
