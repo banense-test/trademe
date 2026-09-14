@@ -3,152 +3,152 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 1 (consolidated) |
 | Milestone Target | End-of-Inception review (LCO) |
-| Review Type | Lifecycle Objectives (LCO) milestone review — management lens |
-| Reviewer | Management Reviewer (project governance lens) |
+| Review Type | Lifecycle Objectives (LCO) milestone review — consolidated |
+| Reviewer | Review Coordinator (consolidation of three lenses) |
 | Date | 2026-09-14 |
 | Artifacts Reviewed | Vision, Use-Case Model, Supplementary Specification, Software Architecture Document, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary (10 total) |
 
+**Lens participation (authoritative):**
+
+| Lens | Status |
+|---|---|
+| Technical / Reviewer | EXECUTED — 7 Minor findings |
+| Business / BusinessReviewer | EXECUTED — 5 Major + 1 Minor findings |
+| Management / ManagementReviewer | EXECUTED — 2 Minor findings (1 overlaps technical lens) |
+
 ## Review Scope and Criteria
 
-This is the **Lifecycle Objectives (LCO)** milestone review, management lens. The evaluative question is **EXIT CRITERIA**: do the Inception artifacts collectively satisfy the conditions for phase transition to Elaboration, and is the project viable and acceptable to stakeholders?
+This is the **Lifecycle Objectives (LCO)** milestone review, consolidated across three lenses. The evaluative question is **EXIT CRITERIA**: do the Inception artifacts collectively satisfy the conditions for phase transition to Elaboration, and is the project viable and acceptable to stakeholders?
 
-**LCO exit criteria (management lens):**
+**LCO exit criteria (consolidated):**
 
-| Criterion | Question |
-|---|---|
-| Scope agreement | Do stakeholders agree on what is in/out of scope? |
-| Risk identification | Have key risks been identified with magnitude ratings? |
-| Feasibility | Is the proposed approach and initial plan feasible? |
-| Project Approval | Is there sanction to proceed to Elaboration? |
+| Criterion | Question | Status |
+|---|---|---|
+| Scope agreement | Do stakeholders agree on what is in/out of scope? | MET (21 UCs trace to 26 FRs) |
+| Risk identification | Have key risks been identified with magnitude ratings? | MET (R001–R006 classified) |
+| Feasibility | Is the proposed approach and initial plan feasible? | MET (ADR-001 modular monolith, Node.js/TS + PostgreSQL) |
+| Project Approval | Is there sanction to proceed to Elaboration? | **REFUSED** (stakeholder directive: fix ALL findings) |
 
-**Checklist applied (management lens):**
+```plantuml
+@startuml
+title Finding Lifecycle — LCO Consolidation (Inception I1)
 
-| Artifact | Checklist |
-|---|---|
-| Vision | Scope in/out clarity, stakeholder needs, viability, data-source verification |
-| Iteration Plan | Objectives, cost-boxing (not time-boxing), AC disposition, milestone sequence |
-| Risk List | Magnitude ratings, strategy/mitigation/contingency, status/trend tracking |
-| Development Case | DC baseline conformance, optional trigger justification |
-| Software Architecture Document | Feasibility of approach, risk-driven priorities |
+state "Open" as Open
+state "Assigned" as Assigned
+state "In-Progress" as InProgress
+state "Resolved" as Resolved
+state "Verified" as Verified
+state "Closed" as Closed
+
+[*] --> Open : record_artifact_finding
+Open --> Assigned : owner assigned
+Assigned --> InProgress : remediation started
+InProgress --> Resolved : author fixes defect
+Resolved --> Verified : lens verifies fix
+Verified --> Closed : resolve_artifact_finding
+
+note right of Open
+  CURRENT: all 14 findings OPEN
+  5 Major + 9 Minor, 0 Critical
+  Stakeholder directive: fix ALL
+  (incl. Minor) before Elaboration
+end note
+@enduml
+```
+
+```plantuml
+@startuml
+title LCO Consolidation Workflow — Review Coordinator (Inception I1)
+
+start
+:Read all lens findings\n(Reviewer, BusinessReviewer, ManagementReviewer);
+:Consolidate cross-lens findings\n(dedupe overlaps, resolve conflicts);
+:Prioritize action items\n(Major > Minor, all blocking per stakeholder);
+:Upsert authoritative Review Record;
+if (open Critical findings?) then (yes)
+  :Escalate to stakeholder\n(REQUIRES_USER_INPUT);
+  :record_milestone_auto_iterate(true);
+else (no)
+  if (open Major OR sanction REFUSED?) then (yes)
+    :Stakeholder contribution\n(REQUIRES_USER_INPUT);
+    :record_milestone_auto_iterate(true);
+  else (no)
+    :Consult stakeholder for sanction;
+    :record_milestone_auto_iterate(false);
+  endif
+endif
+stop
+@enduml
+```
+
+```plantuml
+@startuml
+title Review Calendar — Inception I1 (LCO milestone)
+
+|Inception I1|
+start
+:Project Approval Review\n(Vision + Risk List feasibility);
+:Project Planning Review\n(Development Case + Iteration Plan);
+:LCO Lifecycle Milestone Review\n(all 10 artifacts, 3 lenses);
+:Consolidation\n(Review Coordinator);
+stop
+
+note right
+  LCO = end-of-Inception gate.
+  Verdict: REFUSED (stakeholder).
+  Next: re-review after all findings fixed.
+end note
+@enduml
+```
 
 ## Findings
 
-Two (2) findings recorded by the management lens, both **Minor**. Zero Major, zero Critical from this lens. The business lens (Business Reviewer) carries 5 Major findings; the technical lens (Reviewer) carries 7 Minor findings. **The stakeholder has directed that ALL findings — including Minor — be fixed before advancing to Elaboration.**
+**Consolidated finding tally: 5 Major, 9 Minor, 0 Critical — all OPEN.**
 
-```plantuml
-@startuml
-skinparam object {
-  BackgroundColor #FEFECE
-  BorderColor #A80036
-}
-title LCO Compliance Table — Management Lens (Inception I1)
+Cross-lens consolidation notes:
+- **Iteration Plan#F1** (Gantt time-boxing) is recorded by BOTH the technical lens (Reviewer) and the management lens (ManagementReviewer). It is ONE defect with two lenses concurring — consolidated to a single action item, with the management lens as the authoritative owner (cost-boxing is a project-management discipline concern).
+- No conflicting verdicts between lenses: all three lenses concur that the artifacts are substantively sound but carry blocking defects per the stakeholder's directive.
 
-object "Scope Agreement" as SA {
-  Status = MET
-  Evidence = 21 UCs trace to 26 FRs
-}
+### Major Findings (5 — all business lens, all on Use-Case Model)
 
-object "Risk Identification" as RI {
-  Status = MET
-  Evidence = R001-R006 classified w/ magnitude
-}
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 1 | Use-Case Model | F1 | BusinessReviewer | Major | Business modeling scenario unstated — the engagement is clearly "Revamp" but the BPA never identifies the scenario, so artifact expectations are unanchored. | Add explicit scenario-selection statement at top of Business Use Cases section. | Business Process Analyst |
+| 2 | Use-Case Model | F2 | BusinessReviewer | Major | BUC-012 "Detect Fraud & Enforce Membership" has no initiating business actor — violates the BUC completeness test. | Identify initiating actor (Time-triggered, or fold into BUC-008, or name regulator/worker-reporting trigger). | Business Process Analyst |
+| 3 | Use-Case Model | F4 | BusinessReviewer | Major | No business entities modeled — the entity half of the derivation bridge is missing. | Add Business Object Model (class diagram) with core entities and analysis-class disposition annotations. | Business Process Analyst |
+| 4 | Use-Case Model | F5 | BusinessReviewer | Major | Business rules not formalized — CON-003..CON-019 appear only as scattered prose references, not as BR-NNN rules with testable conditions. | Produce Business Rules section formalizing each rule with ID, source, constrained worker/entity, testable condition. | Business Process Analyst |
+| 5 | Use-Case Model | F6 | BusinessReviewer | Major | No business object model diagram — the structural complement to the behavioral use-case diagram is absent. | Add business object model class diagram (workers + entities + associations). | Business Process Analyst |
 
-object "Feasibility" as F {
-  Status = MET
-  Evidence = ADR-001 modular monolith
-}
+### Minor Findings (9)
 
-object "Project Approval" as PA {
-  Status = REFUSED
-  Evidence = stakeholder: fix all findings
-}
-
-object "Risk Retirement Trend" as RT {
-  Status = PARTIAL
-  Evidence = no Status/Trend column
-}
-@enduml
-```
-
-```plantuml
-@startuml
-title Project Health State Machine — LCO (Inception I1)
-
-state "Healthy" as Healthy
-state "AtRisk" as AtRisk
-state "Stopped" as Stopped
-
-[*] --> Healthy
-Healthy --> AtRisk : stakeholder refuses sanction
-AtRisk --> Stopped : findings remain unresolved
-AtRisk --> Healthy : all findings resolved + re-review
-
-note right of AtRisk
-  CURRENT STATE: AtRisk
-  Stakeholder refused LCO sanction
-  Directive: fix ALL findings (incl. Minor)
-  before advancing to Elaboration
-end note
-@enduml
-```
-
-```plantuml
-@startuml
-title Risk Retirement Trend — Management Lens (Inception I1)
-
-object "R001 Legacy replacement" as R1 {
-  Magnitude = SIGNIFICANT (12)
-  Trend = N/A (baseline)
-}
-object "R002 Dev/leadership tension" as R2 {
-  Magnitude = HIGH (16)
-  Trend = N/A (baseline)
-}
-object "R003 Multi-jurisdiction" as R3 {
-  Magnitude = SIGNIFICANT (12)
-  Trend = N/A (baseline)
-}
-object "R004 Matching policy capture" as R4 {
-  Magnitude = SIGNIFICANT (12)
-  Trend = N/A (baseline)
-}
-object "R005 Availability race" as R5 {
-  Magnitude = SIGNIFICANT (12)
-  Trend = N/A (baseline)
-}
-object "R006 Human-gate queue" as R6 {
-  Magnitude = MODERATE (9)
-  Trend = N/A (baseline)
-}
-
-note bottom of R2
-  Inception I1 = baseline; no trend yet.
-  Risk List lacks Status/Trend columns (MR#F1).
-  R002 (HIGH) must show DECREASING trend
-  at LCA before Construction proceeds.
-end note
-@enduml
-```
-
-### Finding Detail — Management Lens
-
-| # | Artifact | Key | Severity | Finding | Remediation |
-|---|---|---|---|---|---|
-| 1 | Risk List | F1 | Minor | The Risk Register lacks a Status column and a Trend column. It tracks P, I, Exposure, Magnitude, Strategy, and Owner, but not whether a risk is open/mitigating/retired nor whether its trend is improving/stable/worsening since the last review. Without these, risk retirement — the core of RUP's risk-driven approach — cannot be verified at future milestones (LCA/IOC/PR). R002 (HIGH, exposure 16) currently carries no trend line. | Add a Status column (open/mitigating/retired) and a Trend column (improving/stable/worsening) to the Risk Register, and update both at every major review so high-magnitude risks show a decreasing trend line rather than a static list. |
-| 2 | Iteration Plan | F1 | Minor | The coarse-roadmap Gantt chart time-boxes iterations ("lasts 1 days" each), while the plan text cost-boxes them ("Iteration budget box: 750k tokens"). The IARI baseline (§8.1) mandates cost-boxing, not time-boxing; the "1 days" placeholder contradicts this and reads as a fabricated duration. | Replace the "1 days" durations with cost-box annotations (token budgets) or mark the Gantt as a coarse sequence-only roadmap with no duration semantics. |
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 6 | Vision | F1 | Reviewer | Minor | Constraints section lists 17 of 22 declared constraints; CON-020/021/022 relegated to Assumptions table. | List CON-020/021/022 in Constraints section or add cross-reference note. | System Analyst |
+| 7 | Vision | F2 | Reviewer | Minor | Use-case diagram omits Time actor and uses slightly different UC names vs UCM. | Align Vision diagram with UCM (add Time actor, identical UC names). | System Analyst |
+| 8 | Use-Case Model | F1 | Reviewer | Minor | UC-019 and UC-021 have placeholder primary actors "(business)" and "(system)". | Identify proper primary actor for UC-019 (STK-003) and UC-021 (or model as alt-flow of UC-004). | System Analyst |
+| 9 | Use-Case Model | F3 | BusinessReviewer | Minor | BUC-007 "Process Payments" lists External Integration Partners as actor, but payment is a scheduled internal process (CON-004). | Reclassify BUC-007 initiating actor as Time; AP integration is downstream consumer. | Business Process Analyst |
+| 10 | Software Architecture Document | F1 | Reviewer | Minor | UC-016 "Record Rate Adjustments" not mapped to any subsystem in SAD traceability. | Add UC-016 to COMP-002 or COMP-001 trace row, or note as sub-flow. | Software Architect |
+| 11 | Development Case | F1 | Reviewer | Minor | DC references "24-role roster" but baseline lists 25 roles. | Reconcile roster count to 25. | Process Engineer |
+| 12 | Risk List | F1 | ManagementReviewer | Minor | Risk Register lacks Status and Trend columns — risk retirement cannot be verified. | Add Status (open/mitigating/retired) and Trend (improving/stable/worsening) columns. | Project Manager |
+| 13 | Iteration Plan | F1 | Reviewer + ManagementReviewer | Minor | Gantt time-boxes iterations ("1 days") contradicting cost-boxing mandate. | Replace durations with cost-box annotations or mark Gantt as sequence-only. | Project Manager |
+| 14 | Test Plan | F1 | Reviewer | Minor | "Testing is 30–50% of project cost" is an unsourced quantitative claim. | Mark as [ASSUMPTION — requires validation] with basis, or cite source. | Test Manager |
 
 ## Resolutions and Actions
 
-No prior-iteration management-lens findings exist (this is iteration 1, cycle 1). Both findings above are newly recorded this iteration.
+No prior-iteration findings exist (iteration 1, cycle 1). All 14 findings above are newly recorded this iteration and are **OPEN**.
 
 **Stakeholder sanction: REFUSED.** The stakeholder declined to sanction advancement past LCO and directed: *"You do need to fix all findings even if they are minors before move to the next phase."*
 
-**Open action items (all lenses, all blocking per stakeholder directive):**
-- 5 Major (business lens) — BM scenario unstated; BUC-012 no actor; no business entities; business rules not formalized; no business object model.
-- 7 Minor (technical lens) — DC roster count; Vision constraints; Vision diagram; UCM actor placeholders; SAD UC-016 mapping; Test Plan unsourced cost figure; Iteration Plan Gantt time-boxing.
-- 2 Minor (management lens) — Risk List Status/Trend columns; Iteration Plan Gantt time-boxing (overlaps technical lens F1).
+**Prioritized action items (all blocking per stakeholder directive):**
+
+| Priority | Action | Owner | Deadline |
+|---|---|---|---|
+| 1 | Fix 5 Major business-lens findings (BM scenario, BUC-012 actor, business entities, business rules, BOM diagram) | Business Process Analyst | Before re-review |
+| 2 | Fix 9 Minor findings across Vision, UCM, SAD, DC, Risk List, Iteration Plan, Test Plan | Respective owners (see table) | Before re-review |
+| 3 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
+| 4 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 
 ## Disposition
 
@@ -158,16 +158,20 @@ The Inception artifacts are substantively sound — scope is agreed and respecte
 
 **Conditions to close before LCO can be sanctioned:**
 1. All 5 Major (business lens) findings resolved.
-2. All 7 Minor (technical lens) findings resolved.
-3. All 2 Minor (management lens) findings resolved.
-4. Re-review by all three lenses confirming resolution.
-5. Stakeholder re-consulted for sanction.
+2. All 9 Minor findings resolved.
+3. Re-review by all three lenses confirming resolution.
+4. Stakeholder re-consulted for sanction.
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Review Record (I1) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
-| Risk List#F1 (MR) | R001..R006 | DependsOn | Risk List |
-| Iteration Plan#F1 (MR) | IARI cost-boxing mandate (§8.1) | DependsOn | Iteration Plan |
+| Review Record (I1 consolidated) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
+| Use-Case Model#F1..F6 (BR) | FR-018, CON-003..CON-019 | DependsOn | Use-Case Model |
+| Vision#F1, Vision#F2 | CON-020..CON-022, Use-Case Model | DependsOn | Vision |
+| SAD#F1 | FR-023, COMP-001, COMP-002 | DependsOn | Software Architecture Document |
+| Development Case#F1 | IARI baseline roster | DependsOn | Development Case |
+| Risk List#F1 | R001..R006 | DependsOn | Risk List |
+| Iteration Plan#F1 | IARI cost-boxing mandate (§8.1) | DependsOn | Iteration Plan |
+| Test Plan#F1 | anti-fabrication rule | DependsOn | Test Plan |
 | Stakeholder sanction (REFUSED) | LCO milestone | DependsOn | Elaboration (blocked) |
