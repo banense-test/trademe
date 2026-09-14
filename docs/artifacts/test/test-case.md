@@ -6,7 +6,6 @@
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
 
 ## Test Scope
-
 This artifact specifies the **test cases** for the architecturally significant use-case scenarios, per the Test Plan's Elaboration mandate (LCA-T1..T7). Elaboration's exit criterion is **test readiness**, not execution: each test case below is fully specified (preconditions, input data, expected outcome, pass/fail criteria, automation hints, interface points, environment prerequisites) so the Tester can script and execute it in Construction without re-deriving intent.
 
 **Scope boundary.** Test cases cover the four architecturally significant use cases (UC-004, UC-012, UC-013, UC-014), the Money value object (ADR-004), and the cross-cutting mechanisms they exercise (auth/authz REQ-001/REQ-002, audit REQ-003, responsiveness REQ-013). The remaining Must/Should flows (UC-001..UC-003, UC-005..UC-011, UC-015, UC-016) are covered by the Test Plan's TI-005 and are **not** elaborated here — they are standard scenario tests with no architectural risk, deferred to Construction per the Test Plan's schedule. Nice-to-have capabilities (UC-017..UC-021) are tested only for retained-data support (NFR-004), not behavior.
@@ -72,6 +71,66 @@ end note
 @enduml
 ```
 
+### Execution Verdicts — Elaboration I1 (Architecture Test Execution)
+
+**Smoke test.** CI build `main` green (run 34856326288) — PASS. Detailed testing proceeded.
+
+**Prototype under test.** The architectural prototype for this iteration consists of the Money mechanism only (`src/domain/money.ts` + `tests/money.test.ts`). COMP-001..COMP-009 are not yet implemented (expected later in Elaboration), so the scenario test cases are BLOCKED pending component implementation.
+
+**Money mechanism evaluation (TC-009).** The `add` operation is **correct**: black-box cases pass (0.10+0.20=0.30; cross-currency rejection), and the white-box branches were traced by inspection — carry propagation (0.90+0.20=1.10), integer-only path (1+2=3), mixed-scale (1.5+2=3.5) all produce exact results with no floating-point degradation. However, `subtract()`, `convert()`, and the `ExchangeRate` value object are **missing** (confirms Review Record F2), so TC-009 and TC-007 are BLOCKED.
+
+```plantuml
+@startuml
+title Test Execution Verdict — Elaboration I1 (Architecture Prototype)
+
+start
+:Smoke test — CI build status (main);
+if (CI green?) then (yes)
+  :PASS — run 34856326288;
+else (no)
+  :STOP — log blocker CR;
+  stop
+endif
+
+:Inspect architectural prototype\n(repo tree: src/domain/money.ts only);
+:Evaluate TC-009 Money integrity;
+
+if (subtract()/convert()/ExchangeRate present?) then (yes)
+  :PASS — full monetary-integrity coverage;
+else (no)
+  :BLOCKED — F2: subtract/convert/ExchangeRate missing;
+  :Log CR (severity=major);
+endif
+
+:Evaluate TC-001..TC-008, TC-010..TC-016;
+if (COMP-001..COMP-009 implemented?) then (yes)
+  :Execute scenario tests;
+else (no)
+  :BLOCKED — components not yet built\n(expected at Elaboration I1);
+endif
+
+:Record verdicts in Test Case;
+:Flag white-box test code for Implementer materialization;
+stop
+
+note right
+  Elaboration exit criterion is test readiness,
+  not full execution. The prototype (Money mechanism)
+  is present but incomplete: add() is correct,
+  subtract()/convert() are missing (F2).
+end note
+@enduml
+```
+
+| Test Case | Verdict | Evidence / Reason |
+|---|---|---|
+| TC-009 (Money value object integrity) | BLOCKED | `add` correct (black-box + white-box branches traced); `subtract`/`convert`/`ExchangeRate` missing (F2) → Issue #1 |
+| TC-007 (currency conversion) | BLOCKED | `convert`/`ExchangeRate` missing (F2) → Issue #1 |
+| TC-001..TC-006, TC-008, TC-010..TC-016 | BLOCKED | COMP-001..COMP-009 not implemented this iteration |
+
+**Defect logged.** Issue #1 (severity=major, priority=high) — Money mechanism incomplete; confirms Review Record F2.
+
+**Test code materialization.** The white-box tests for `addExact` branches and `Money.of` validation (Review Record F3) and the `subtract`/`convert` tests (F2) are flagged for the Implementer to materialize in `tests/money.test.ts` — the Tester has no SCM push tooling this iteration, so the executable test code is specified here and handed to the Implementer for commit.
 ## Test Case Catalog
 
 ### Test Automation Architecture
