@@ -170,8 +170,135 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Volatility | Medium — must not encourage casual termination (CON-013) |
 
 ## Business Use Cases
+Business Modeling is active (Development Case §4: business-process-led). The system automates a manual brokerage — 220 representatives across 9 call centers performing data entry and manual matching. The business use cases below model the **organizational** processes at the organization boundary (the brokerage), not the software. The SystemAnalyst's system use cases (UC-001..UC-021) derive from these via the derivation bridge.
 
-Business Modeling is active (Development Case). The Business Process Analyst will contribute the Business Use Cases section in a later iteration. The system use cases above derive from the manual brokerage process (220 representatives performing data entry and matching); FR-018 requires capturing the hand-tuned matching policy in configurable form.
+### Business Actors and Workers
+
+| ID | Role | Classification | Rationale |
+|---|---|---|---|
+| STK-001 | Worker | Business Actor (external) | Independent contractor, not employed by the brokerage (CON-003); outside the organization boundary |
+| STK-002 | Contractor | Business Actor (external) | General contractor; outside the organization boundary |
+| STK-004 | Regulator | Business Actor (external) | Jurisdiction-specific body; outside the organization |
+| STK-005 | External Integration Partners | Business Actor (external) | AP systems, credential validators; outside the organization |
+| STK-003 | Internal Representative | Business Worker (internal) | Employed by the brokerage; performs the manual matching/data-entry work being automated |
+
+### Business Use-Case Diagram
+
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Worker\n(STK-001)" as Worker
+actor "Contractor\n(STK-002)" as Contractor
+actor "Regulator\n(STK-004)" as Regulator
+actor "External Integration\nPartners (STK-005)" as Ext
+
+rectangle "TradeMe Brokerage (Organization)" {
+  actor "Internal Representative\n(STK-003)" as Rep <<business worker>>
+  usecase "BUC-001 Onboard Worker" as BUC1
+  usecase "BUC-002 Onboard Contractor" as BUC2
+  usecase "BUC-003 Manage Project Lifecycle" as BUC3
+  usecase "BUC-004 Broker Worker to Project" as BUC4
+  usecase "BUC-005 Manage Assignment" as BUC5
+  usecase "BUC-006 Capture Hours & Compute Wages" as BUC6
+  usecase "BUC-007 Process Payments" as BUC7
+  usecase "BUC-008 Manage Membership & Fees" as BUC8
+  usecase "BUC-009 Track CE & Certifications" as BUC9
+  usecase "BUC-010 Produce Regulatory Reports" as BUC10
+  usecase "BUC-011 Handle Exceptions & Fallback" as BUC11
+  usecase "BUC-012 Detect Fraud & Enforce Membership" as BUC12
+}
+
+Worker --> BUC1
+Worker --> BUC5
+Worker --> BUC6
+Worker --> BUC8
+Worker --> BUC9
+Contractor --> BUC2
+Contractor --> BUC3
+Contractor --> BUC4
+Contractor --> BUC5
+Contractor --> BUC8
+Regulator --> BUC10
+Ext --> BUC7
+Rep --> BUC11
+Rep --> BUC12
+Rep --> BUC5
+
+BUC4 ..> BUC5 : <<include>>
+BUC7 ..> BUC6 : <<include>>
+@enduml
+```
+
+### Business Use-Case Survey
+
+| ID | Business Use Case | Business Actor(s) | Business Worker(s) | Automation Potential | Volatility | Volatility Reason |
+|---|---|---|---|---|---|---|
+| BUC-001 | Onboard Worker | Worker | — | Full | Medium | Trade/skill taxonomy and certification frameworks are configurable data (CON-018); rate factors evolve |
+| BUC-002 | Onboard Contractor | Contractor | — | Full | Low | Stable registration process |
+| BUC-003 | Manage Project Lifecycle | Contractor | — | Full | Medium | Project requirement changes treated as variation of creation (FR-003); trades vary by jurisdiction |
+| BUC-004 | Broker Worker to Project | Contractor | Internal Representative | Full | High | Matching policy must be configurable (NFR-005, AC-008); fairness objectives evolve; hand-tuned policy captured (FR-018) |
+| BUC-005 | Manage Assignment | Worker, Contractor | Internal Representative | Full | Medium | Contracts-must-be-honored rule (CON-013); termination must not encourage casual churn |
+| BUC-006 | Capture Hours & Compute Wages | Worker | — | Full | Medium | Wage computation depends on jurisdiction-specific floors/premiums (CON-008, CON-010) |
+| BUC-007 | Process Payments | External Integration Partners | — | Full | High | Pricing model evolvable (CON-019); currency conversion (FR-022); tax withholding (CON-009) |
+| BUC-008 | Manage Membership & Fees | Worker, Contractor | — | Full | Low | Recurring annual fee; stable lifecycle |
+| BUC-009 | Track CE & Certifications | Worker | — | Full | Medium | Certification frameworks jurisdiction-specific (CON-018) |
+| BUC-010 | Produce Regulatory Reports | Regulator | — | Full | High | Regulatory variation across jurisdictions (R003, CON-007) |
+| BUC-011 | Handle Exceptions & Fallback | Worker, Contractor | Internal Representative | Partial | Medium | Human judgment retained for exceptions; channel equivalence required (NFR-006) |
+| BUC-012 | Detect Fraud & Enforce Membership | — | Internal Representative | Partial | High | Detection in scope (FR-016); enforcement response deferred (out-of-scope open question) |
+
+### Process Scope vs Project Scope
+
+The business process is the **brokerage** — matching workers to contractors for a margin, with the company as financial intermediary. The project automates the **front door** (BG-002): the self-service channel that replaces 220 representatives. The following business processes are **out of project scope** and are documented as recommendations, not modeled:
+
+- `[RECOMMENDATION — requires CR]` Deep continuing-education (course delivery, test administration, accreditation pipeline) — declared out of scope.
+- `[RECOMMENDATION — requires CR]` Detailed billing and collections mechanics (invoicing, dunning, late-payment, dispute resolution) — declared out of scope.
+- `[RECOMMENDATION — requires CR]` Demand planning / project-optimization consulting / cross-training scheduling — declared adjacent businesses, not entered.
+
+### Derivation Bridge (Business → System)
+
+| Business UC | Automation | Derives System UC(s) | Notes |
+|---|---|---|---|
+| BUC-001 Onboard Worker | Full | UC-001 | Worker self-service registration |
+| BUC-002 Onboard Contractor | Full | UC-002 | Contractor self-service registration |
+| BUC-003 Manage Project Lifecycle | Full | UC-003, UC-015 | Project creation and closure |
+| BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019) | The core brokerage process; matching/assignment are sub-flows |
+| BUC-005 Manage Assignment | Full | UC-005, UC-014 | Arrival/departure tracking and termination |
+| BUC-006 Capture Hours & Compute Wages | Full | UC-006 (incl. wage computation FR-007) | Hours and wage computation |
+| BUC-007 Process Payments | Full | UC-012 (incl. currency FR-022), UC-018 | Financial intermediary flow; AP integration |
+| BUC-008 Manage Membership & Fees | Full | UC-008, UC-009 | Membership lifecycle and recurring fees |
+| BUC-009 Track CE & Certifications | Full | UC-007 (incl. certification recording FR-009) | CE tracking and certification recording |
+| BUC-010 Produce Regulatory Reports | Full | UC-013 | Jurisdiction-specific reporting |
+| BUC-011 Handle Exceptions & Fallback | Partial | UC-010, UC-011 | Human judgment retained; channel equivalence (NFR-006) |
+| BUC-012 Detect Fraud & Enforce Membership | Partial | UC-017 | Detection in scope; enforcement deferred |
+
+### Volatility → Architectural Input
+
+The following business processes are annotated **Volatility: High** and are architectural input for the SoftwareArchitect — each should be encapsulated in a dedicated component so the volatile policy can evolve without restructuring:
+
+- **BUC-004 Broker Worker to Project** — matching policy (NFR-005, AC-008), fairness objectives.
+- **BUC-007 Process Payments** — pricing model (CON-019), currency (FR-022), tax (CON-009).
+- **BUC-010 Produce Regulatory Reports** — jurisdiction variation (R003, CON-007).
+- **BUC-012 Detect Fraud & Enforce Membership** — detection approach and enforcement response both deferred.
+
+### Traceability
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| BUC-001 | FR-001 | Derives | UC-001 |
+| BUC-002 | FR-002 | Derives | UC-002 |
+| BUC-003 | FR-003, FR-021 | Derives | UC-003, UC-015 |
+| BUC-004 | FR-004, FR-018, FR-019 | Derives | UC-004 |
+| BUC-005 | FR-005, FR-020 | Derives | UC-005, UC-014 |
+| BUC-006 | FR-006, FR-007 | Derives | UC-006 |
+| BUC-007 | FR-014, FR-022, FR-017 | Derives | UC-012, UC-018 |
+| BUC-008 | FR-010, FR-011 | Derives | UC-008, UC-009 |
+| BUC-009 | FR-008, FR-009 | Derives | UC-007 |
+| BUC-010 | FR-015 | Derives | UC-013 |
+| BUC-011 | FR-012, FR-013 | Derives | UC-010, UC-011 |
+| BUC-012 | FR-016, CON-005 | Derives | UC-017 |
 
 ## Traceability
 
