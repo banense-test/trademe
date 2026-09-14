@@ -143,101 +143,74 @@ The technical lens re-reviewed all 11 artifacts in iteration 2. All 7 prior tech
 | 15 | Deployment Model | F1 | Reviewer | Minor | Document Control status reads "Draft — iteration 1" while the rest of the iteration-2 baseline reads "Draft — iteration 2"; the artifact was preserved but its metadata was not bumped, leaving stale iteration metadata. | Update Document Control status to "Draft — iteration 2". | Deployment Manager |
 | 16 | Development Case | F2 | Reviewer | Minor | UI Prototype trigger justification cites "low-technical-literacy users" as UX-critical, but "low technical literacy is a design concern" is a deferred out-of-cycle open question (Supplementary Specification REQ-010) — the DC cites an open question as settled fact. | Re-justify the UI Prototype trigger on settled ground (NFR-001 mobile must-have, NFR-002 self-service replacing 220 reps); drop or qualify the low-technical-literacy phrase. | Process Engineer |
 
+### Iteration 2 — Business Lens (BusinessReviewer) Findings
+
+The business lens re-reviewed the Use-Case Model's business sections in iteration 2. All 6 prior business-lens findings (F1..F6) are RESOLVED (see Resolutions and Actions). Two new Minor findings were recorded — both are diagram/survey consistency gaps, not substantive defects:
+
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 17 | Use-Case Model | F7 | BusinessReviewer | Minor | BUC-004 "Broker Worker to Project" survey lists Internal Representative (STK-003) as a business worker, but the Business Use-Case Diagram does not draw an association from the Internal Representative worker to BUC-004. | Add `Rep --> BUC4` association in the Business Use-Case Diagram to match the survey (worker assists brokering, per FR-018 "hand-tuned policy representatives used for decades"). | Business Process Analyst |
+| 18 | Use-Case Model | F8 | BusinessReviewer | Minor | BUC-011 "Handle Exceptions & Fallback" survey lists Worker and Contractor as business actors, but the Business Use-Case Diagram draws only `Rep --> BUC11` — the Worker and Contractor associations are missing. | Add `Worker --> BUC11` and `Contractor --> BUC11` associations to match the survey (fallback channel serves workers/contractors, FR-013). | Business Process Analyst |
+
 ```plantuml
 @startuml
-title LCO Technical Review — Compliance Matrix (Inception I2)
+title Business Modeling Coverage Map — Inception I2 (Business Reviewer)
 
-object "Vision" as V
-object "Use-Case Model" as UCM
-object "Supplementary Specification" as SS
-object "Glossary" as GL
-object "Risk List" as RL
-object "Iteration Plan" as IP
-object "Software Architecture Document" as SAD
-object "Test Plan" as TP
-object "Deployment Model" as DM
-object "Development Case" as DC
-object "Iteration Assessment" as IA
+package "Business Use Cases (12/12 PASS Inception completeness)" {
+  class "BUC-001\nOnboard Worker" as B1 #lightgreen
+  class "BUC-002\nOnboard Contractor" as B2 #lightgreen
+  class "BUC-003\nManage Project Lifecycle" as B3 #lightgreen
+  class "BUC-004\nBroker Worker to Project" as B4 #lightgreen
+  class "BUC-005\nManage Assignment" as B5 #lightgreen
+  class "BUC-006\nCapture Hours & Wages" as B6 #lightgreen
+  class "BUC-007\nProcess Payments" as B7 #lightgreen
+  class "BUC-008\nManage Membership & Fees" as B8 #lightgreen
+  class "BUC-009\nTrack CE & Certifications" as B9 #lightgreen
+  class "BUC-010\nProduce Regulatory Reports" as B10 #lightgreen
+  class "BUC-011\nHandle Exceptions & Fallback" as B11 #lightgreen
+  class "BUC-012\nDetect Fraud & Enforce Membership" as B12 #lightgreen
+}
 
-note right of V
-  Constraints 22/22: PASS
-  Time actor present: PASS
-  UC names aligned: PASS
+note right of B4
+  Actor: PASS (Contractor)
+  Automation: PASS (Full)
+  Diagram assoc: FAIL — Rep worker omitted
 end note
 
-note right of UCM
-  UC sources trace FR: PASS
-  No cross-cutting UCs: PASS
-  Business Object Model: PASS
-  Business Rules BR-001..016: PASS
+note right of B11
+  Actor: PASS (Worker, Contractor)
+  Automation: PASS (Partial)
+  Diagram assoc: FAIL — Worker/Contractor omitted
 end note
 
-note right of SS
-  Cross-cutting as REQ not UC: PASS
-  Money mechanism REQ-028: PASS
-end note
-
-note right of GL
-  Definitions complete: PASS
-end note
-
-note right of RL
-  Status + Trend columns: PASS
-end note
-
-note right of IP
-  Cost-boxed (sequence-only Gantt): PASS
-end note
-
-note right of SAD
-  Subsystems map Volatility High: PASS
-  UC-016 mapped: PASS
-  Money ADR-004: PASS
-end note
-
-note right of TP
-  ASSUMPTION tag on 30-50%: PASS
-end note
-
-note right of DM
-  Document Control status: FAIL (stale iter 1)
-end note
-
-note right of DC
-  25-role roster: PASS
-  UI Prototype justification: FAIL
-end note
-
-note right of IA
-  LCO refusal recorded: PASS
+note bottom of B1
+  Inception completeness criteria (scenario stated,
+  actor-initiated, automation-annotated, entities + rules
+  present) now PASS for all 12 BUCs. Full realizations are
+  Elaboration scope — not required at LCO.
 end note
 @enduml
 ```
 
 ```plantuml
 @startuml
-title Defect Distribution — LCO Technical Review (Inception I2)
+title Business Lens Defect Distribution — Inception I2
 
-package "New Findings (this lens, I2)" {
-  class "Critical" as C {
-    count = 0
-  }
-  class "Major" as M {
-    count = 0
-  }
-  class "Minor" as Mi {
-    count = 2
-  }
+package "Business Lens (BusinessReviewer)" {
+  class "Critical" as C { count = 0 }
+  class "Major" as M { count = 0 }
+  class "Minor" as Mi { count = 2 }
 }
 
 note bottom of Mi
-  Deployment Model#F1 (stale Document Control status)
-  Development Case#F2 (UI Prototype justification cites open question)
+  Use-Case Model#F7 (BUC-004 diagram/survey mismatch)
+  Use-Case Model#F8 (BUC-011 diagram/survey mismatch)
 end note
 
 note right of C
-  No Critical or Major defects remain
-  from the technical lens this iteration.
+  All 6 prior business-lens findings (5 Major + 1 Minor)
+  RESOLVED this iteration. No Critical or Major remain
+  from the business lens.
 end note
 @enduml
 ```
