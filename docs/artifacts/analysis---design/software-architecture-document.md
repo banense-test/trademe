@@ -2,9 +2,8 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 2 (candidate architecture) |
+| Status | Draft — iteration 3 (candidate architecture) |
 | Milestone Target | End-of-Inception review |
-
 ## Architectural Representation
 
 This document presents the **candidate architecture** for the TradeMe marketplace front door. Per RUP Inception, this is a *sketch* — sufficient to surface architectural risk and guide Elaboration planning, not a baselined 4+1 model. The Logical and Deployment views are elaborated here; the Process, Implementation, and Data views are described at sketch level and will be baselined in Elaboration.
