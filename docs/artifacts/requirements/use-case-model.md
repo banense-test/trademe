@@ -761,6 +761,345 @@ BUC7 ..> BUC6 : <<include>>
 | BUC-011 | Handle Exceptions & Fallback | Worker, Contractor | Internal Representative | Partial | Medium | Human judgment retained for exceptions; channel equivalence required (NFR-006) |
 | BUC-012 | Detect Fraud & Enforce Membership | Time | Internal Representative | Partial | High | Detection in scope (FR-016); enforcement response deferred (out-of-scope open question) |
 
+### Detailed Business Process Flows (Elaboration)
+
+Each business use case is elaborated with a swimlane activity diagram showing the worker/actor handoffs and the automation boundary. The core brokerage process (BUC-004) is modeled **As-Is → To-Be** to make the re-engineering gap explicit; the remaining BUCs are modeled at the To-Be (automated) state, which is the project's target.
+
+#### BUC-004 Broker Worker to Project — As-Is (Manual Brokerage)
+
+The As-Is process is the tacit-knowledge operation the project replaces (BG-002). It is the source of the hand-tuned matching policy (FR-018) that must be captured in configurable form.
+
+```plantuml
+@startuml
+title BUC-004 Broker Worker to Project — As-Is (Manual Brokerage)
+
+|Contractor|
+start
+:Contact call center (phone);
+:Describe project needs\n(trades, skills, location, duration, rate);
+
+|Internal Representative|
+:Enter request into desktop application (data entry);
+:Search worker records manually\n(5 desktop applications, tacit knowledge);
+:Apply hand-tuned matching policy\n(from decades of experience — in head);
+:Call candidate workers to check availability;
+
+|Worker|
+:Confirm availability;
+
+|Internal Representative|
+:Select best-fit worker;
+:Assign worker to project;
+:Record assignment in desktop application;
+
+|Contractor|
+:Receive confirmation of assignment;
+stop
+@enduml
+```
+
+#### BUC-004 Broker Worker to Project — To-Be (Automated Self-Service)
+
+```plantuml
+@startuml
+title BUC-004 Broker Worker to Project — To-Be (Automated Self-Service)
+
+|Contractor|
+start
+:Submit request via self-service\n(trades, skills, location, duration, rate, preferences);
+
+|System (automated)|
+:Search available worker population (FR-018);
+if (Candidate found?) then (yes)
+  :Apply configurable matching policy\n(NFR-005, AC-008 — captures hand-tuned policy);
+  :Verify worker still available (race check, NFR-008);
+  if (Still available?) then (yes)
+    :Commit assignment (FR-019);
+    :Record commitment (CON-013);
+    stop
+  else (no)
+    :Revert to matching (FR-019, NFR-008);
+    stop
+  endif
+else (no)
+  :Request remains open;
+  :Contractor may raise offered rate (FR-023);
+  stop
+endif
+@enduml
+```
+
+#### BUC-001 Onboard Worker
+
+```plantuml
+@startuml
+title BUC-001 Onboard Worker
+
+|Worker|
+start
+:Provide identity and contact details;
+:List trades, skill level, availability, expected rate;
+:List certifications held;
+
+|System (automated)|
+:Validate against configurable taxonomy (CON-018);
+if (Certification verifiable?) then (yes)
+  :Record as verified;
+else (no)
+  :Record as self-attested pending verification;
+endif
+:Create worker record;
+:Initiate membership (BUC-008);
+stop
+@enduml
+```
+
+#### BUC-002 Onboard Contractor
+
+```plantuml
+@startuml
+title BUC-002 Onboard Contractor
+
+|Contractor|
+start
+:Provide identity and contact details;
+
+|System (automated)|
+:Create contractor record;
+:Initiate membership (BUC-008);
+stop
+@enduml
+```
+
+#### BUC-003 Manage Project Lifecycle
+
+```plantuml
+@startuml
+title BUC-003 Manage Project Lifecycle
+
+|Contractor|
+start
+:Specify project details\n(trades, skill levels, location, bill rate, duration);
+:Specify per-period trade needs (FR-003);
+
+|System (automated)|
+:Validate trades against taxonomy (CON-018);
+:Create project listing;
+
+|Contractor|
+:Signal project closure (complete or cancelled);
+
+|System (automated)|
+:Verify closure request;
+:Release workers via termination flow (BUC-005);
+:Move project to closed state;
+:Retain records for retention period (CON-015);
+stop
+@enduml
+```
+
+#### BUC-005 Manage Assignment — Arrival/Departure/Termination
+
+```plantuml
+@startuml
+title BUC-005 Manage Assignment — Arrival/Departure/Termination
+
+|Worker / Contractor|
+start
+:Signal arrival at project;
+
+|System (automated)|
+:Record arrival timestamp;
+
+|Worker / Contractor|
+:Signal departure;
+
+|System (automated)|
+:Record departure timestamp;
+:Update assignment status (FR-005);
+
+|Contractor / Internal Representative|
+:Request termination\n(project end, illness, walk-off, cancellation);
+
+|System (automated)|
+:Verify termination request;
+if (Verifiable cause?) then (yes)
+  :Remove worker from active assignment;
+  :Make worker available for new matches;
+  :Record deviation from commitment (CON-013);
+  stop
+else (no)
+  :Reject termination (CON-006, CON-013);
+  stop
+endif
+@enduml
+```
+
+#### BUC-006 Capture Hours & Compute Wages
+
+```plantuml
+@startuml
+title BUC-006 Capture Hours & Compute Wages
+
+|Worker|
+start
+:Record hours worked on assigned project;
+
+|System (automated)|
+:Validate hours against assignment;
+:Compute wages from hours and rates (FR-007);
+:Apply minimum wage floor (CON-008);
+:Apply risk premium (CON-010);
+:Record hours and computed wage;
+stop
+@enduml
+```
+
+#### BUC-007 Process Payments — Financial Intermediary Flow
+
+```plantuml
+@startuml
+title BUC-007 Process Payments — Financial Intermediary Flow
+
+|Contractor|
+:Pay system for project\n(contractor to system, CON-004);
+
+|System (automated)|
+:Collect contractor funds;
+:Compute wages from hours and rates (FR-007);
+:Apply tax withholding (CON-009);
+:Apply minimum wage floor (CON-008);
+:Apply risk premium (CON-010);
+if (Cross-currency?) then (yes)
+  :Convert currency (FR-022);
+else (no)
+endif
+:Apply margin (CON-004);
+:Submit payment to worker (system to worker);
+
+|Worker|
+:Receive payment;
+stop
+@enduml
+```
+
+#### BUC-008 Manage Membership & Fees
+
+```plantuml
+@startuml
+title BUC-008 Manage Membership & Fees
+
+|Time|
+start
+:Annual fee due;
+
+|System (automated)|
+:Identify memberships with fees due;
+:Process recurring annual fee (FR-011);
+if (Payment succeeds?) then (yes)
+  :Update status to renewed;
+  :Record payment;
+  stop
+else (no)
+  :Mark membership lapsed;
+  :Restrict from new matches until renewed;
+  stop
+endif
+@enduml
+```
+
+#### BUC-009 Track CE & Certifications
+
+```plantuml
+@startuml
+title BUC-009 Track CE & Certifications
+
+|Worker|
+start
+:Register for certification course (FR-008);
+:Attend and complete course;
+
+|System (automated)|
+:Record course completion;
+:Record resulting certification on worker record (FR-009);
+:Update credential status for matching and regulatory purposes;
+stop
+@enduml
+```
+
+#### BUC-010 Produce Regulatory Reports — Jurisdiction-Configured
+
+```plantuml
+@startuml
+title BUC-010 Produce Regulatory Reports — Jurisdiction-Configured
+
+|Time|
+start
+:Reporting cadence reached;
+
+|System (automated)|
+:Load jurisdiction reporting config (NFR-003, CON-007);
+:Assemble labor activity data;
+:Assemble payment flow data;
+:Assemble certification status data;
+:Assemble tax withholding data;
+:Produce report in required format (CON-014);
+:Deliver on required cadence;
+
+|Regulator|
+:Receive report;
+stop
+@enduml
+```
+
+#### BUC-011 Handle Exceptions & Fallback — Partial Automation
+
+```plantuml
+@startuml
+title BUC-011 Handle Exceptions & Fallback — Partial Automation
+
+|Worker / Contractor|
+start
+:Contact fallback channel (phone);
+
+|Internal Representative|
+:Receive request;
+:Perform same operation as self-service\n(channel equivalence, NFR-006);
+
+|System (automated)|
+:Apply same matching, financial flow, compliance\nregardless of channel (NFR-006);
+stop
+@enduml
+```
+
+#### BUC-012 Detect Fraud & Enforce Membership — Partial Automation
+
+```plantuml
+@startuml
+title BUC-012 Detect Fraud & Enforce Membership — Partial Automation
+
+|Time|
+start
+:Fraud scan scheduled;
+
+|System (automated)|
+:Analyze retained operational data (NFR-004);
+:Apply pattern detection\n(e.g., contractor terminating workers shortly after assignment);
+if (Suspicious pattern?) then (yes)
+  :Flag for review;
+else (no)
+  :No action;
+  stop
+endif
+
+|Internal Representative|
+:Review flagged pattern;
+:Apply human judgment;
+:Record enforcement decision (deferred — out-of-cycle);
+stop
+@enduml
+```
+
 ### Business Object Model
 
 The structural complement to the behavioral use-case diagram. Entities carry the analysis-class disposition (`<<entity>>` for persistent business objects, `<<control>>` for the volatile policy/decision processes the SoftwareArchitect must encapsulate).
@@ -963,6 +1302,7 @@ The following business processes are annotated **Volatility: High** and are arch
 | BR-014 | CON-016 | Refines | Worker, Contractor |
 | BR-015 | CON-018 | Refines | Worker, Certification |
 | BR-016 | CON-019 | Refines | PricingModel |
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
