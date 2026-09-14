@@ -1,9 +1,8 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 (consolidated) |
+| Status | Draft — iteration 2 (consolidated) |
 | Milestone Target | End-of-Inception review (LCO) |
 | Review Type | Lifecycle Objectives (LCO) milestone review — consolidated |
 | Reviewer | Review Coordinator (consolidation of three lenses) |
@@ -14,10 +13,11 @@
 
 | Lens | Status |
 |---|---|
-| Technical / Reviewer | EXECUTED — 7 Minor findings |
-| Business / BusinessReviewer | EXECUTED — 5 Major + 1 Minor findings |
-| Management / ManagementReviewer | EXECUTED — 2 Minor findings (1 overlaps technical lens) |
+| Technical / Reviewer | EXECUTED — 7 Minor findings (all resolved) + 2 new Minor |
+| Business / BusinessReviewer | EXECUTED — 5 Major + 1 Minor (all resolved) + 2 new Minor |
+| Management / ManagementReviewer | EXECUTED — 2 Minor (both resolved) + 1 new Minor |
 
+**Stakeholder sanction: REFUSED** (iteration 2) — fix all findings including Minors before advancing to Elaboration.
 ## Review Scope and Criteria
 
 This is the **Lifecycle Objectives (LCO)** milestone review, consolidated across three lenses. The evaluative question is **EXIT CRITERIA**: do the Inception artifacts collectively satisfy the conditions for phase transition to Elaboration, and is the project viable and acceptable to stakeholders?
