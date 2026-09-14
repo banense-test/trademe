@@ -33,14 +33,13 @@ All 16 CORE artifacts are produced per baseline. No CORE artifact is omitted.
 - Lint configuration — per-language (Software Architect). **Gap: not yet created — due Elaboration.**
 
 ## Optional Artifact Triggers
-
 | Optional Artifact | Trigger Condition | Verdict |
 |---|---|---|
 | Glossary | Specialist/regulated vocabulary | **FIRED** — multi-jurisdiction labor law, tax, certification terminology (CON-008..CON-016) requires stakeholder-validated definitions |
 | Architectural Proof-of-Concept | Elaboration + technical risk requiring empirical validation | **NOT FIRED** — Elaboration phase not reached; re-evaluate at Elaboration against R001/R003 |
 | Data Model | Data-centric OR >10 entities OR data-migration | **FIRED** — worker/contractor/project/payment/certification/membership/assignment entities well exceed 10 |
 | Deployment Model | Distributed/multi-node OR multi-environment non-trivial | **FIRED** — CON-017 requires both multi-tenant and single-tenant topologies |
-| User-Interface Prototype | UX-critical OR UI complexity needing stakeholder validation | **FIRED** — NFR-001/NFR-002 self-service channel for low-technical-literacy users is UX-critical |
+| User-Interface Prototype | UX-critical OR UI complexity needing stakeholder validation | **FIRED** — NFR-001 (mobile access is a must-have) and NFR-002 (self-service channel replacing 220 representatives across 9 call centers) make the self-service UX the primary front door; the UI is UX-critical and warrants stakeholder validation before implementation |
 | Test Plan | Formal delivery / regulatory audit / contractual reporting | **FIRED** — CON-014 regulatory reporting + AC-006 audit requirement |
 
 ## Roles and Ownership
