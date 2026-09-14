@@ -216,15 +216,18 @@ Worker --> BUC5
 Worker --> BUC6
 Worker --> BUC8
 Worker --> BUC9
+Worker --> BUC11
 Contractor --> BUC2
 Contractor --> BUC3
 Contractor --> BUC4
 Contractor --> BUC5
 Contractor --> BUC8
+Contractor --> BUC11
 Regulator --> BUC10
+Rep --> BUC4
+Rep --> BUC5
 Rep --> BUC11
 Rep --> BUC12
-Rep --> BUC5
 
 Time --> BUC7
 Time --> BUC10
@@ -455,7 +458,6 @@ The following business processes are annotated **Volatility: High** and are arch
 | BR-014 | CON-016 | Refines | Worker, Contractor |
 | BR-015 | CON-018 | Refines | Worker, Certification |
 | BR-016 | CON-019 | Refines | PricingModel |
-
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
