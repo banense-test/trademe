@@ -17,6 +17,7 @@ The User-Interface Prototype is triggered (UX-critical) because the self-service
 **Out of scope for the prototype:** deep continuing-education delivery, billing/collections mechanics, and the nice-to-have capabilities (UC-017..UC-021) — all declared out of scope or deferred.
 
 ## Storyboards
+Storyboards visualize the critical self-service flows for stakeholder validation. Each storyboard traces to a use case in the Use-Case Model and renders the interaction sequence as a screen-by-screen flow. The highest-frequency operations (register, request workers, record hours) are the primary validation targets for AC-003 (end-to-end without representative intervention).
 
 ### Storyboard 1 — Worker Registration (UC-001)
 
@@ -41,7 +42,52 @@ stop
 @enduml
 ```
 
-### Storyboard 2 — Contractor Request Workers (UC-004)
+### Storyboard 2 — Contractor Registration (UC-002)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Contractor Registration Storyboard (UC-002)
+
+|Contractor|
+start
+:Screen 1 — Identity & contact details;
+:Screen 2 — Company / business details;
+:Screen 3 — Review & confirm;
+
+|System|
+:Create contractor record;
+:Initiate membership (UC-008);
+:Confirm — "You're registered";
+stop
+@enduml
+```
+
+### Storyboard 3 — Create Project Listing (UC-003)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Create Project Listing Storyboard (UC-003)
+
+|Contractor|
+start
+:Screen 1 — Project details\n(trades, skill levels, location, bill rate, duration);
+:Screen 2 — Per-period trade needs\n(different trades for different periods, FR-003);
+:Screen 3 — Review & publish;
+
+|System|
+:Validate trades against configurable taxonomy (CON-018);
+if (Trade valid?) then (yes)
+  :Create project listing;
+else (no)
+  :Extend taxonomy via configuration (CON-018);
+  :Create project listing;
+endif
+:Confirm — "Project listed";
+stop
+@enduml
+```
+
+### Storyboard 4 — Contractor Request Workers (UC-004)
 
 ```plantuml
 @startuml
@@ -66,6 +112,243 @@ endif
 stop
 @enduml
 ```
+
+### Storyboard 5 — Track Arrival/Departure (UC-005)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Track Arrival/Departure Storyboard (UC-005)
+
+|Worker / Contractor|
+start
+:Screen 1 — Select active assignment;
+:Screen 2 — Signal arrival at project;
+
+|System|
+:Record arrival timestamp;
+
+|Worker / Contractor|
+:Screen 3 — Signal departure;
+
+|System|
+:Record departure timestamp;
+:Update assignment status (workers can come and go, FR-005);
+if (Departure without return?) then (yes)
+  :Assignment remains open until termination (UC-014)\nor project closure (UC-015);
+else (no)
+endif
+stop
+@enduml
+```
+
+### Storyboard 6 — Record Hours Worked (UC-006)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Record Hours Storyboard (UC-006)
+
+|Worker|
+start
+:Screen 1 — Select assigned project;
+:Screen 2 — Enter hours (date, hours worked);
+:Screen 3 — Review & submit;
+
+|System|
+:Validate hours against assignment;
+if (Hours exceed assignment duration?) then (yes)
+  :Flag for review (UC-010);
+else (no)
+endif
+:Compute wages from hours and agreed rates (FR-007);
+:Apply jurisdiction minimum wage floor (CON-008);
+:Apply risk premium for high-risk work (CON-010);
+:Confirm — "Hours recorded, wage computed";
+stop
+@enduml
+```
+
+### Storyboard 7 — Complete Certification Course (UC-007)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Complete Certification Course Storyboard (UC-007)
+
+|Worker|
+start
+:Screen 1 — Browse available courses (basic CE tracking, FR-008);
+:Screen 2 — Register for course;
+:Screen 3 — Mark course completed;
+
+|System|
+:Record course completion;
+:Record resulting certification on worker record (FR-009);
+:Update credential status for matching and regulatory purposes;
+:Confirm — "Certification recorded";
+stop
+@enduml
+```
+
+### Storyboard 8 — Maintain Membership (UC-008)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Maintain Membership Storyboard (UC-008)
+
+|Worker / Contractor|
+start
+:Screen 1 — View membership status (active / lapsed / renewed);
+
+|System|
+if (Renewal due?) then (yes)
+  :Screen 2 — Renew membership (pay annual fee, UC-009);
+  :Update status to renewed;
+else (no — non-payment)
+  :Mark membership lapsed;
+  :Restrict from new matches until renewed;
+endif
+:Enforce membership-violation detection (CON-005, AC-007);
+stop
+@enduml
+```
+
+### Storyboard 9 — Terminate Assignment (UC-014)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Terminate Assignment Storyboard (UC-014)
+
+|Contractor / Representative|
+start
+:Screen 1 — Select active assignment;
+:Screen 2 — State termination reason\n(project end, illness, walk-off, cancellation);
+
+|System|
+:Verify termination request;
+if (Verifiable cause?) then (yes)
+  :Remove worker from active assignment;
+  :Make worker available for new matches;
+  :Record termination and deviation from commitment (CON-013);
+  :Confirm — "Assignment terminated";
+else (no — casual termination for better pay)
+  :Reject termination (CON-006, CON-013);
+  :Screen 3 — "Termination requires a verifiable cause";
+endif
+stop
+@enduml
+```
+
+### Storyboard 10 — Close Project (UC-015)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Close Project Storyboard (UC-015)
+
+|Contractor|
+start
+:Screen 1 — Select project;
+:Screen 2 — Signal closure (complete or cancelled);
+
+|System|
+:Verify closure request;
+if (Workers still assigned?) then (yes)
+  :Release workers via termination flow (UC-014);
+else (no)
+endif
+:Move project to closed state;
+:Retain records for regulatory retention period (CON-015);
+:Confirm — "Project closed";
+stop
+@enduml
+```
+
+### Wireframes — Primary Screens (Salt)
+
+The following Salt wireframes render the primary screens for the highest-frequency flows. They are the tangible realization of the storyboards above and the basis the Implementer builds from.
+
+**Wireframe W-1 — Worker Registration, Screen 2 (Trades & Skills):**
+
+```plantuml
+@startsalt
+title Worker Registration — Screen 2 (Trades & Skills)
+{
+  {^ TradeMe — Worker Registration (Step 2 of 5) }
+  {T
+    + Trades & Skill Levels
+    ++ Select trade | [Electrician ▼]
+    ++ Skill level | [Journeyman ▼]
+    ++ Years experience | [12 ]
+    ++ Add another trade | [ + Add ]
+    ++ Geographic availability | [UK — London ▼]
+    ++ Expected rate (per hour) | [£ 45.00 ]
+    ++ Union member | (X) Yes ( ) No
+  }
+  { [ < Back ] | [ Next > ] }
+}
+@endsalt
+```
+
+**Wireframe W-2 — Contractor Request Workers, Screen 2 (Specify Needs):**
+
+```plantuml
+@startsalt
+title Contractor Request Workers — Screen 2 (Specify Needs)
+{
+  {^ TradeMe — Request Workers (Step 2 of 4) }
+  {T
+    + Project needs
+    ++ Trade | [Electrician ▼]
+    ++ Skill level | [Journeyman ▼]
+    ++ Location | [Manchester ▼]
+    ++ Duration | [6 weeks ]
+    ++ Bill rate (per hour) | [£ 62.00 ]
+    ++ Preferred worker (optional) | [ (soft signal) ]
+  }
+  { [ < Back ] | [ Submit request > ] }
+}
+@endsalt
+```
+
+**Wireframe W-3 — Worker Record Hours, Screen 2 (Enter Hours):**
+
+```plantuml
+@startsalt
+title Worker Record Hours — Screen 2 (Enter Hours)
+{
+  {^ TradeMe — Record Hours }
+  {T
+    + Assigned project | [Riverside Tower — Electrician ]
+    ++ Date | [2026-09-14 ]
+    ++ Hours worked | [8.0 ]
+    ++ Notes (optional) | [ ]
+  }
+  { [ < Back ] | [ Submit hours > ] }
+}
+@endsalt
+```
+
+**Wireframe W-4 — Worker Dashboard (post-login):**
+
+```plantuml
+@startsalt
+title Worker Dashboard (post-login)
+{
+  {^ TradeMe — Worker Dashboard }
+  {
+    {S
+      + My assignments | [Riverside Tower — active]
+      + Available matches | [3 new]
+      + Record hours | [Go]
+      + My certifications | [2 current]
+      + Membership | [Active — renews 2027-03-01]
+    }
+  }
+}
+@endsalt
+```
+
+### Storyboard Coverage Note
+
+The storyboards above cover all Must-priority self-service use cases (UC-001..UC-008, UC-014, UC-015). The remaining Must-priority use cases are system-triggered (UC-009 membership fees, UC-012 payments, UC-013 regulatory reports — Time actor) or representative-mediated (UC-010 exception, UC-011 fallback) and do not require self-service storyboards; they are covered by the Navigation Flow and the channel-equivalence validation below. Nice-to-have use cases (UC-016..UC-021) remain at survey level pending stakeholder prioritization and are out of prototype scope.
 
 ## Navigation Flow
 
