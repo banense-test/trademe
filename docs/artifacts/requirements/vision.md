@@ -67,13 +67,14 @@ actor "Contractor\n(STK-002)" as Contractor
 actor "Internal Representative\n(STK-003)" as Rep
 actor "Regulator\n(STK-004)" as Regulator
 actor "External Integration Partners\n(STK-005)" as Ext
+actor "Time\n(scheduled triggers)" as Time
 
 rectangle "TradeMe Marketplace" {
   usecase "UC-001 Register as Worker" as UC1
   usecase "UC-002 Register as Contractor" as UC2
   usecase "UC-003 Create Project Listing" as UC3
   usecase "UC-004 Request Workers for Project" as UC4
-  usecase "UC-005 Track Assignment (Arrive/Depart)" as UC5
+  usecase "UC-005 Track Assignment Arrival/Departure" as UC5
   usecase "UC-006 Record Hours Worked" as UC6
   usecase "UC-007 Complete Certification Course" as UC7
   usecase "UC-008 Maintain Membership" as UC8
@@ -112,6 +113,10 @@ Rep --> UC11
 Rep --> UC14
 Regulator --> UC13
 Ext --> UC18
+Time --> UC9
+Time --> UC12
+Time --> UC13
+Time --> UC17
 
 UC15 ..> UC14 : <<include>>
 @enduml
