@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review (LCO) |
 
 ## Iteration Objectives
@@ -39,6 +39,8 @@ hide footbox
 [PR] happens at [I9]'s end
 @endgantt
 ```
+
+**Sequence-only, not a calendar.** The Gantt above expresses the *ordering* of iterations and the *position* of the four milestones (LCO, LCA, IOC, PR) — nothing more. The `lasts 1 days` bars are PlantUML placeholders required to render the sequence; they are **not** time-boxes and carry no calendar meaning. Iterations are bounded by their **token budget box** (see Fine Plan below), never by a duration. No iteration is sized in days, weeks, or person-time — units this system does not measure.
 
 **Iteration count rationale:** 9 iterations total, within the "6 ± 3" rule's high extreme [1, 3, 3, 2]. Justified by the risk profile: R003 (multi-jurisdiction regulatory complexity) and R001 (legacy replacement failures) demand a full 3-iteration Elaboration to retire architectural and compliance risk before Construction; R002 (leadership tension) argues for a lean but complete process. The rubber profile (Inception ~5%) is stretched to a single Inception iteration because the scope is already well-declared by the stakeholder and Business Modeling is active.
 
