@@ -91,7 +91,6 @@ stop
 ```
 
 ## Findings
-
 **Consolidated finding tally (iteration 2, authoritative): 0 Critical, 0 Major, 5 Minor — all OPEN.**
 
 Cross-lens consolidation notes:
@@ -108,6 +107,104 @@ Cross-lens consolidation notes:
 | 4 | Iteration Plan | F2 | ManagementReviewer | Minor | The Iteration Plan's budget box (750k tokens) is disproven by the measured iteration-1 actual (2,871,727 tokens, 3.8x overspend) documented in the Iteration Assessment, yet the Iteration Plan still carries 750k as the current box with no re-sizing or supersession annotation. | Re-size the budget box from the measured 2,871,727-token actual (or annotate 750k as iteration-1 historical and add the iteration-2 remediation box), and align the fine-plan section header with the iteration-2 Document Control status. | Project Manager |
 | 5 | Deployment Model | F1 | Reviewer | Minor | Deployment Model's Document Control status reads "Draft — iteration 1" while the rest of the iteration-2 baseline reads "Draft — iteration 2"; the artifact was preserved but its metadata was not bumped, leaving stale iteration metadata. | Update Document Control status to "Draft — iteration 2". | Deployment Manager |
 
+---
+
+### Iteration 3 — Technical lens (Reviewer) findings
+
+**Technical-lens tally (iteration 3): 0 Critical, 0 Major, 1 Minor — OPEN.**
+
+The technical baseline is substantively sound. All prior Critical and Major findings are closed; all prior Minor findings of this lens are closed. One new Minor finding was recorded this iteration.
+
+#### New Findings (iteration 3, technical lens)
+
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 1 | Development Case | F3 | Reviewer | Minor | Document Control status reads "Draft — iteration 2" while the rest of the iteration-3 baseline reads "Draft — iteration 3". The artifact was modified this iteration (UI Prototype trigger re-justified on NFR-001/NFR-002, resolving F2), but its metadata was not bumped. | Update Document Control status to "Draft — iteration 3". | Process Engineer |
+
+#### Compliance Matrix (technical lens)
+
+```plantuml
+@startuml
+title Compliance Matrix — Technical Lens (LCO, Inception Iteration 3)
+
+object "Vision" as V
+object "Use-Case Model" as UCM
+object "Supplementary Specification" as SS
+object "Software Architecture Document" as SAD
+object "Test Plan" as TP
+object "Deployment Model" as DM
+object "Development Case" as DC
+
+object "Scope Adherence" as C1
+object "Traceability" as C2
+object "UML Richness" as C3
+object "Data Source Verification" as C4
+object "DC Baseline Conformance" as C5
+object "Optional Trigger Justification" as C6
+
+V .. C1 : Pass
+V .. C2 : Pass
+V .. C3 : Pass
+V .. C4 : Pass
+
+UCM .. C1 : Pass
+UCM .. C2 : Pass
+UCM .. C3 : Pass
+
+SS .. C1 : Pass
+SS .. C2 : Pass
+SS .. C3 : Pass
+
+SAD .. C1 : Pass
+SAD .. C2 : Pass
+SAD .. C3 : Pass
+
+TP .. C2 : Pass
+TP .. C3 : Pass
+TP .. C4 : Pass
+
+DM .. C2 : Pass
+DM .. C3 : Pass
+
+DC .. C5 : Pass
+DC .. C6 : Pass
+DC .. C1 : Minor (F3)
+@enduml
+```
+
+#### Defect Distribution (technical lens)
+
+```plantuml
+@startuml
+title Defect Distribution — Technical Lens (LCO, Inception Iteration 3)
+
+object "Development Case" as DC {
+  F3 : Minor (stale Document Control)
+}
+
+object "Critical" as CRIT
+object "Major" as MAJ
+object "Minor" as MIN
+
+DC --> MIN : 1
+
+note bottom of MIN
+  Total new findings this iteration: 1 Minor
+  Prior findings of this lens: 2 resolved (DC#F2, DM#F1)
+  Open Critical: 0 | Open Major: 0 | Open Minor: 1
+end note
+@enduml
+```
+
+#### Technical-lens evaluation notes (per artifact)
+
+- **Vision** — Scope adherence, traceability, UML richness, and data-source verification all pass. All 22 constraints listed; Time actor present; UC names aligned with UCM; no unsourced quantitative claims.
+- **Use-Case Model** — Scope adherence, traceability, UML richness pass. All 21 UCs trace 1:1 to declared FR-NNN; no phantom UCs; no cross-cutting mechanism modeled as a UC; multi-actor processes correctly modeled as single UCs with multiple scenarios. Business Object Model, Business Rules (BR-001..BR-016), and derivation bridge all present.
+- **Supplementary Specification** — Scope adherence, traceability, UML richness pass. Cross-cutting mechanisms (auth, audit, retention, residency, fraud, Money value object) correctly placed as REQ entries with `<<include>>`, not as UCs. Money mechanism (REQ-028) fully captures the stakeholder's mandatory decision including both closed edges (DB driver, JSON).
+- **Software Architecture Document** — Scope adherence, traceability, UML richness pass. Subsystems named after encapsulated change (not layers/features); every Volatility:High UC mapped to a component; ADR-004 (Money) and ADR-005 (Keycloak/OIDC) capture the stakeholder's decisions verbatim.
+- **Test Plan** — Traceability, UML richness, data-source verification pass. The 30–50% cost figure carries [ASSUMPTION — requires validation]; risk-weighted test items trace to R003/R004/R005.
+- **Deployment Model** — Traceability, UML richness pass. Document Control bumped to iteration 3 (F1 resolved).
+- **Development Case** — DC baseline conformance and optional-trigger justification pass (25-role roster, no ownership reassignment, no CORE omission, all FIRED triggers justified on settled ground). One Minor: stale Document Control (F3).
 ## Resolutions and Actions
 
 **Iteration 1 (cycle 1):** No prior-iteration findings existed. All 14 findings were newly recorded and OPEN.
