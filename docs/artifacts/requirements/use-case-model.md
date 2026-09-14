@@ -116,10 +116,153 @@ UC15 ..> UC14 : <<include>>
 - UC-019 (Project Demand Projection, FR-024) is initiated by the Internal Representative (STK-003) — the operations team uses demand projection to proactively recruit for scarce trades. It is a NICE-TO-HAVE (Could) capability.
 - UC-021 (Delayed Assignment with Availability Commitment, FR-026) is initiated by the Contractor — it is a variant of UC-004's assignment flow where the system delays final assignment while committing availability. It is a NICE-TO-HAVE (Could) capability.
 ## Use-Case Specifications
+Elaboration details ~80% of all use cases. The architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) were detailed in Inception and are refined here; the remaining Must-priority use cases are now fully specified. Should/Could (nice-to-have) use cases remain at survey level pending stakeholder prioritization.
 
-Inception details only the architecturally significant use cases (10-20%). The Requirements Specifier details the remaining flows in Elaboration.
+### UC-001 Register as Worker
 
-### UC-004 Request Workers for Project (architecturally significant)
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001) |
+| Trigger | Worker initiates registration on the self-service channel |
+| Precondition | None (new worker) |
+| Postcondition | Worker record created with trades, skills, certifications, availability, expected rate; membership initiated |
+| Main Flow | 1. Worker provides identity and contact details. 2. Worker lists trades performed, skill level per trade, geographic availability, and expected rate (rate varies by trade, skill level, experience, project type, location, union membership, certifications — FR-001). 3. Worker lists certifications held. 4. System validates against the configurable trade-and-skill taxonomy and certification frameworks (CON-018). 5. System creates the worker record and initiates membership (UC-008). |
+| Alternatives | A1: Certification claimed but not verifiable → recorded as self-attested pending verification (verification strategy deferred — out-of-cycle). A2: Trade/skill not in taxonomy → taxonomy extended via configuration (CON-018), not code. |
+| Volatility | Medium — taxonomy and certification frameworks are configurable data (CON-018) |
+
+### UC-002 Register as Contractor
+
+| Field | Value |
+|---|---|
+| Primary Actor | Contractor (STK-002) |
+| Trigger | Contractor initiates registration on the self-service channel |
+| Precondition | None (new contractor) |
+| Postcondition | Contractor record created; membership initiated |
+| Main Flow | 1. Contractor provides identity and contact details. 2. System creates the contractor record. 3. System initiates membership (UC-008). |
+| Alternatives | None |
+| Volatility | Low — stable registration process |
+
+### UC-003 Create Project Listing
+
+| Field | Value |
+|---|---|
+| Primary Actor | Contractor (STK-002) |
+| Trigger | Contractor lists a new project |
+| Precondition | Contractor registered (UC-002); membership active (UC-008) |
+| Postcondition | Project listing created with required trades, skill levels, location, bill rate, duration |
+| Main Flow | 1. Contractor specifies project details: required trades, skill levels, location, bill rate, duration. 2. Contractor specifies per-period trade needs (different trades may be needed for different periods within one project — FR-003). 3. System validates trades against the configurable taxonomy (CON-018). 4. System creates the project listing. |
+| Alternatives | A1: Project requirement changes → treated as a variation of project creation (FR-003), not a separate operation. |
+| Volatility | Medium — trades vary by jurisdiction; taxonomy configurable (CON-018) |
+
+### UC-005 Track Assignment Arrival/Departure
+
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001), Contractor (STK-002) |
+| Trigger | Worker arrives at or departs from a project |
+| Precondition | Active assignment exists (UC-004) |
+| Postcondition | Arrival/departure recorded against the assignment; assignment status reflects current presence |
+| Main Flow | 1. Worker (or contractor) signals arrival at the project. 2. System records arrival timestamp against the assignment. 3. Worker (or contractor) signals departure. 4. System records departure timestamp. 5. System updates assignment status (workers can come and go on a single project — FR-005). |
+| Alternatives | A1: Departure without return → assignment remains open until termination (UC-014) or project closure (UC-015). |
+| Volatility | Medium |
+
+### UC-006 Record Hours Worked
+
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001) |
+| Trigger | Worker records hours worked on an assigned project |
+| Precondition | Active assignment exists (UC-004); worker present (UC-005) |
+| Postcondition | Hours recorded; wages computed (FR-007) |
+| Main Flow | 1. Worker selects the assigned project. 2. Worker records hours worked (date, hours). 3. System validates hours against the assignment. 4. System computes wages owed from recorded hours and agreed rates (FR-007), applying jurisdiction-specific minimum wage floors (CON-008) and risk premiums (CON-010). |
+| Alternatives | A1: Hours exceed assignment duration → flagged for review. A2: Wage below jurisdiction floor → floor applied (CON-008). |
+| Volatility | Medium — wage computation depends on jurisdiction-specific floors/premiums (CON-008, CON-010) |
+
+### UC-007 Complete Certification Course
+
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001) |
+| Trigger | Worker registers for a certification course |
+| Precondition | Worker registered (UC-001) |
+| Postcondition | Course completion recorded; certification recorded on worker record (FR-009) |
+| Main Flow | 1. Worker registers for a course (basic CE tracking — FR-008). 2. Worker attends and completes the course. 3. System records completion. 4. System records the resulting certification on the worker's record (FR-009), so credential status is current for matching and regulatory purposes. |
+| Alternatives | A1: Course delivery/test administration/accreditation → out of scope (deep CE excluded). |
+| Volatility | Medium — certification frameworks jurisdiction-specific (CON-018) |
+
+### UC-008 Maintain Membership
+
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001), Contractor (STK-002) |
+| Trigger | Membership lifecycle event (renewal, lapse) |
+| Precondition | Worker or contractor registered |
+| Postcondition | Membership status current (active, lapsed, renewed) |
+| Main Flow | 1. System tracks membership status and records (FR-010). 2. On renewal, system updates status to renewed. 3. On non-payment, system marks membership lapsed. 4. System enforces membership-violation detection (CON-005, AC-007) via REQ-006. |
+| Alternatives | A1: Lapsed membership → worker/contractor restricted from new matches until renewed. |
+| Volatility | Low — stable lifecycle |
+
+### UC-009 Process Recurring Membership Fees
+
+| Field | Value |
+|---|---|
+| Primary Actor | Time (scheduled trigger) |
+| Trigger | Annual membership fee due |
+| Precondition | Membership active (UC-008) |
+| Postcondition | Annual fee processed for workers and contractors |
+| Main Flow | 1. System identifies memberships with fees due. 2. System processes the recurring annual fee (FR-011). 3. System records the payment (Money value object — REQ-028). |
+| Alternatives | A1: Payment fails → membership marked lapsed (UC-008). |
+| Volatility | Low |
+
+### UC-010 Resolve Exception Case
+
+| Field | Value |
+|---|---|
+| Primary Actor | Internal Representative (STK-003) |
+| Trigger | A case falls outside the automated self-service path |
+| Precondition | Exception/escalation/complex case identified |
+| Postcondition | Case resolved |
+| Main Flow | 1. Representative accesses the exception case. 2. Representative applies human judgment to resolve (FR-012). 3. System records the resolution. |
+| Alternatives | A1: Case requires escalation → routed to a higher authority. |
+| Volatility | Medium — human judgment retained for exceptions |
+
+### UC-011 Assist via Fallback Channel
+
+| Field | Value |
+|---|---|
+| Primary Actor | Internal Representative (STK-003) |
+| Trigger | Worker or contractor prefers human interaction over self-service |
+| Precondition | Worker or contractor contacts the fallback channel |
+| Postcondition | User's need served through the human channel |
+| Main Flow | 1. Representative receives the user's request via phone. 2. Representative performs the same operation the self-service channel would (channel equivalence — NFR-006). 3. System applies the same matching, financial flow, and compliance regardless of channel. |
+| Alternatives | A1: Operation requires self-service-only capability → representative performs on user's behalf. |
+| Volatility | Medium — channel equivalence required (NFR-006) |
+
+### UC-015 Close Project
+
+| Field | Value |
+|---|---|
+| Primary Actor | Contractor (STK-002) |
+| Trigger | Project completes or is cancelled |
+| Precondition | Project exists (UC-003) |
+| Postcondition | Project moved to closed state; workers released; records retained |
+| Main Flow | 1. Contractor signals project closure. 2. System verifies the request. 3. System releases any workers still assigned via the termination flow (UC-014). 4. System moves the project to a closed state. 5. System retains project records for the regulatory retention period (CON-015). |
+| Alternatives | A1: Workers still assigned → termination flow invoked (UC-014). |
+| Volatility | Medium |
+
+### UC-016 Record Rate Adjustments
+
+| Field | Value |
+|---|---|
+| Primary Actor | Worker (STK-001), Contractor (STK-002) |
+| Trigger | Worker or contractor adjusts a rate |
+| Precondition | Worker or contractor registered |
+| Postcondition | Rate adjustment recorded |
+| Main Flow | 1. Contractor raises offered rate when a project sits idle (FR-023). 2. Worker lowers expected rate when idle to attract matches. 3. System records the adjustment. 4. System does not actively price-set or steer the market beyond the matching policy. |
+| Alternatives | A1: Rate adjustment affects matching → matching policy re-evaluates (UC-004). |
+| Volatility | High — pricing model evolvable (CON-019) |
+
+### UC-004 Request Workers for Project (architecturally significant — refined)
 
 | Field | Value |
 |---|---|
@@ -131,7 +274,35 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Alternatives | A1: No candidate found → request remains open; contractor may raise offered rate (FR-023). A2: Worker became unavailable between match and assignment → revert to matching (FR-019, NFR-008). A3: Contractor expresses preference for specific worker → preference weighted, not insisted (CON-006). |
 | Volatility | High — matching policy must be configurable (NFR-005, AC-008); fairness objectives evolve |
 
-### UC-012 Process Payments (architecturally significant)
+```plantuml
+@startuml
+title UC-004 Request Workers — Matching & Assignment Flow (race resolution)
+
+start
+:Contractor selects project and specifies needs\n(trades, skill levels, location, duration, rate, preferences);
+:Contractor submits request;
+:Search available worker population (FR-018);
+if (Candidate found?) then (yes)
+  :Select best fit per configurable matching policy\n(NFR-005, AC-008);
+  :Verify worker still available (race check, NFR-008);
+  if (Worker still available?) then (yes)
+    :Commit assignment (FR-019);
+    :Record commitment (CON-013);
+    stop
+  else (no — picked up elsewhere)
+    :Revert to matching (FR-019, NFR-008);
+    :Re-search candidates;
+    stop
+  endif
+else (no)
+  :Request remains open awaiting match;
+  :Contractor may raise offered rate (FR-023);
+  stop
+endif
+@enduml
+```
+
+### UC-012 Process Payments (architecturally significant — refined)
 
 | Field | Value |
 |---|---|
@@ -143,7 +314,29 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Alternatives | A1: Single-currency deployment → no conversion (FR-022). A2: Cross-jurisdiction → conversion applied. |
 | Volatility | High — pricing model evolvable (CON-019); tax/currency jurisdiction-specific |
 
-### UC-013 Produce Regulatory Reports (architecturally significant)
+```plantuml
+@startuml
+title UC-012 Process Payments — Financial Intermediary Flow
+
+start
+:Payment run scheduled (Time);
+:Compute wages from recorded hours and agreed rates (FR-007);
+:Apply jurisdiction-specific tax withholding (CON-009);
+:Apply minimum wage floors (CON-008);
+:Apply risk premiums for high-risk work (CON-010);
+if (Cross-currency boundary?) then (yes)
+  :Perform currency conversion (FR-022);
+else (no)
+  :Single currency — no conversion;
+endif
+:Submit payment to worker from contractor-collected funds (FR-014, CON-004);
+:Record payment (audit trail, REQ-003);
+:Retain payment records (CON-015);
+stop
+@enduml
+```
+
+### UC-013 Produce Regulatory Reports (architecturally significant — refined)
 
 | Field | Value |
 |---|---|
@@ -155,7 +348,24 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Alternatives | A1: Jurisdiction requires different cadence/format → configuration, not code (AC-001). |
 | Volatility | High — regulatory variation across jurisdictions (R003) |
 
-### UC-014 Terminate Worker Assignment (architecturally significant)
+```plantuml
+@startuml
+title UC-013 Produce Regulatory Reports — Jurisdiction-Configured Flow
+
+start
+:Reporting cadence reached (Time);
+:Identify jurisdiction's reporting requirements from configuration\n(NFR-003, CON-007);
+:Assemble labor activity data;
+:Assemble payment flow data;
+:Assemble certification status data;
+:Assemble tax withholding data;
+:Produce report in required format (CON-014);
+:Deliver on required cadence;
+stop
+@enduml
+```
+
+### UC-014 Terminate Worker Assignment (architecturally significant — refined)
 
 | Field | Value |
 |---|---|
@@ -166,6 +376,56 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Main Flow | 1. System verifies termination request. 2. System removes worker from active assignment. 3. System makes worker available for new matches. 4. System records the termination and deviation from commitment (CON-013). |
 | Alternatives | A1: Termination without verifiable cause → rejected (CON-006, contracts-must-be-honored CON-013). |
 | Volatility | Medium — must not encourage casual termination (CON-013) |
+
+```plantuml
+@startuml
+title UC-014 Terminate Worker Assignment — Contracts-Must-Be-Honored Flow
+
+start
+:Termination request received\n(project end, illness, walk-off, cancellation);
+:System verifies termination request;
+if (Verifiable cause?) then (yes)
+  :Remove worker from active assignment;
+  :Make worker available for new matches;
+  :Record termination and deviation from commitment (CON-013);
+  stop
+else (no — casual termination for better pay)
+  :Reject termination (CON-006, CON-013);
+  stop
+endif
+@enduml
+```
+
+### UC-017 Detect Fraudulent Patterns (nice-to-have — survey level)
+
+| Field | Value |
+|---|---|
+| Primary Actor | Time (scheduled scan) |
+| Trigger | Fraud scan scheduled |
+| Precondition | Operational data retained (NFR-004) |
+| Postcondition | Suspicious patterns flagged for review |
+| Main Flow | 1. System analyzes retained operational data. 2. System applies pattern detection (e.g., contractor terminating workers shortly after assignment — wage-avoidance). 3. System flags suspicious patterns for representative review. |
+| Alternatives | A1: Detection approach deferred (out-of-cycle); data retention supports later implementation (NFR-004). |
+| Volatility | High — detection approach and enforcement response both deferred |
+
+```plantuml
+@startuml
+title UC-017 Detect Fraudulent Patterns — Scan Flow
+
+start
+:Fraud scan scheduled (Time);
+:Analyze retained operational data (NFR-004);
+:Apply pattern detection\n(e.g., contractor terminating workers shortly after assignment);
+if (Suspicious pattern detected?) then (yes)
+  :Flag for review (Internal Representative);
+  :Record detection (audit trail);
+  stop
+else (no)
+  :No action;
+  stop
+endif
+@enduml
+```
 
 ## Business Use Cases
 **Business Modeling Scenario: Revamp.** The engagement is a *revamp* of an existing business process: the brokerage's manual matching-and-data-entry operation (220 representatives across 9 call centers) is being re-engineered into an automated self-service front door (BG-002), while the core brokerage function — matching independent workers to general contractors for a margin, with the company as financial intermediary (CON-003, CON-004) — is preserved. The business use cases below model the **organizational** processes at the organization boundary (the brokerage), not the software. The SystemAnalyst's system use cases (UC-001..UC-021) derive from these via the derivation bridge.
