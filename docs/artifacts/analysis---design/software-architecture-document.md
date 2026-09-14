@@ -1,9 +1,8 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 (candidate architecture) |
+| Status | Draft — iteration 2 (candidate architecture) |
 | Milestone Target | End-of-Inception review |
 
 ## Architectural Representation
