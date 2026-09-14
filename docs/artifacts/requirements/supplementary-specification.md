@@ -69,7 +69,7 @@ UC17 ..> Fraud
 ## Performance
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
-| REQ-013 | User-facing channel responsiveness (self-service and phone) | NFR-009 | **Quantified threshold pending stakeholder decision** — NFR-009 declares responsiveness as a constraint but gives no latency target. The interactive-channel latency target (e.g., p95 response time for search/match/register operations) is a consequential performance threshold the Architect designs against. `[SCOPE_QUESTION — responsiveness latency target not declared]` |
+| REQ-013 | User-facing channel responsiveness (self-service and phone) | NFR-009 | **Quantified threshold (stakeholder decision):** interactive-channel operations (search, match, register, hours entry) MUST respond at p95 ≤ 2 seconds. Basis: the stakeholder's directive that the system be "fast enough so the representative doesn't have to wait during the call" — a phone-call interaction stalls perceptibly beyond ~2 seconds, so 2 seconds is the ceiling that keeps the fallback channel (UC-011) conversational. The same threshold applies to the self-service channel for channel equivalence (NFR-006). |
 | REQ-014 | Throughput is not a binding constraint | CON-021 | Modest transaction volume; bounded by worker supply and contractor demand. No throughput target is set; the design must not over-engineer for scale. |
 ## Supportability
 
