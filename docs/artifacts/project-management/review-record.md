@@ -104,7 +104,6 @@ end note
 ```
 
 ## Findings
-
 **Consolidated finding tally: 5 Major, 9 Minor, 0 Critical — all OPEN.**
 
 Cross-lens consolidation notes:
@@ -135,6 +134,113 @@ Cross-lens consolidation notes:
 | 13 | Iteration Plan | F1 | Reviewer + ManagementReviewer | Minor | Gantt time-boxes iterations ("1 days") contradicting cost-boxing mandate. | Replace durations with cost-box annotations or mark Gantt as sequence-only. | Project Manager |
 | 14 | Test Plan | F1 | Reviewer | Minor | "Testing is 30–50% of project cost" is an unsourced quantitative claim. | Mark as [ASSUMPTION — requires validation] with basis, or cite source. | Test Manager |
 
+### Iteration 2 — Technical Lens (Reviewer) Findings
+
+The technical lens re-reviewed all 11 artifacts in iteration 2. All 7 prior technical-lens findings are RESOLVED (see Resolutions and Actions). Two new Minor findings were recorded:
+
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 15 | Deployment Model | F1 | Reviewer | Minor | Document Control status reads "Draft — iteration 1" while the rest of the iteration-2 baseline reads "Draft — iteration 2"; the artifact was preserved but its metadata was not bumped, leaving stale iteration metadata. | Update Document Control status to "Draft — iteration 2". | Deployment Manager |
+| 16 | Development Case | F2 | Reviewer | Minor | UI Prototype trigger justification cites "low-technical-literacy users" as UX-critical, but "low technical literacy is a design concern" is a deferred out-of-cycle open question (Supplementary Specification REQ-010) — the DC cites an open question as settled fact. | Re-justify the UI Prototype trigger on settled ground (NFR-001 mobile must-have, NFR-002 self-service replacing 220 reps); drop or qualify the low-technical-literacy phrase. | Process Engineer |
+
+```plantuml
+@startuml
+title LCO Technical Review — Compliance Matrix (Inception I2)
+
+object "Vision" as V
+object "Use-Case Model" as UCM
+object "Supplementary Specification" as SS
+object "Glossary" as GL
+object "Risk List" as RL
+object "Iteration Plan" as IP
+object "Software Architecture Document" as SAD
+object "Test Plan" as TP
+object "Deployment Model" as DM
+object "Development Case" as DC
+object "Iteration Assessment" as IA
+
+note right of V
+  Constraints 22/22: PASS
+  Time actor present: PASS
+  UC names aligned: PASS
+end note
+
+note right of UCM
+  UC sources trace FR: PASS
+  No cross-cutting UCs: PASS
+  Business Object Model: PASS
+  Business Rules BR-001..016: PASS
+end note
+
+note right of SS
+  Cross-cutting as REQ not UC: PASS
+  Money mechanism REQ-028: PASS
+end note
+
+note right of GL
+  Definitions complete: PASS
+end note
+
+note right of RL
+  Status + Trend columns: PASS
+end note
+
+note right of IP
+  Cost-boxed (sequence-only Gantt): PASS
+end note
+
+note right of SAD
+  Subsystems map Volatility High: PASS
+  UC-016 mapped: PASS
+  Money ADR-004: PASS
+end note
+
+note right of TP
+  ASSUMPTION tag on 30-50%: PASS
+end note
+
+note right of DM
+  Document Control status: FAIL (stale iter 1)
+end note
+
+note right of DC
+  25-role roster: PASS
+  UI Prototype justification: FAIL
+end note
+
+note right of IA
+  LCO refusal recorded: PASS
+end note
+@enduml
+```
+
+```plantuml
+@startuml
+title Defect Distribution — LCO Technical Review (Inception I2)
+
+package "New Findings (this lens, I2)" {
+  class "Critical" as C {
+    count = 0
+  }
+  class "Major" as M {
+    count = 0
+  }
+  class "Minor" as Mi {
+    count = 2
+  }
+}
+
+note bottom of Mi
+  Deployment Model#F1 (stale Document Control status)
+  Development Case#F2 (UI Prototype justification cites open question)
+end note
+
+note right of C
+  No Critical or Major defects remain
+  from the technical lens this iteration.
+end note
+@enduml
+```
 ## Resolutions and Actions
 No prior-iteration findings exist (iteration 1, cycle 1). All 14 findings above are newly recorded this iteration and are **OPEN**.
 
