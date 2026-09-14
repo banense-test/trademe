@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review |
 
 ## Risk Classification
@@ -21,7 +21,8 @@ class Risk {
   +owner: Role
   +mitigation: String
   +contingency: String
-  +status: String
+  +status: Status
+  +trend: Trend
 }
 
 enum Magnitude {
@@ -38,23 +39,39 @@ enum Strategy {
   ACCEPT
 }
 
+enum Status {
+  OPEN
+  MITIGATING
+  RETIRED
+}
+
+enum Trend {
+  IMPROVING
+  STABLE
+  WORSENING
+}
+
 Risk --> Magnitude : classified by
 Risk --> Strategy : addressed by
+Risk --> Status : tracked by
+Risk --> Trend : trended by
 @enduml
 ```
 
 **Classification rule:** magnitude = probability × impact (exposure). HIGH ≥ 15, SIGNIFICANT 10–14, MODERATE 6–9, MINOR 3–5, LOW 1–2. Every risk carries a strategy (avoid / transfer / accept); accepted risks carry both mitigation and contingency.
 
+**Status and Trend (measurement goal — risk retirement verification):** every risk carries a `Status` (OPEN / MITIGATING / RETIRED) and a `Trend` (IMPROVING / STABLE / WORSENING), updated each iteration. The goal of these two attributes is to make risk retirement verifiable: a risk may only be marked RETIRED when its mitigation has demonstrably reduced exposure, and the Trend column records the direction of that movement between iterations. Without them, the register is a static list and the stakeholder cannot verify that the highest-magnitude risks are actually being confronted and retired.
+
 ## Risk Register
 
-| ID | Risk | P | I | Exposure | Magnitude | Strategy | Owner |
-|---|---|---|---|---|---|---|---|
-| R001 | Legacy replacement has failed multiple times; root causes not yet understood | 3 | 4 | 12 | SIGNIFICANT | Accept | Project Manager |
-| R002 | Dev/leadership tension — management historically does not understand what proper development takes | 4 | 4 | 16 | HIGH | Accept | Project Manager |
-| R003 | Multi-jurisdiction regulatory complexity (UK, Ireland, Canada) — distinct labor law, tax, reporting | 3 | 4 | 12 | SIGNIFICANT | Accept | Software Architect |
-| R004 | Matching policy capture — the hand-tuned policy lives in 220 representatives' heads (FR-018); risk of loss or un-codifiable tacit knowledge | 4 | 3 | 12 | SIGNIFICANT | Accept | System Analyst |
-| R005 | Availability race condition (NFR-008, AC-005) — concurrent match/assignment integrity under a small team | 3 | 4 | 12 | SIGNIFICANT | Accept | Software Architect |
-| R006 | Human-gate queue time — every `REQUIRES_USER_INPUT` is a gate; queue time approaching the 14-day ceiling stalls the iteration | 3 | 3 | 9 | MODERATE | Accept | Project Manager |
+| ID | Risk | P | I | Exposure | Magnitude | Strategy | Owner | Status | Trend |
+|---|---|---|---|---|---|---|---|---|---|
+| R001 | Legacy replacement has failed multiple times; root causes not yet understood | 3 | 4 | 12 | SIGNIFICANT | Accept | Project Manager | OPEN | STABLE |
+| R002 | Dev/leadership tension — management historically does not understand what proper development takes | 4 | 4 | 16 | HIGH | Accept | Project Manager | OPEN | STABLE |
+| R003 | Multi-jurisdiction regulatory complexity (UK, Ireland, Canada) — distinct labor law, tax, reporting | 3 | 4 | 12 | SIGNIFICANT | Accept | Software Architect | OPEN | STABLE |
+| R004 | Matching policy capture — the hand-tuned policy lives in 220 representatives' heads (FR-018); risk of loss or un-codifiable tacit knowledge | 4 | 3 | 12 | SIGNIFICANT | Accept | System Analyst | OPEN | STABLE |
+| R005 | Availability race condition (NFR-008, AC-005) — concurrent match/assignment integrity under a small team | 3 | 4 | 12 | SIGNIFICANT | Accept | Software Architect | OPEN | STABLE |
+| R006 | Human-gate queue time — every `REQUIRES_USER_INPUT` is a gate; queue time approaching the 14-day ceiling stalls the iteration | 3 | 3 | 9 | MODERATE | Accept | Project Manager | OPEN | STABLE |
 
 ## Risk Mitigation and Contingency
 
