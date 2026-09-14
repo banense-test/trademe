@@ -41,12 +41,13 @@ TradeMe is a skilled-trade labor brokerage: it matches independent workers to ge
 | Self-Service Channel | Direct software interaction by workers and contractors (NFR-002). | — |
 | Channel Equivalence | The same matching, financial flow, and compliance regardless of channel (NFR-006). | — |
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Worker | STK-001 | Derives | UC-001, UC-005, UC-006, UC-007, UC-008 |
 | Contractor | STK-002 | Derives | UC-002, UC-003, UC-004, UC-008 |
 | Financial Intermediary | CON-004 | Derives | UC-012 |
+| Money | CON-004, FR-022 | Derives | UC-012 |
+| Currency | FR-022 | Derives | UC-012 |
 | Matching | FR-018, NFR-005 | Derives | UC-004 |
 | Certification | CON-011, CON-018 | Derives | UC-007 |
 | Membership | FR-010, FR-011 | Derives | UC-008, UC-009 |
