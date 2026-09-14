@@ -7,8 +7,7 @@
 | Milestone Target | End-of-Inception review |
 
 ## Tailoring Overview
-
-This Development Case is an **override delta** over the IARI DC baseline (24-role roster, 9 disciplines, 16 CORE + 6 OPTIONAL artifacts, fixed ownership). It records only project-specific deviations. Anything not stated here is per the baseline.
+This Development Case is an **override delta** over the IARI DC baseline (25-role roster, 9 disciplines, 16 CORE + 6 OPTIONAL artifacts, fixed ownership). It records only project-specific deviations. Anything not stated here is per the baseline.
 
 **Organization assessment (feeds tailoring):**
 - **CON-022** — market intermediary, not a software firm; historically weak software discipline. The process must be operable by a small team and maintainable over a long horizon → lean ceremony, no heavyweight review boards.
@@ -17,7 +16,6 @@ This Development Case is an **override delta** over the IARI DC baseline (24-rol
 - **R003** — multi-jurisdiction regulatory complexity. Requirements and Test disciplines carry the highest risk weight; configuration-driven (CON-007, NFR-003) rather than code-branching.
 
 **Tool assessment:** No `CONTRIBUTING.md`, lint config, or CI workflows exist at project start. These are owned by their discipline roles (Software Architect, Configuration Manager) and must be produced during Elaboration. The Development Case references them; it does not author them.
-
 ## Disciplines and Intensity
 
 Intensity per discipline/phase is **per the canonical matrix** (no deviations requested).
