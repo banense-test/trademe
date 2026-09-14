@@ -356,7 +356,7 @@ The business lens's verdict is **Approved with changes**. The business model is 
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Review Record (I1 consolidated) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
+| Review Record (I2 consolidated) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
 | Use-Case Model#F1..F6 (BR) | FR-018, CON-003..CON-019 | DependsOn | Use-Case Model |
 | Vision#F1, Vision#F2 | CON-020..CON-022, Use-Case Model | DependsOn | Vision |
 | SAD#F1 | FR-023, COMP-001, COMP-002 | DependsOn | Software Architecture Document |
@@ -368,4 +368,5 @@ The business lens's verdict is **Approved with changes**. The business model is 
 | Development Case#F2 | Supplementary Specification REQ-010 (open question) | DependsOn | Development Case |
 | Use-Case Model#F7 (BR) | FR-018, BUC-004, STK-003 | DependsOn | Use-Case Model |
 | Use-Case Model#F8 (BR) | FR-013, BUC-011, STK-001, STK-002 | DependsOn | Use-Case Model |
-| Stakeholder sanction (REFUSED) | LCO milestone | DependsOn | Elaboration (blocked) |
+| Iteration Plan#F2 (MR) | Iteration Assessment (I1) measured 2,871,727-token actual | DependsOn | Iteration Plan |
+| Stakeholder sanction (REFUSED, I2) | LCO milestone | DependsOn | Elaboration (blocked) |
