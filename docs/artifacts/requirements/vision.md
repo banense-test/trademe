@@ -190,26 +190,25 @@ UC15 ..> UC14 : <<include>>
 The system automates a manual brokerage: 220 representatives across 9 call centers perform data entry and manual matching today. FR-018 explicitly requires capturing "the hand-tuned policy representatives used for decades" in configurable, explainable form. The business process is the subject of the system, not merely its context — Business Modeling is active, and the Business Process Analyst will contribute a Business Use Cases section to the Use-Case Model.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | FEAT-001 | FR-001 | Derives | UC-001 |
 | FEAT-002 | FR-002 | Derives | UC-002 |
 | FEAT-003 | FR-003 | Derives | UC-003 |
-| FEAT-004 | FR-004, FR-018, FR-019 | Derives | UC-004, UC-018, UC-019 |
+| FEAT-004 | FR-004, FR-018, FR-019 | Derives | UC-004 |
 | FEAT-005 | FR-005 | Derives | UC-005 |
-| FEAT-006 | FR-006, FR-007 | Derives | UC-006, UC-007 |
-| FEAT-007 | FR-008, FR-009 | Derives | UC-008, UC-009 |
-| FEAT-008 | FR-010, FR-011 | Derives | UC-010, UC-011 |
-| FEAT-009 | FR-012, FR-013 | Derives | UC-012, UC-013 |
-| FEAT-010 | FR-014, FR-022 | Derives | UC-014, UC-022 |
-| FEAT-011 | FR-015 | Derives | UC-015 |
-| FEAT-012 | FR-020, FR-021 | Derives | UC-020, UC-021 |
-| FEAT-013 | FR-023 | Derives | UC-023 |
-| FEAT-014 | FR-016 | Derives | UC-016 |
-| FEAT-015 | FR-017 | Derives | UC-017 |
-| FEAT-016 | FR-024 | Derives | UC-024 |
-| FEAT-017 | FR-025 | Derives | UC-025 |
-| FEAT-018 | FR-026 | Derives | UC-026 |
+| FEAT-006 | FR-006, FR-007 | Derives | UC-006 |
+| FEAT-007 | FR-008, FR-009 | Derives | UC-007 |
+| FEAT-008 | FR-010, FR-011 | Derives | UC-008, UC-009 |
+| FEAT-009 | FR-012, FR-013 | Derives | UC-010, UC-011 |
+| FEAT-010 | FR-014, FR-022 | Derives | UC-012 |
+| FEAT-011 | FR-015 | Derives | UC-013 |
+| FEAT-012 | FR-020, FR-021 | Derives | UC-014, UC-015 |
+| FEAT-013 | FR-023 | Derives | UC-016 |
+| FEAT-014 | FR-016 | Derives | UC-017 |
+| FEAT-015 | FR-017 | Derives | UC-018 |
+| FEAT-016 | FR-024 | Derives | UC-019 |
+| FEAT-017 | FR-025 | Derives | UC-020 |
+| FEAT-018 | FR-026 | Derives | UC-021 |
 | BG-001 | declared | — | FEAT-001..FEAT-018 |
 | BG-002 | declared | — | FEAT-001..FEAT-018 |
