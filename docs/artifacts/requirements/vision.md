@@ -150,9 +150,10 @@ UC15 ..> UC14 : <<include>>
 | A-005 | The system must be operable by a small team and maintainable over a long horizon | CON-022 |
 
 ## Constraints
-
 | ID | Constraint | Category |
 |---|---|---|
+| CON-001 | Deployable on cloud-hosted infrastructure | Architectural [DERIVED] |
+| CON-002 | Able to connect to external systems | Architectural [DERIVED] |
 | CON-003 | Workers are independent contractors, not employees | BusinessRule |
 | CON-004 | Company is the financial intermediary (contractors pay system, system pays workers) | BusinessRule |
 | CON-005 | Workers cannot be employed directly by contractors outside the marketplace | BusinessRule |
@@ -170,7 +171,9 @@ UC15 ..> UC14 : <<include>>
 | CON-017 | Multi-tenant default; single-tenant where residency requires | Architectural |
 | CON-018 | Trade-and-skill taxonomy as configurable data | Architectural |
 | CON-019 | Pricing model evolvable | Architectural |
-
+| CON-020 | Legacy operates alongside new system; no historical data migration | Operational |
+| CON-021 | Throughput not a binding constraint; do not over-engineer for scale | Performance |
+| CON-022 | Operable by a small team; maintainable over a long horizon | Operational |
 ## Other Product Requirements
 
 | ID | Requirement | Source |
