@@ -25,6 +25,11 @@ The architecture is represented using the 4+1 view model. The Use-Case view (UC-
 - **CON-018 / CON-019** — taxonomy and pricing model are evolvable configurable data, not hard-coded.
 - **CON-020** — legacy operates alongside; no historical data migration.
 
+**Declared technology stack** (stakeholder decision, iteration 1):
+- Application runtime: **Node.js on the current LTS line, with TypeScript**.
+- Data store: **PostgreSQL (latest)**.
+- Identity provider: **Keycloak over OIDC**, with the provider chosen at deployment time through configuration.
+
 **Risk-driven priorities** (trace to Risk List):
 - **R003** (multi-jurisdiction) → configuration-driven compliance is the central architectural mechanism.
 - **R005** (availability race) → the match→assign transition is an atomic availability check (COMP-007).
@@ -75,10 +80,10 @@ package "Domain" {
 }
 
 package "Infrastructure" {
-  component "Persistence\n(mechanism)" as I1
+  component "Persistence\n(PostgreSQL)" as I1
   component "Scheduler\n(time triggers)" as I2
   component "Configuration\n(jurisdiction rules)" as I3
-  component "Security\n(auth/authz)" as I4
+  component "Security\n(Keycloak OIDC)" as I4
 }
 
 PRES_SS --> APP
@@ -153,10 +158,10 @@ title Candidate Deployment Topology (Inception sketch)
 
 node "Cloud — Multi-Tenant Deployment (default)" {
   node "Application Node" {
-    component "TradeMe App\n(modular monolith)" as APP_MT
+    component "TradeMe App\n(Node.js LTS + TypeScript)" as APP_MT
   }
   node "Data Node" {
-    database "Data Store\n(Jurisdictions A, B, C)" as DB_MT
+    database "PostgreSQL\n(Jurisdictions A, B, C)" as DB_MT
   }
   APP_MT --> DB_MT
 }
@@ -166,7 +171,7 @@ node "Cloud — Single-Tenant Deployment\n(residency-constrained jurisdiction)" 
     component "TradeMe App" as APP_ST
   }
   node "Data Node" {
-    database "Data Store\n(Jurisdiction D only)" as DB_ST
+    database "PostgreSQL\n(Jurisdiction D only)" as DB_ST
   }
   APP_ST --> DB_ST
 }
@@ -176,29 +181,34 @@ node "External Systems" {
   component "Credential Validators" as VAL
 }
 
+node "Identity" {
+  component "Keycloak\n(OIDC)" as KC
+}
+
 APP_MT --> AP
 APP_MT --> VAL
 APP_ST --> AP
 APP_ST --> VAL
+APP_MT --> KC
+APP_ST --> KC
 @enduml
 ```
 
-The same software artifact deploys in two topologies (CON-017): multi-tenant by default, single-tenant where personal-data residency (CON-016) forces it. The choice is a deployment-time configuration decision, not a code branch. The number of deployments is small (countries, not customers) and long-lived — no rapid provisioning is required (CON-017). The Deployment Model (optional artifact, FIRED) will elaborate nodes and connectors in Elaboration.
+The same software artifact deploys in two topologies (CON-017): multi-tenant by default, single-tenant where personal-data residency (CON-016) forces it. The choice is a deployment-time configuration decision, not a code branch. The number of deployments is small (countries, not customers) and long-lived — no rapid provisioning is required (CON-017). The identity provider (Keycloak over OIDC) is likewise chosen at deployment time through configuration. The Deployment Model (optional artifact, FIRED) will elaborate nodes and connectors in Elaboration.
 
 ## Implementation View
 
-Sketch level. The modular monolith (ADR-001) is organized as a single deployable with internal module boundaries mirroring the Logical-view subsystems (COMP-001..COMP-009). Each subsystem is a module with a published interface; modules depend only on interfaces, not on each other's internals. This preserves the option to extract a subsystem into a separate service later (e.g., if fraud detection or reporting grows) without restructuring — the interface boundary is already in place. Source layout, build structure, and `CONTRIBUTING.md` are due in Elaboration (per Development Case).
+Sketch level. The modular monolith (ADR-001) is organized as a single deployable on **Node.js (current LTS line) with TypeScript**, with internal module boundaries mirroring the Logical-view subsystems (COMP-001..COMP-009). Each subsystem is a module with a published interface; modules depend only on interfaces, not on each other's internals. This preserves the option to extract a subsystem into a separate service later (e.g., if fraud detection or reporting grows) without restructuring — the interface boundary is already in place. Source layout, build structure, and `CONTRIBUTING.md` are due in Elaboration (per Development Case).
 
 ## Data View
 
-Sketch level. The Data Model (optional artifact, FIRED) will own the entity detail. At the architectural level, the retained-data store must satisfy:
+Sketch level. The Data Model (optional artifact, FIRED) will own the entity detail. The persistence store is **PostgreSQL (latest)**. At the architectural level, the retained-data store must satisfy:
 
 - **Tamper-evident audit** (REQ-003, AC-006) — financial and assignment transactions are append-only and verifiable.
 - **Retention window** (CON-015, REQ-004) — records held for the longest applicable jurisdiction window; no deletion before it elapses.
 - **Residency** (CON-016, REQ-005) — personal data stays within jurisdiction borders; this is the single-tenant driver.
 - **Future analytics** (NFR-004, REQ-022) — operational data retained to support later fraud detection and demand projection.
-
-The persistence mechanism is a **PENDING DECISION** (ADR-003) — no technology was declared by the stakeholder.
+- **Monetary exactness** (ADR-004) — monetary amounts are stored in exact numeric columns; the database driver's type handling is configured so an exact numeric column is never degraded to a floating-point number on the way back.
 
 ## Size and Performance
 
@@ -212,6 +222,7 @@ Throughput is not a binding constraint (CON-021). The marketplace volume is boun
 | Data integrity under concurrency | NFR-008, AC-005 | Atomic availability check in COMP-007; serialized match→assign |
 | Explainability (matching) | NFR-005, AC-008 | Matching policy as configurable, published, deterministic selection in COMP-001 |
 | Auditability | CON-014, AC-006 | Tamper-evident append-only audit trail (REQ-003) |
+| Monetary exactness | stakeholder decision (ADR-004) | Money value object; no bare floats on any monetary path |
 | Evolvability (pricing, taxonomy, integrations) | CON-019, CON-018, NFR-007 | Volatility encapsulation in COMP-002, COMP-005, COMP-006 |
 | Operability | CON-022 | Modular monolith; small team; no heavyweight distributed infra |
 | Channel equivalence | NFR-006 | Single Application orchestration shared by both channels |
@@ -237,12 +248,28 @@ The system automates the brokerage front door (BG-002). The Business Use-Case Mo
 - **Alternatives considered:** Functional decomposition (Billing Service, Shipping Service) — rejected, maximizes change ripple; layer-only decomposition — rejected, layers are not a decomposition.
 - **Consequences:** A change to the matching policy touches only COMP-001; a new jurisdiction's reporting rules touch only COMP-003 configuration.
 
-### ADR-003 — Persistence mechanism: PENDING DECISION
+### ADR-003 — Persistence mechanism: PostgreSQL (latest)
 
-- **Context:** The system is data-centric (Data Model FIRED) and must satisfy tamper-evident audit (REQ-003), retention (CON-015), residency (CON-016), and future analytics (NFR-004). **No technology was declared by the stakeholder.**
-- **Decision:** PENDING — the mechanism is described by capability (durable, append-only-auditable, retention-windowed, residency-partitionable storage) and properties (tamper-evidence, configurable retention, per-jurisdiction partitioning), not by product.
-- **Options under consideration:** a relational store (strong integrity, mature audit support) vs. a document store (schema flexibility for evolvable taxonomy/pricing) vs. a hybrid. The criterion that will decide: which single store best satisfies tamper-evident audit + retention + residency with the smallest operational footprint (CON-022).
-- **Consequences:** Downstream roles (Data Model, Implementation) must not assume a product until this is resolved.
+- **Context:** The system is data-centric (Data Model FIRED) and must satisfy tamper-evident audit (REQ-003), retention (CON-015), residency (CON-016), and future analytics (NFR-004).
+- **Decision:** PostgreSQL (latest), as declared by the stakeholder. The database driver's type handling is configured so exact numeric columns are never degraded to floating-point numbers on the way back (see ADR-004).
+- **Alternatives considered:** A document store (rejected — weaker integrity/audit guarantees for a financial intermediary); a hybrid (rejected — larger operational footprint, contradicts CON-022).
+- **Consequences:** The Data Model and Implementation roles build on PostgreSQL; the driver type-handling requirement is a binding constraint on the persistence layer.
+
+### ADR-004 — Money mechanism: exact value object, no bare floats
+
+- **Context:** The system is a financial intermediary (CON-004) handling wages, fees, tax withholding, and currency conversion (FR-022). The stakeholder declared this mechanism **mandatory** and stated it constrains every other mechanism derived from it.
+- **Decision:** Every monetary amount is a **Money value object** carrying an exact amount and its currency. Arithmetic is permitted only between Money of the same currency; crossing currencies requires an explicit conversion that records the rate applied and the moment it was applied. The rounding policy is declared once and is identical in the domain, in persistence, and at the API. No monetary amount ever exists as a bare number — not in the domain, not on the HTTP boundary, not coming back from the database driver.
+- **Two edges closed explicitly** (the runtime has no native decimal type, so exactness lives in the value object and risk lives at exactly two edges):
+  1. **Database driver** — an exact numeric column must not be degraded to a floating-point number on the way back; the driver's type handling is configured so it never is.
+  2. **JSON** — amounts crossing the API boundary are serialised and parsed without passing through a floating-point representation.
+- **Consequences:** A bare floating-point number anywhere on a monetary path is a **critical defect**, not a style preference. This constrains COMP-002 (Pricing & Settlement), the persistence layer, and the API boundary. The rounding policy is a single declared source of truth.
+
+### ADR-005 — Identity provider: Keycloak over OIDC
+
+- **Context:** Authentication for workers and contractors on the self-service channel (REQ-001) was deferred as an out-of-cycle open question. The stakeholder has now decided the mechanism.
+- **Decision:** Keycloak as the identity provider over OIDC, with the provider chosen at deployment time through configuration.
+- **Alternatives considered:** Greenfield authentication (rejected — reinvents identity, contradicts CON-022); a single hard-coded provider (rejected — contradicts the deployment-time configurability required by CON-017).
+- **Consequences:** The Security infrastructure (I4) is Keycloak/OIDC; the provider is a deployment-time configuration choice, consistent with the multi/single-tenant topology decision.
 
 ## Architectural Proof-of-Concept Plan (annex)
 
@@ -270,3 +297,5 @@ The PoC trigger is NOT fired this phase (Development Case: Elaboration-gated aga
 | ADR-001 | CON-021, CON-022, CON-017 | DependsOn | — |
 | ADR-002 | Use-Case Model (Volatility: High) | DependsOn | — |
 | ADR-003 | CON-015, CON-016, REQ-003, NFR-004 | DependsOn | Data Model |
+| ADR-004 | CON-004, FR-022, CON-009 | DependsOn | COMP-002, Data Model |
+| ADR-005 | REQ-001, CON-017 | DependsOn | Security (I4) |
