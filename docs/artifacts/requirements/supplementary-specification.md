@@ -7,8 +7,37 @@
 | Milestone Target | End-of-Inception review |
 
 ## Functionality
-
 Security, licensing, and cross-cutting functional mechanisms. These are NOT use cases — they are constraints included by each dependent use case via `<<include>>`.
+
+```plantuml
+@startuml
+skinparam componentStyle rectangle
+
+package "Cross-Cutting Mechanisms (Supplementary Specification)" {
+  component "Authentication\nREQ-001" as Auth
+  component "Authorization\nREQ-002" as Authz
+  component "Audit Trail\nREQ-003" as Audit
+  component "Data Retention\nREQ-004" as Retention
+  component "Data Residency\nREQ-005" as Residency
+  component "Fraud Detection\nREQ-006" as Fraud
+}
+
+package "Use Cases (Use-Case Model)" {
+  component "UC-004 Request Workers" as UC4
+  component "UC-012 Process Payments" as UC12
+  component "UC-013 Regulatory Reports" as UC13
+  component "UC-017 Detect Fraud" as UC17
+}
+
+UC4 ..> Auth
+UC4 ..> Authz
+UC12 ..> Audit
+UC12 ..> Retention
+UC13 ..> Retention
+UC13 ..> Residency
+UC17 ..> Fraud
+@enduml
+```
 
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
@@ -18,7 +47,6 @@ Security, licensing, and cross-cutting functional mechanisms. These are NOT use 
 | REQ-004 | Data retention honoring the longest applicable regulatory window | CON-015 | Cross-cutting mechanism |
 | REQ-005 | Personal-data residency enforcement per jurisdiction | CON-016 | Cross-cutting mechanism; deployment-topology driver (CON-017) |
 | REQ-006 | Membership-violation detection (contractor bypassing marketplace to hire directly) | CON-005, AC-007 | Cross-cutting mechanism; included by UC-008, UC-017 |
-
 ## Usability
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
