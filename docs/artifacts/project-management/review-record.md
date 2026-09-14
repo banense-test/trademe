@@ -258,7 +258,6 @@ end note
 |---|---|---|---|
 | 1 | Fix Development Case#F3 (bump Document Control to "Draft — iteration 3") | Process Engineer | Before re-review |
 ## Disposition
-
 **No-Go — iteration 2, consolidated across lenses.**
 
 ### Management lens (ManagementReviewer)
@@ -314,6 +313,17 @@ end note
 @enduml
 ```
 
+---
+
+### Iteration 3 — Technical lens (Reviewer) disposition
+
+**Technical-lens verdict (iteration 3): Approved with changes.**
+
+- All prior technical-lens findings RESOLVED (Development Case#F2, Deployment Model#F1).
+- 1 new Minor finding (Development Case#F3 — stale Document Control).
+- 0 Critical, 0 Major, 1 Minor.
+
+The technical baseline is substantively sound: scope adherence, traceability, UML richness, and data-source verification all pass across the seven technical artifacts. The single open Minor (Development Case#F3) is a metadata bump, not a substantive defect. Per the stakeholder's standing directive to fix ALL findings including Minors before advancing, this Minor remains blocking until the Process Engineer bumps the Document Control status.
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
