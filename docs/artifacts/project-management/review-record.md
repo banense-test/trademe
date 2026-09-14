@@ -254,16 +254,27 @@ The business lens re-reviewed the Use-Case Model's business sections and closed 
 
 **New findings (iteration 2, business lens):** 2 Minor findings recorded (Use-Case Model#F7, Use-Case Model#F8) — see Findings section. Both are diagram/survey consistency gaps (missing associations in the Business Use-Case Diagram); neither blocks LCO on substance.
 
+### Iteration 2 — Management Lens (ManagementReviewer) Reconciliation
+
+The management lens re-reviewed the project-management artifacts and closed both of its prior findings. Both are RESOLVED (verified against corrected artifact content):
+
+| Artifact | Key | Prior Severity | Resolution | Evidence |
+|---|---|---|---|---|
+| Risk List | F1 | Minor | Resolved | Risk Register now carries Status (OPEN/MITIGATING/RETIRED) and Trend (IMPROVING/STABLE/WORSENING) columns, populated for R001–R006; Status/Trend enums added to the Risk Classification diagram. |
+| Iteration Plan | F1 | Minor | Resolved | Gantt now carries "Sequence-only, not a calendar" note; cost-boxing preserved. |
+
+**New finding (iteration 2, management lens):** 1 Minor finding recorded (Iteration Plan#F2 — budget box 750k disproven by measured 2,871,727-token actual, not re-sized) — see Findings section. Approved-with-changes; non-blocking on substance.
+
+**Stakeholder sanction (iteration 2): REFUSED.** The stakeholder was consulted with the management lens's Conditional verdict (0 Critical, 0 Major, 5 Minor open) and answered "No". The standing directive remains in force: fix all findings including Minors before advancing to Elaboration.
+
 **Prioritized action items (all blocking per stakeholder directive):**
 
 | Priority | Action | Owner | Deadline |
 |---|---|---|---|
-| 1 | Fix 5 Major business-lens findings (BM scenario, BUC-012 actor, business entities, business rules, BOM diagram) | Business Process Analyst | Before re-review |
-| 2 | Fix 9 Minor findings across Vision, UCM, SAD, DC, Risk List, Iteration Plan, Test Plan | Respective owners (see table) | Before re-review |
-| 3 | Fix 2 new Minor findings (Deployment Model#F1, Development Case#F2) | Deployment Manager, Process Engineer | Before re-review |
-| 4 | Fix 2 new Minor findings (Use-Case Model#F7, Use-Case Model#F8) | Business Process Analyst | Before re-review |
-| 5 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
-| 6 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
+| 1 | Fix 4 new Minor findings (Deployment Model#F1, Development Case#F2, Use-Case Model#F7, Use-Case Model#F8) | Deployment Manager, Process Engineer, Business Process Analyst | Before re-review |
+| 2 | Fix 1 new Minor finding (Iteration Plan#F2 — re-size budget box) | Project Manager | Before re-review |
+| 3 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
+| 4 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 ## Disposition
 **No-Go — iteration 2, consolidated across lenses.**
 
