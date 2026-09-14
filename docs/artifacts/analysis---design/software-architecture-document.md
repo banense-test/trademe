@@ -281,11 +281,10 @@ The PoC trigger is NOT fired this phase (Development Case: Elaboration-gated aga
 | R005 (availability race) | Validate the atomic match→assign availability check | Concurrent match/assign produces no inconsistent state (AC-005) |
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | COMP-001 Matching | UC-004, NFR-005, AC-008 | Realizes | BUC-004 |
-| COMP-002 Pricing & Settlement | UC-012, CON-019, FR-022, CON-009 | Realizes | BUC-007 |
+| COMP-002 Pricing & Settlement | UC-012, UC-016, CON-019, FR-022, FR-023, CON-009 | Realizes | BUC-007 |
 | COMP-003 Regulatory Reporting | UC-013, CON-007, CON-014 | Realizes | BUC-010 |
 | COMP-004 Fraud Detection | UC-017, FR-016, NFR-004 | Realizes | BUC-012 |
 | COMP-005 Taxonomy & Certification | CON-018, UC-001, UC-003 | Realizes | BUC-001 |
@@ -298,3 +297,4 @@ The PoC trigger is NOT fired this phase (Development Case: Elaboration-gated aga
 | ADR-003 | CON-015, CON-016, REQ-003, NFR-004 | DependsOn | Data Model |
 | ADR-004 | CON-004, FR-022, CON-009 | DependsOn | COMP-002, Data Model |
 | ADR-005 | REQ-001, CON-017 | DependsOn | Security (I4) |
+
