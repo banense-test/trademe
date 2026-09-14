@@ -1,11 +1,9 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review |
-
 ## Domain Overview
 
 TradeMe is a skilled-trade labor brokerage: it matches independent workers to general contractors for a margin, acting as the financial intermediary (contractors pay the system, the system pays workers). The domain vocabulary spans labor law, tax, certification, and payment terminology that varies across jurisdictions (UK, Ireland, Canada, plus the existing European footprint). Terms below are the canonical definitions used across all artifacts; where a term is jurisdiction-specific, that is noted.
