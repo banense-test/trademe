@@ -1,11 +1,9 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft — iteration 3 |
-| Milestone Target | End-of-Inception review |
-
+| Phase | Elaboration |
+| Status | Draft — iteration 1 |
+| Milestone Target | End-of-Elaboration review |
 ## Functionality
 Security, licensing, and cross-cutting functional mechanisms. These are NOT use cases — they are constraints included by each dependent use case via `<<include>>`.
 
