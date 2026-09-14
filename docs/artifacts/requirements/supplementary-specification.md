@@ -12,7 +12,7 @@ Security, licensing, and cross-cutting functional mechanisms. These are NOT use 
 
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
-| REQ-001 | Authentication for workers and contractors on the self-service channel | [SCOPE_QUESTION — not declared, but potentially critical: how users authenticate] | Cross-cutting mechanism; included by UC-001, UC-002, UC-004, UC-006, UC-007, UC-008, UC-016 |
+| REQ-001 | Authentication for workers and contractors on the self-service channel | [DERIVED — from NFR-002, awaiting stakeholder confirmation] | Cross-cutting mechanism; included by UC-001, UC-002, UC-004, UC-006, UC-007, UC-008, UC-016. Authentication mechanism (identity provider vs greenfield) is deferred — out-of-cycle open question. |
 | REQ-002 | Authorization: workers and contractors access only their own records; representatives access exception cases | CON-003, CON-004 | Cross-cutting mechanism |
 | REQ-003 | Audit trail of all financial and assignment transactions (tamper-evident) | CON-014, AC-006 | Cross-cutting mechanism; included by UC-012, UC-014, UC-015 |
 | REQ-004 | Data retention honoring the longest applicable regulatory window | CON-015 | Cross-cutting mechanism |
@@ -33,7 +33,7 @@ Security, licensing, and cross-cutting functional mechanisms. These are NOT use 
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
 | REQ-011 | Availability race condition resolution without losing worker record or contractor request | NFR-008, AC-005 | Concurrency on worker availability |
-| REQ-012 | Availability target and recovery expectation for payment processing | [SCOPE_QUESTION — not declared, but potentially critical: availability/recovery target] | Out-of-cycle open question |
+| REQ-012 | Availability target and recovery expectation for payment processing | [DERIVED — from NFR-009 responsiveness + FR-014 payment processing, awaiting stakeholder confirmation] | Specific availability/recovery target is deferred — out-of-cycle open question. |
 
 ## Performance
 
