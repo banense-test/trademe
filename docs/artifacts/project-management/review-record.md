@@ -74,11 +74,11 @@ end note
 ```
 
 ## Findings
-
 ### Consolidated finding tally (Elaboration iteration 1)
 
 **Code review (Money mechanism):** 1 Critical, 2 Major, 1 Minor.
 **Technical review (artifact surface):** 0 Critical, 1 Major, 3 Minor.
+**Business modeling (Use-Case Model business sections):** 0 Critical, 0 Major, 2 Minor.
 
 ```plantuml
 @startuml
@@ -88,15 +88,20 @@ object "Design Model\nO/R mapping ID collision" as f1
 object "Design Model\nhoursWorked float64" as f2
 object "SAD\nUC-014 no sequence diagram" as f3
 object "Test Case\nstale CI run ID" as f4
+object "Use-Case Model\nUC-016 orphaned in bridge" as f5
+object "Use-Case Model\nRep absent from BOM" as f6
 
 f1 : severity = Major
 f2 : severity = Minor
 f3 : severity = Minor
 f4 : severity = Minor
+f5 : severity = Minor
+f6 : severity = Minor
 
 note bottom
   Technical lens: 4 findings (1 Major, 3 Minor), no Critical.
   Code-review lens: 1 Critical, 2 Major, 1 Minor (Money mechanism).
+  Business-modeling lens: 2 Minor (derivation bridge completeness), no Critical/Major.
   LCA disposition driver: Money mechanism (ADR-004) not baselined —
   Issue #1 open (severity=major, cr:approved), LCA-T7 not met.
 end note
@@ -121,6 +126,59 @@ end note
 | 7 | Software Architecture Document | F2 | Reviewer | Minor | UC-014 is listed architecturally significant (priority 4) but has no sequence diagram in the SAD's Logical View (only UC-004/012/013 are realized there; UC-014 appears only in Design Model SEQ-004). | Add a UC-014 sequence diagram to the SAD Logical View, or note its realization is deferred to SEQ-004. | Software Architect |
 | 8 | Test Case | F1 | Reviewer | Minor | The Test Case cites CI build 'run 34856326288' as smoke-test evidence, but the current main build is 'run 34886064517' (success). Stale run ID. | Update the cited CI run ID to 34886064517. | Test Designer |
 
+### Open Findings — Business Modeling (Use-Case Model business sections)
+
+| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
+|---|---|---|---|---|---|---|---|
+| 9 | Use-Case Model | F9 | Business Reviewer | Minor | UC-016 "Record Rate Adjustments" (FR-023, Should) is orphaned in the derivation bridge — no BUC anchors it, though BUC-004's To-Be flow references "Contractor may raise offered rate (FR-023)". | Add UC-016 to BUC-004's "Derives System UC(s)" column, or model rate adjustment as an explicit sub-flow of BUC-004/BUC-006. | Business Process Analyst |
+| 10 | Use-Case Model | F10 | Business Reviewer | Minor | Internal Representative (business worker, STK-003) absent from the Business Object Model class diagram, though it participates in BUC-004/005/011/012. | Add `<<business worker>>` class to BOM, or note the worker is being automated away (BG-002) and modeled only in the survey. | Business Process Analyst |
+
+### Business Modeling coverage map (Business Reviewer)
+
+```plantuml
+@startuml
+title TradeMe LCA — Business Modeling Coverage Map (BUC realization + derivation bridge)
+
+object "BUC-001 Onboard Worker" as b1
+object "BUC-002 Onboard Contractor" as b2
+object "BUC-003 Manage Project Lifecycle" as b3
+object "BUC-004 Broker Worker to Project" as b4
+object "BUC-005 Manage Assignment" as b5
+object "BUC-006 Capture Hours & Wages" as b6
+object "BUC-007 Process Payments" as b7
+object "BUC-008 Manage Membership & Fees" as b8
+object "BUC-009 Track CE & Certifications" as b9
+object "BUC-010 Produce Regulatory Reports" as b10
+object "BUC-011 Handle Exceptions & Fallback" as b11
+object "BUC-012 Detect Fraud & Enforce Membership" as b12
+
+object "UC-016 Record Rate Adjustments\n(FR-023, Should)" as uc16 #FFB3B3
+object "UC-019/020/021\n(Could, deferred)" as uc19 #FFE0B3
+
+b1 : realization = PASS
+b2 : realization = PASS
+b3 : realization = PASS
+b4 : realization = PASS (As-Is + To-Be)
+b5 : realization = PASS
+b6 : realization = PASS
+b7 : realization = PASS
+b8 : realization = PASS
+b9 : realization = PASS
+b10 : realization = PASS
+b11 : realization = PASS
+b12 : realization = PASS
+
+uc16 : ORPHANED — no BUC anchor in bridge
+uc19 : deferred — no BUC anchor (nice-to-have)
+
+note bottom
+  12/12 BUCs have complete realizations (activity swimlanes + BOM class diagram).
+  Derivation bridge: all Must UCs (UC-001..UC-015) anchored to a BUC.
+  Gap: UC-016 (Should) orphaned; UC-019/020/021 (Could) deferred.
+end note
+@enduml
+```
+
 ### Resolved findings (this iteration)
 
 - **Development Case#F3** (stale Document Control metadata) — resolved: Document Control now reads "Draft — iteration 1" with Phase = Elaboration.
@@ -128,6 +186,8 @@ end note
 ### Prior-phase findings carried forward
 
 The Inception LCO review closed with 0 Critical, 0 Major, 1 Minor (Development Case#F3), deferred to Elaboration by stakeholder directive. That finding is now resolved. No Inception findings remain open.
+
+All 8 prior Business Reviewer findings on the Use-Case Model (F1–F8, Inception) are **Resolved** — scenario statement, BUC-012 actor, BUC-007 actor, business entities, business rules, BOM diagram, and BUC-004/BUC-011 diagram associations all corrected in Inception iterations 2–3.
 
 ## Resolutions and Actions
 
