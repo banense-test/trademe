@@ -32,8 +32,7 @@ This is the **Lifecycle Objectives (LCO)** milestone review, technical lens. The
 **Scope guard applied:** every UC/BUC/REQ/COMP must trace to declared FR/NFR/CON/AC; cross-cutting mechanisms never as UCs; multi-actor processes as single UCs; non-literal elements carry correct markers.
 
 ## Findings
-
-Seven (7) findings recorded, all **Minor** severity. Zero Major, zero Critical. No LCO blockers.
+Seven (7) findings recorded by the technical lens (Reviewer), all **Minor** severity. Zero Major, zero Critical. No LCO blockers.
 
 ```plantuml
 @startuml
@@ -149,7 +148,7 @@ end note
 @enduml
 ```
 
-### Finding Detail
+### Finding Detail — Technical Lens
 
 | # | Artifact | Key | Severity | Finding | Remediation |
 |---|---|---|---|---|---|
@@ -160,6 +159,92 @@ end note
 | 5 | Software Architecture Document | F1 | Minor | UC-016 (Record Rate Adjustments, FR-023, Volatility: High) not mapped to any subsystem in the traceability table. | Add UC-016 to COMP-002 or COMP-001 trace row, or note it as a sub-flow to be detailed in Elaboration. |
 | 6 | Test Plan | F1 | Minor | "Testing is 30–50% of project cost" is an unsourced quantitative claim. | Mark as [ASSUMPTION — requires validation] with basis, or cite source. |
 | 7 | Iteration Plan | F1 | Minor | Gantt chart time-boxes iterations ("lasts 1 days") while text cost-boxes them (750k tokens); contradicts the cost-boxing mandate. | Replace durations with cost-box annotations or mark Gantt as sequence-only. |
+
+---
+
+### Business Modeling Lens (Business Reviewer)
+
+**Verdict: [BR-NEEDS-REWORK] — Business Modeling active (BPL=true); derivation bridge incomplete on entity + rules side**
+
+**Scenario assessment (Heuristic 1):** The engagement is a **Revamp** — the system replaces an organically-grown legacy brokerage (220 representatives, 9 call centers) whose business process is the subject of the system, not merely its context. The BPA did NOT state this scenario explicitly; the review applies Revamp standards (full realization depth expected in Elaboration, business object model required).
+
+**Business-process-led signal:** Confirmed by Development Case §4 (`isBusinessProcessLed: true`) and by the presence of a "Business Use Cases" section in the Use-Case Model. Business Modeling discipline is correctly ACTIVE.
+
+#### BUC Completeness Coverage Map
+
+```plantuml
+@startuml
+skinparam class {
+  BackgroundColor #FEFECE
+  BorderColor #A80036
+}
+title Business Use-Case Completeness Map — Business Modeling Lens (Inception I1)
+
+class "BUC-001 Onboard Worker" as B1 #LightGreen
+class "BUC-002 Onboard Contractor" as B2 #LightGreen
+class "BUC-003 Manage Project Lifecycle" as B3 #LightGreen
+class "BUC-004 Broker Worker to Project" as B4 #LightGreen
+class "BUC-005 Manage Assignment" as B5 #LightGreen
+class "BUC-006 Capture Hours & Compute Wages" as B6 #LightGreen
+class "BUC-007 Process Payments" as B7 #LightYellow
+class "BUC-008 Manage Membership & Fees" as B8 #LightGreen
+class "BUC-009 Track CE & Certifications" as B9 #LightGreen
+class "BUC-010 Produce Regulatory Reports" as B10 #LightGreen
+class "BUC-011 Handle Exceptions & Fallback" as B11 #LightGreen
+class "BUC-012 Detect Fraud & Enforce Membership" as B12 #LightPink
+
+note right of B7
+  PARTIAL: actor classification
+  (scheduled run, not Ext-initiated)
+end note
+
+note right of B12
+  FAIL: no business actor
+  (Business Actor(s) = "—")
+end note
+
+note bottom of B1
+  Legend: Green = PASS (actor-initiated, value-delivering, end-to-end)
+  Yellow = PARTIAL (minor defect)
+  Pink = FAIL (completeness test violated)
+end note
+@enduml
+```
+
+#### Defect Distribution — Business Modeling Lens
+
+```plantuml
+@startuml
+skinparam object {
+  BackgroundColor #FEFECE
+  BorderColor #A80036
+}
+title Defect Distribution — Business Modeling Lens (Inception I1)
+
+object "Use-Case Model\n(Business Use Cases section)" as UCM {
+  Major = 5
+  Minor = 1
+}
+
+note bottom of UCM
+  Total: 5 Major, 1 Minor, 0 Critical
+  Disposition: Needs Rework (business lens)
+  No LCO blocker — but derivation bridge
+  is incomplete on entity + rules side
+end note
+@enduml
+```
+
+#### Finding Detail — Business Modeling Lens
+
+| # | Key | Severity | Finding | Remediation |
+|---|---|---|---|---|
+| 1 | F1 | Major | Scenario not stated. The BPA never identifies which of the six BM scenarios applies (clearly Revamp). | Add explicit "Scenario: Revamp" statement anchoring the review standard and Elaboration realization depth. |
+| 2 | F2 | Major | BUC-012 "Detect Fraud & Enforce Membership" has Business Actor(s) = "—" — no initiating actor, violating the BUC completeness test. | Model BUC-012 as Time-initiated (like UC-017), or fold into BUC-008, or name the worker-reporting trigger. Do not leave the actor column empty. |
+| 3 | F3 | Minor | BUC-007 "Process Payments" lists External Integration Partners as actor, but payment is a scheduled financial-intermediary process (CON-004); AP integration (FR-017) is nice-to-have. | Reclassify BUC-007's initiating actor as Time (scheduled run), consistent with UC-012. |
+| 4 | F4 | Major | No business entities modeled — no entity→analysis-class annotations; the entity half of the derivation bridge is missing. | Add a Business Object Model (class diagram) of core entities (Worker, Contractor, Project, Assignment, Certification, Membership, Payment, Hours, Rate) with candidate analysis-class disposition. |
+| 5 | F5 | Major | Business rules not formalized. CON-003..CON-019 are business rules but lack unique IDs, sources, worker/entity attachment, and testable conditions. | Produce a Business Rules section formalizing each rule (BR-NNN, source, constrained worker/entity, testable condition); prioritize CON-006, CON-013, CON-008, CON-009, CON-015. |
+| 6 | F6 | Major | No business object model diagram — the structural complement to the behavioral use-case diagram is absent. | Add a business object model class diagram showing workers and entities with associations. |
 
 ## Resolutions and Actions
 
