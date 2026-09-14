@@ -168,7 +168,7 @@ Inception details only the architecturally significant use cases (10-20%). The R
 | Volatility | Medium — must not encourage casual termination (CON-013) |
 
 ## Business Use Cases
-Business Modeling is active (Development Case §4: business-process-led). The system automates a manual brokerage — 220 representatives across 9 call centers performing data entry and manual matching. The business use cases below model the **organizational** processes at the organization boundary (the brokerage), not the software. The SystemAnalyst's system use cases (UC-001..UC-021) derive from these via the derivation bridge.
+**Business Modeling Scenario: Revamp.** The engagement is a *revamp* of an existing business process: the brokerage's manual matching-and-data-entry operation (220 representatives across 9 call centers) is being re-engineered into an automated self-service front door (BG-002), while the core brokerage function — matching independent workers to general contractors for a margin, with the company as financial intermediary (CON-003, CON-004) — is preserved. The business use cases below model the **organizational** processes at the organization boundary (the brokerage), not the software. The SystemAnalyst's system use cases (UC-001..UC-021) derive from these via the derivation bridge.
 
 ### Business Actors and Workers
 
@@ -179,6 +179,7 @@ Business Modeling is active (Development Case §4: business-process-led). The sy
 | STK-004 | Regulator | Business Actor (external) | Jurisdiction-specific body; outside the organization |
 | STK-005 | External Integration Partners | Business Actor (external) | AP systems, credential validators; outside the organization |
 | STK-003 | Internal Representative | Business Worker (internal) | Employed by the brokerage; performs the manual matching/data-entry work being automated |
+| — | Time | Business Actor (system) | Scheduled/periodic triggers for internal processes (payment runs, regulatory reporting, fraud-pattern analysis) |
 
 ### Business Use-Case Diagram
 
@@ -192,6 +193,7 @@ actor "Worker\n(STK-001)" as Worker
 actor "Contractor\n(STK-002)" as Contractor
 actor "Regulator\n(STK-004)" as Regulator
 actor "External Integration\nPartners (STK-005)" as Ext
+actor "Time" as Time <<system>>
 
 rectangle "TradeMe Brokerage (Organization)" {
   actor "Internal Representative\n(STK-003)" as Rep <<business worker>>
@@ -220,11 +222,15 @@ Contractor --> BUC4
 Contractor --> BUC5
 Contractor --> BUC8
 Regulator --> BUC10
-Ext --> BUC7
 Rep --> BUC11
 Rep --> BUC12
 Rep --> BUC5
 
+Time --> BUC7
+Time --> BUC10
+Time --> BUC12
+
+BUC7 --> Ext : payment submission\n(downstream consumer)
 BUC4 ..> BUC5 : <<include>>
 BUC7 ..> BUC6 : <<include>>
 @enduml
@@ -240,12 +246,148 @@ BUC7 ..> BUC6 : <<include>>
 | BUC-004 | Broker Worker to Project | Contractor | Internal Representative | Full | High | Matching policy must be configurable (NFR-005, AC-008); fairness objectives evolve; hand-tuned policy captured (FR-018) |
 | BUC-005 | Manage Assignment | Worker, Contractor | Internal Representative | Full | Medium | Contracts-must-be-honored rule (CON-013); termination must not encourage casual churn |
 | BUC-006 | Capture Hours & Compute Wages | Worker | — | Full | Medium | Wage computation depends on jurisdiction-specific floors/premiums (CON-008, CON-010) |
-| BUC-007 | Process Payments | External Integration Partners | — | Full | High | Pricing model evolvable (CON-019); currency conversion (FR-022); tax withholding (CON-009) |
+| BUC-007 | Process Payments | Time | — | Full | High | Pricing model evolvable (CON-019); currency conversion (FR-022); tax withholding (CON-009) |
 | BUC-008 | Manage Membership & Fees | Worker, Contractor | — | Full | Low | Recurring annual fee; stable lifecycle |
 | BUC-009 | Track CE & Certifications | Worker | — | Full | Medium | Certification frameworks jurisdiction-specific (CON-018) |
-| BUC-010 | Produce Regulatory Reports | Regulator | — | Full | High | Regulatory variation across jurisdictions (R003, CON-007) |
+| BUC-010 | Produce Regulatory Reports | Regulator, Time | — | Full | High | Regulatory variation across jurisdictions (R003, CON-007) |
 | BUC-011 | Handle Exceptions & Fallback | Worker, Contractor | Internal Representative | Partial | Medium | Human judgment retained for exceptions; channel equivalence required (NFR-006) |
-| BUC-012 | Detect Fraud & Enforce Membership | — | Internal Representative | Partial | High | Detection in scope (FR-016); enforcement response deferred (out-of-scope open question) |
+| BUC-012 | Detect Fraud & Enforce Membership | Time | Internal Representative | Partial | High | Detection in scope (FR-016); enforcement response deferred (out-of-scope open question) |
+
+### Business Object Model
+
+The structural complement to the behavioral use-case diagram. Entities carry the analysis-class disposition (`<<entity>>` for persistent business objects, `<<control>>` for the volatile policy/decision processes the SoftwareArchitect must encapsulate).
+
+```plantuml
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "TradeMe Brokerage — Business Object Model" {
+
+  class Worker <<entity>> {
+    workerId
+    trades[]
+    skills[]
+    certifications[]
+    geographicAvailability
+    expectedRate : Money
+    membershipStatus
+  }
+
+  class Contractor <<entity>> {
+    contractorId
+    projects[]
+    membershipStatus
+  }
+
+  class Project <<entity>> {
+    projectId
+    requiredTrades[]
+    skillLevels[]
+    location
+    billRate : Money
+    duration
+    status
+  }
+
+  class Assignment <<entity>> {
+    assignmentId
+    startDate
+    endDate
+    status
+  }
+
+  class HoursEntry <<entity>> {
+    hoursEntryId
+    date
+    hoursWorked
+  }
+
+  class WageComputation <<control>> {
+    computeWages(hours, rate) : Money
+  }
+
+  class Payment <<entity>> {
+    paymentId
+    amount : Money
+    currency
+    direction
+  }
+
+  class Membership <<entity>> {
+    membershipId
+    status
+    renewalDate
+  }
+
+  class Course <<entity>> {
+    courseId
+    title
+  }
+
+  class Certification <<entity>> {
+    certificationId
+    authority
+    renewalCadence
+  }
+
+  class RegulatoryReport <<entity>> {
+    reportId
+    jurisdiction
+    cadence
+  }
+
+  class MatchingPolicy <<control>> {
+    match(candidates, preferences) : Worker
+  }
+
+  class PricingModel <<control>> {
+    applyMargin(amount) : Money
+  }
+
+  Worker "1" -- "0..*" Assignment
+  Contractor "1" -- "0..*" Project
+  Project "1" -- "0..*" Assignment
+  Worker "1" -- "0..*" HoursEntry
+  Assignment "1" -- "0..*" HoursEntry
+  HoursEntry --> WageComputation
+  WageComputation --> Payment
+  Worker "1" -- "0..1" Membership
+  Contractor "1" -- "0..1" Membership
+  Worker "1" -- "0..*" Certification
+  Course "1" -- "0..*" Certification
+  Project --> MatchingPolicy
+  MatchingPolicy --> Assignment
+  Payment --> PricingModel
+  Project --> RegulatoryReport
+  Payment --> RegulatoryReport
+  Certification --> RegulatoryReport
+}
+@enduml
+```
+
+### Business Rules
+
+Formalized from the declared constraints (CON-003..CON-019). Each rule carries a stable ID, its source constraint, the worker/entity it constrains, and a testable condition.
+
+| ID | Rule | Source | Constrains | Testable Condition |
+|---|---|---|---|---|
+| BR-001 | Workers are independent contractors, not employees; the brokerage is an impartial intermediary and does not employ workers. | CON-003 | Worker, Assignment | No employment relationship record exists between brokerage and any Worker; Worker is never a payroll employee of the brokerage. |
+| BR-002 | The brokerage is the financial intermediary: contractors pay the system, the system pays workers, and the brokerage takes a margin. | CON-004 | Payment | Every worker payment traces to a contractor payment; margin = contractor-paid − worker-received, and margin > 0 for every settled transaction. |
+| BR-003 | Workers found through the marketplace cannot be employed directly by contractors outside the marketplace. | CON-005 | Worker, Contractor, Assignment | No direct-hire arrangement is recorded between a Contractor and a Worker who met through the marketplace; violations surface via payment-pattern/membership analysis (AC-007). |
+| BR-004 | Contractors may express preferences for specific workers but cannot insist; outright denial requires a verifiable skills/integrity concern. | CON-006 | Assignment, MatchingPolicy | A contractor's stated preference is recorded as a soft signal, never a hard exclusion; any denial carries a recorded verifiable cause. |
+| BR-005 | Regulator demands vary by jurisdiction and are accommodated through configuration, not per-jurisdiction code branching. | CON-007 | RegulatoryReport, Certification | Adding a jurisdiction requires only configuration data; no code change (AC-001). |
+| BR-006 | The system respects jurisdiction-specific minimum wage floors. | CON-008 | WageComputation | Computed wage ≥ jurisdiction minimum wage floor for every hours entry. |
+| BR-007 | The system handles employment-tax obligations on behalf of workers as the financial intermediary. | CON-009 | Payment | Every worker payment carries the correct jurisdiction-specific tax withholding. |
+| BR-008 | The system applies risk-premium adjustments for high-risk work as required by jurisdiction. | CON-010 | WageComputation | High-risk work (e.g., high-voltage, skyscraper) carries the jurisdiction-mandated premium in the computed wage. |
+| BR-009 | The system enforces certification requirements for specific tasks as mandated by jurisdiction. | CON-011 | Certification, Assignment | A worker cannot be assigned to a task requiring certification without a current, valid certification for that task. |
+| BR-010 | The system respects wage-leaning protections (claims against future wages) as required by jurisdiction. | CON-012 | Payment | No payment is issued that violates a jurisdiction's wage-leaning protection rule. |
+| BR-011 | Contracts must be honored: a worker committed to a project for a stated duration is not unilaterally re-assigned to a more lucrative opportunity. | CON-013 | Assignment | An active assignment is not terminated for a better-paying opportunity; deviation from commitment is recorded and tracked. |
+| BR-012 | Regulatory reporting must be complete and on time, in the required format and cadence. | CON-014 | RegulatoryReport | Every report is produced in the required format on the required cadence; missing/late reports are a compliance failure. |
+| BR-013 | Records are retained for the regulatory retention window; not deleted before the period elapses except under explicit legal authority. | CON-015 | Worker, Contractor, Project, Payment | No record is deleted before the longest applicable retention period across served jurisdictions. |
+| BR-014 | Personal-data residency is respected; where a jurisdiction requires data to remain within its borders, the system honors it. | CON-016 | Worker, Contractor | Resident personal data is stored within the jurisdiction's borders where required (may force single-tenant topology). |
+| BR-015 | The trade-and-skill taxonomy and certification frameworks are configurable data, not hard-coded enumerations. | CON-018 | Worker, Certification | New trades/certifications are added via configuration, not code change. |
+| BR-016 | The pricing model is evolvable; today's pricing is not locked in. | CON-019 | PricingModel | New pricing strategies can be introduced without restructuring the core financial flow. |
 
 ### Process Scope vs Project Scope
 
@@ -265,7 +407,7 @@ The business process is the **brokerage** — matching workers to contractors fo
 | BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019) | The core brokerage process; matching/assignment are sub-flows |
 | BUC-005 Manage Assignment | Full | UC-005, UC-014 | Arrival/departure tracking and termination |
 | BUC-006 Capture Hours & Compute Wages | Full | UC-006 (incl. wage computation FR-007) | Hours and wage computation |
-| BUC-007 Process Payments | Full | UC-012 (incl. currency FR-022), UC-018 | Financial intermediary flow; AP integration |
+| BUC-007 Process Payments | Full | UC-012 (incl. currency FR-022), UC-018 | Financial intermediary flow; AP integration is a downstream consumer |
 | BUC-008 Manage Membership & Fees | Full | UC-008, UC-009 | Membership lifecycle and recurring fees |
 | BUC-009 Track CE & Certifications | Full | UC-007 (incl. certification recording FR-009) | CE tracking and certification recording |
 | BUC-010 Produce Regulatory Reports | Full | UC-013 | Jurisdiction-specific reporting |
@@ -281,7 +423,7 @@ The following business processes are annotated **Volatility: High** and are arch
 - **BUC-010 Produce Regulatory Reports** — jurisdiction variation (R003, CON-007).
 - **BUC-012 Detect Fraud & Enforce Membership** — detection approach and enforcement response both deferred.
 
-### Traceability
+### Business Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
@@ -297,6 +439,22 @@ The following business processes are annotated **Volatility: High** and are arch
 | BUC-010 | FR-015 | Derives | UC-013 |
 | BUC-011 | FR-012, FR-013 | Derives | UC-010, UC-011 |
 | BUC-012 | FR-016, CON-005 | Derives | UC-017 |
+| BR-001 | CON-003 | Refines | Worker, Assignment |
+| BR-002 | CON-004 | Refines | Payment |
+| BR-003 | CON-005 | Refines | Worker, Contractor, Assignment |
+| BR-004 | CON-006 | Refines | Assignment, MatchingPolicy |
+| BR-005 | CON-007 | Refines | RegulatoryReport, Certification |
+| BR-006 | CON-008 | Refines | WageComputation |
+| BR-007 | CON-009 | Refines | Payment |
+| BR-008 | CON-010 | Refines | WageComputation |
+| BR-009 | CON-011 | Refines | Certification, Assignment |
+| BR-010 | CON-012 | Refines | Payment |
+| BR-011 | CON-013 | Refines | Assignment |
+| BR-012 | CON-014 | Refines | RegulatoryReport |
+| BR-013 | CON-015 | Refines | Worker, Contractor, Project, Payment |
+| BR-014 | CON-016 | Refines | Worker, Contractor |
+| BR-015 | CON-018 | Refines | Worker, Certification |
+| BR-016 | CON-019 | Refines | PricingModel |
 
 ## Traceability
 
