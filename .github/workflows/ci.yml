@@ -1,0 +1,53 @@
+# TradeMe CI pipeline — build + test for the modular monolith.
+#
+# Dependency hierarchy (bottom-up integration order; leaves first):
+#
+# @startuml
+# skinparam componentStyle rectangle
+# package "TradeMe Modular Monolith" {
+#   [API Layer] as api
+#   [Application Layer] as app
+#   [Domain Layer] as domain
+#   [Infrastructure Layer] as infra
+# }
+# api --> app
+# app --> domain
+# app --> infra
+# infra --> domain
+# @enduml
+#
+# Target build frequency: >= 1 build/day toward iteration end (Construction).
+# The build/test jobs pick up EVERYTHING under src/ and tests/ automatically via
+# tsconfig include globs — new subsystem packages added by the Implementer are
+# compiled and tested without editing this file.
+
+name: CI
+
+on:
+  push:
+    branches: [main, "iteration/**", "chore/**", "feature/**", "hotfix/**"]
+  pull_request:
+    branches: [main, "iteration/**", "chore/**", "feature/**", "hotfix/**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
