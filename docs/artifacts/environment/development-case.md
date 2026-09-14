@@ -1,11 +1,9 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review |
-
 ## Tailoring Overview
 This Development Case is an **override delta** over the IARI DC baseline (25-role roster, 9 disciplines, 16 CORE + 6 OPTIONAL artifacts, fixed ownership). It records only project-specific deviations. Anything not stated here is per the baseline.
 
