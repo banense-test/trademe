@@ -46,11 +46,9 @@ All 16 CORE artifacts are produced per baseline. No CORE artifact is omitted.
 | Test Plan | Formal delivery / regulatory audit / contractual reporting | **FIRED** — CON-014 regulatory reporting + AC-006 audit requirement |
 
 ## Roles and Ownership
-
-All 24 baseline roles are active. Primary ownership per artifact is per the service-side allowlist (never reassigned). No roles are merged.
+All 25 baseline roles are active. Primary ownership per artifact is per the service-side allowlist (never reassigned). No roles are merged.
 
 **Business Modeling roles** (BusinessProcessAnalyst, BusinessReviewer) are active because Business Modeling is active.
-
 ## Guidelines and Procedures
 
 **Measurement policy (this project):** IARI measures two quantities — tokens consumed, and elapsed time split into agent time vs. human queue time. This project uses them as follows:
