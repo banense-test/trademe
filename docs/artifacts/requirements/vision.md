@@ -140,15 +140,14 @@ UC15 ..> UC14 : <<include>>
 | FEAT-018 | Delayed assignment with availability commitment | FR-026 | Could | High |
 
 ## Assumptions and Dependencies
+All declared constraints (CON-001..CON-022) are listed in the Constraints section above. The following are the only items treated as assumptions pending stakeholder confirmation:
 
 | # | Assumption / Dependency | Basis |
 |---|---|---|
-| A-001 | The new system is deployable on cloud-hosted infrastructure | CON-001 [DERIVED] |
-| A-002 | The new system can connect to external systems | CON-002 [DERIVED] |
-| A-003 | The legacy system continues to operate alongside the new system; no historical data migration | CON-020 |
-| A-004 | Throughput is not a binding constraint; do not over-engineer for scale | CON-021 |
-| A-005 | The system must be operable by a small team and maintainable over a long horizon | CON-022 |
+| A-001 | The new system is deployable on cloud-hosted infrastructure | CON-001 [DERIVED — awaiting stakeholder confirmation] |
+| A-002 | The new system can connect to external systems | CON-002 [DERIVED — awaiting stakeholder confirmation] |
 
+No other assumptions are carried: CON-020 (legacy coexistence), CON-021 (throughput not binding), and CON-022 (small-team operability) are declared operational/performance constraints and are listed in the Constraints section, not as assumptions.
 ## Constraints
 | ID | Constraint | Category |
 |---|---|---|
