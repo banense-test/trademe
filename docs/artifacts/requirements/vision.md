@@ -106,9 +106,11 @@ Contractor --> UC14
 Contractor --> UC15
 Contractor --> UC16
 Contractor --> UC20
+Contractor --> UC21
 Rep --> UC10
 Rep --> UC11
 Rep --> UC14
+Rep --> UC19
 Regulator --> UC13
 Ext --> UC18
 Time --> UC9
