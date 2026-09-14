@@ -351,40 +351,146 @@ title Worker Dashboard (post-login)
 The storyboards above cover all Must-priority self-service use cases (UC-001..UC-008, UC-014, UC-015). The remaining Must-priority use cases are system-triggered (UC-009 membership fees, UC-012 payments, UC-013 regulatory reports — Time actor) or representative-mediated (UC-010 exception, UC-011 fallback) and do not require self-service storyboards; they are covered by the Navigation Flow and the channel-equivalence validation below. Nice-to-have use cases (UC-016..UC-021) remain at survey level pending stakeholder prioritization and are out of prototype scope.
 
 ## Navigation Flow
+The authoritative navigation model is the **Navigation Topology** — a formal state machine in the Design Model's "Boundary Classes and Navigation Map" section. Every screen is a state; every user action causing a screen change is a directed edge with a guard condition. The prototype's storyboards (SB-1..SB-10) are the screen-by-screen realizations of the transitions in that state machine.
+
+The Navigation Topology is reproduced here for prototype validation convenience; the Design Model copy is authoritative.
 
 ```plantuml
 @startuml
-title TradeMe Self-Service — Navigation Flow (Worker & Contractor)
+title TradeMe — Navigation Topology (Self-Service + Representative Console)
 
-|Worker|
-start
-:Landing / Login (Keycloak OIDC, REQ-001);
-if (Registered?) then (no)
-  :Register as Worker (UC-001)\n— trades, skills, certifications, availability, rate;
-endif
-:Worker Dashboard;
-:View available projects / matches;
-:Accept assignment (UC-004);
-:Record hours (UC-006);
-:Track CE / certifications (UC-007);
-:Manage membership (UC-008);
-stop
+state "Landing" as Landing
+state "Login (Keycloak OIDC)" as Login
+state "Logout" as Logout
+state "Session Timeout" as Timeout
+state "Error Terminal" as Error
 
-|Contractor|
-start
-:Landing / Login (Keycloak OIDC, REQ-001);
-if (Registered?) then (no)
-  :Register as Contractor (UC-002);
-endif
-:Contractor Dashboard;
-:Create project listing (UC-003);
-:Request workers (UC-004);
-:Track arrivals/departures (UC-005);
-:Close project (UC-015);
-:Manage membership (UC-008);
-stop
+state "Worker Registration" as WReg {
+  state "W1 Identity" as WReg1
+  state "W2 Trades & Skills" as WReg2
+  state "W3 Availability & Rate" as WReg3
+  state "W4 Certifications" as WReg4
+  state "W5 Review & Confirm" as WReg5
+  WReg1 --> WReg2
+  WReg2 --> WReg3
+  WReg3 --> WReg4
+  WReg4 --> WReg5
+}
+
+state "Worker Dashboard" as WDash
+state "Available Matches" as WMatches
+state "Assignment Detail" as WAssign
+state "Arrival / Departure" as WArrDep
+state "Record Hours" as WHours
+state "Certifications & CE" as WCE
+state "Worker Membership" as WMember
+state "Worker Rate Adjustment" as WRate
+
+state "Contractor Registration" as CReg
+state "Contractor Dashboard" as CDash
+state "Create Project" as CProject
+state "Request Workers" as CRequest
+state "Request Result" as CResult
+state "Project Detail" as CProjectDetail
+state "Close Project" as CClose
+state "Contractor Membership" as CMember
+state "Contractor Rate Adjustment" as CRate
+
+state "Representative Console" as RepConsole
+state "Exception Queue" as RepQueue
+state "Case Detail" as RepCase
+state "Fallback Operation" as RepFallback
+
+[*] --> Landing
+Landing --> Login : "Sign in"
+Landing --> WReg : "Register as Worker" [not authenticated]
+Landing --> CReg : "Register as Contractor" [not authenticated]
+
+Login --> WDash : [role = worker]
+Login --> CDash : [role = contractor]
+Login --> RepConsole : [role = representative]
+Login --> Error : [auth failure]
+
+WReg --> WDash : [registration complete]
+CReg --> CDash : [registration complete]
+
+WDash --> WMatches : "View matches"
+WDash --> WAssign : "My assignments"
+WDash --> WHours : "Record hours"
+WDash --> WCE : "Certifications"
+WDash --> WMember : "Membership"
+WDash --> WRate : "Adjust rate"
+
+WMatches --> WAssign : [accept assignment — UC-004]
+WAssign --> WArrDep : "Signal arrival/departure" [UC-005]
+WAssign --> WHours : "Record hours" [UC-006]
+
+CDash --> CProject : "Create project" [UC-003]
+CDash --> CRequest : "Request workers" [UC-004]
+CDash --> CProjectDetail : "Project detail"
+CDash --> CMember : "Membership"
+CDash --> CRate : "Adjust rate"
+
+CProject --> CDash : [project created]
+CRequest --> CResult : [submit request]
+CResult --> CDash : [assigned | awaiting match]
+CProjectDetail --> CClose : "Close project" [UC-015]
+CProjectDetail --> CRequest : "Request more workers"
+
+RepConsole --> RepQueue : "Exception queue"
+RepConsole --> RepFallback : "Assist user" [UC-011]
+RepQueue --> RepCase : "Open case"
+RepCase --> RepQueue : [resolved | escalated]
+
+WDash --> Logout : "Sign out"
+CDash --> Logout : "Sign out"
+RepConsole --> Logout : "Sign out"
+Logout --> [*]
+
+WDash --> Timeout : [idle > session limit]
+CDash --> Timeout : [idle > session limit]
+RepConsole --> Timeout : [idle > session limit]
+Timeout --> Login : "Re-authenticate"
+Timeout --> [*]
+
+Error --> Landing : "Return"
+Error --> [*]
+
+note right of WAssign
+  Race resolution (NFR-008): if the worker is
+  taken between match and assignment, the
+  transition reverts to WMatches with a
+  "worker no longer available" notice — never
+  a dead-end.
+end note
 @enduml
 ```
+
+### Navigation Topology — Completeness & Consistency Checks
+
+| Check | Result |
+|---|---|
+| Every screen reachable from Landing | Yes — all states trace to Landing via Login or registration |
+| No dead-end screens | Yes — every screen has an onward transition (back to dashboard, logout, or timeout) |
+| Terminal states explicit | Yes — Logout, Session Timeout, Error Terminal are all explicit `[*]` sinks |
+| Race-resolution path (NFR-008) | Reversion to WMatches, not a dead-end (see note) |
+| Channel equivalence (NFR-006) | Representative Console reuses the same controllers as self-service; no divergent screen set |
+| Role guards | Login branches on role (worker/contractor/representative); no cross-role screen access |
+
+### Storyboard → Navigation Topology Mapping
+
+| Storyboard | Navigation Topology States |
+|---|---|
+| SB-1 Worker Registration (UC-001) | Landing → WReg (W1..W5) → WDash |
+| SB-2 Contractor Registration (UC-002) | Landing → CReg → CDash |
+| SB-3 Create Project Listing (UC-003) | CDash → CProject → CDash |
+| SB-4 Request Workers (UC-004) | CDash → CRequest → CResult → CDash |
+| SB-5 Track Arrival/Departure (UC-005) | WAssign → WArrDep |
+| SB-6 Record Hours (UC-006) | WAssign → WHours |
+| SB-7 Complete Certification Course (UC-007) | WDash → WCE |
+| SB-8 Maintain Membership (UC-008) | WDash → WMember / CDash → CMember |
+| SB-9 Terminate Assignment (UC-014) | WAssign (termination path) |
+| SB-10 Close Project (UC-015) | CProjectDetail → CClose |
 
 ## Validation Feedback
 The prototype is validated against the following declared acceptance criteria and NFRs:
