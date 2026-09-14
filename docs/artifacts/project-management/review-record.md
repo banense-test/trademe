@@ -5,34 +5,37 @@
 | Phase | Inception |
 | Status | Draft — iteration 1 |
 | Milestone Target | End-of-Inception review (LCO) |
-| Review Type | Technical review (LCO milestone — feasibility lens) |
-| Reviewer | Reviewer (technical lens) |
+| Review Type | Lifecycle Objectives (LCO) milestone review — management lens |
+| Reviewer | Management Reviewer (project governance lens) |
 | Date | 2026-09-14 |
-| Artifacts Reviewed | Development Case, Vision, Use-Case Model, Supplementary Specification, Software Architecture Document, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary (10 total) |
+| Artifacts Reviewed | Vision, Use-Case Model, Supplementary Specification, Software Architecture Document, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary (10 total) |
 
 ## Review Scope and Criteria
 
-This is the **Lifecycle Objectives (LCO)** milestone review, technical lens. The evaluative question is **FEASIBILITY**: are the Inception artifacts feasible and acceptable to stakeholders, and do they collectively satisfy the LCO exit criteria (Vision clarity, initial risk identification, use-case survey level, stakeholder agreement on scope and feasibility)?
+This is the **Lifecycle Objectives (LCO)** milestone review, management lens. The evaluative question is **EXIT CRITERIA**: do the Inception artifacts collectively satisfy the conditions for phase transition to Elaboration, and is the project viable and acceptable to stakeholders?
 
-**Checklist applied (per artifact type):**
+**LCO exit criteria (management lens):**
+
+| Criterion | Question |
+|---|---|
+| Scope agreement | Do stakeholders agree on what is in/out of scope? |
+| Risk identification | Have key risks been identified with magnitude ratings? |
+| Feasibility | Is the proposed approach and initial plan feasible? |
+| Project Approval | Is there sanction to proceed to Elaboration? |
+
+**Checklist applied (management lens):**
 
 | Artifact | Checklist |
 |---|---|
-| Vision | Problem statement, product position, stakeholder needs, scope in/out, constraints, traceability |
-| Use-Case Model | UC survey completeness, source citation (FR-NNN), cross-cutting-as-UC guard, actor identification, traceability |
-| Supplementary Specification | Cross-cutting mechanisms (not UCs), FURPS+ coverage, traceability |
-| Software Architecture Document | Subsystem naming (not layers/features), volatility encapsulation, ADR completeness, traceability |
-| Development Case | DC baseline conformance (roster/CORE/ownership), optional trigger justification |
-| Risk List | Declared + derived risks, strategy/mitigation/contingency |
-| Iteration Plan | Objectives, cost-boxing, AC disposition |
-| Test Plan | Risk-weighting, money mechanism, data sourcing |
-| Deployment Model | Topologies, acceptance gates, rollback criteria |
-| Glossary | Term coverage, jurisdiction notes |
-
-**Scope guard applied:** every UC/BUC/REQ/COMP must trace to declared FR/NFR/CON/AC; cross-cutting mechanisms never as UCs; multi-actor processes as single UCs; non-literal elements carry correct markers.
+| Vision | Scope in/out clarity, stakeholder needs, viability, data-source verification |
+| Iteration Plan | Objectives, cost-boxing (not time-boxing), AC disposition, milestone sequence |
+| Risk List | Magnitude ratings, strategy/mitigation/contingency, status/trend tracking |
+| Development Case | DC baseline conformance, optional trigger justification |
+| Software Architecture Document | Feasibility of approach, risk-driven priorities |
 
 ## Findings
-Seven (7) findings recorded by the technical lens (Reviewer), all **Minor** severity. Zero Major, zero Critical. No LCO blockers.
+
+Two (2) findings recorded by the management lens, both **Minor**. Zero Major, zero Critical from this lens. The business lens (Business Reviewer) carries 5 Major findings; the technical lens (Reviewer) carries 7 Minor findings. **The stakeholder has directed that ALL findings — including Minor — be fixed before advancing to Elaboration.**
 
 ```plantuml
 @startuml
@@ -40,253 +43,131 @@ skinparam object {
   BackgroundColor #FEFECE
   BorderColor #A80036
 }
-title LCO Compliance Matrix — Technical Lens (Inception I1)
+title LCO Compliance Table — Management Lens (Inception I1)
 
-object "Vision" as V {
-  Scope clarity = PASS
-  Stakeholder needs = PASS
-  Constraint coverage = PARTIAL
-  Traceability = PASS
+object "Scope Agreement" as SA {
+  Status = MET
+  Evidence = 21 UCs trace to 26 FRs
 }
 
-object "Use-Case Model" as UCM {
-  UC survey (21 UCs / 26 FRs) = PASS
-  Source citation (FR-NNN) = PASS
-  Cross-cutting as UCs = PASS
-  Actor identification = PARTIAL
-  Traceability = PASS
+object "Risk Identification" as RI {
+  Status = MET
+  Evidence = R001-R006 classified w/ magnitude
 }
 
-object "Supplementary Spec" as SS {
-  Cross-cutting mechanisms = PASS
-  FURPS+ coverage = PASS
-  Traceability = PASS
+object "Feasibility" as F {
+  Status = MET
+  Evidence = ADR-001 modular monolith
 }
 
-object "SAD" as SAD {
-  Subsystem naming = PASS
-  Volatility encapsulation = PASS
-  ADR completeness = PASS
-  UC-016 mapping = PARTIAL
-  Traceability = PASS
+object "Project Approval" as PA {
+  Status = REFUSED
+  Evidence = stakeholder: fix all findings
 }
 
-object "Development Case" as DC {
-  Roster conformance = PARTIAL
-  CORE artifacts (16) = PASS
-  Optional triggers = PASS
-  Ownership = PASS
-}
-
-object "Risk List" as RL {
-  Declared risks = PASS
-  Derived risks = PASS
-  Strategy/mitigation = PASS
-}
-
-object "Iteration Plan" as IP {
-  Objectives = PASS
-  Cost-boxing = PARTIAL
-  AC disposition = PASS
-}
-
-object "Test Plan" as TP {
-  Risk-weighted = PASS
-  Money mechanism = PASS
-  Data sourcing = PARTIAL
-}
-
-object "Deployment Model" as DM {
-  Topologies = PASS
-  Two-gate acceptance = PASS
-  Rollback criteria = PASS
-}
-
-object "Glossary" as G {
-  Term coverage = PASS
-  Jurisdiction notes = PASS
+object "Risk Retirement Trend" as RT {
+  Status = PARTIAL
+  Evidence = no Status/Trend column
 }
 @enduml
 ```
 
 ```plantuml
 @startuml
-skinparam object {
-  BackgroundColor #FEFECE
-  BorderColor #A80036
-}
-title Defect Distribution — Technical Lens (Inception I1)
+title Project Health State Machine — LCO (Inception I1)
 
-object "Development Case" as DC {
-  Minor = 1
-}
+state "Healthy" as Healthy
+state "AtRisk" as AtRisk
+state "Stopped" as Stopped
 
-object "Vision" as V {
-  Minor = 2
-}
+[*] --> Healthy
+Healthy --> AtRisk : stakeholder refuses sanction
+AtRisk --> Stopped : findings remain unresolved
+AtRisk --> Healthy : all findings resolved + re-review
 
-object "Use-Case Model" as UCM {
-  Minor = 1
-}
-
-object "SAD" as SAD {
-  Minor = 1
-}
-
-object "Test Plan" as TP {
-  Minor = 1
-}
-
-object "Iteration Plan" as IP {
-  Minor = 1
-}
-
-note bottom of DC
-  Total: 7 Minor, 0 Major, 0 Critical
-  Disposition: Approved with Changes
+note right of AtRisk
+  CURRENT STATE: AtRisk
+  Stakeholder refused LCO sanction
+  Directive: fix ALL findings (incl. Minor)
+  before advancing to Elaboration
 end note
 @enduml
 ```
 
-### Finding Detail — Technical Lens
+```plantuml
+@startuml
+title Risk Retirement Trend — Management Lens (Inception I1)
+
+object "R001 Legacy replacement" as R1 {
+  Magnitude = SIGNIFICANT (12)
+  Trend = N/A (baseline)
+}
+object "R002 Dev/leadership tension" as R2 {
+  Magnitude = HIGH (16)
+  Trend = N/A (baseline)
+}
+object "R003 Multi-jurisdiction" as R3 {
+  Magnitude = SIGNIFICANT (12)
+  Trend = N/A (baseline)
+}
+object "R004 Matching policy capture" as R4 {
+  Magnitude = SIGNIFICANT (12)
+  Trend = N/A (baseline)
+}
+object "R005 Availability race" as R5 {
+  Magnitude = SIGNIFICANT (12)
+  Trend = N/A (baseline)
+}
+object "R006 Human-gate queue" as R6 {
+  Magnitude = MODERATE (9)
+  Trend = N/A (baseline)
+}
+
+note bottom of R2
+  Inception I1 = baseline; no trend yet.
+  Risk List lacks Status/Trend columns (MR#F1).
+  R002 (HIGH) must show DECREASING trend
+  at LCA before Construction proceeds.
+end note
+@enduml
+```
+
+### Finding Detail — Management Lens
 
 | # | Artifact | Key | Severity | Finding | Remediation |
 |---|---|---|---|---|---|
-| 1 | Development Case | F1 | Minor | References "24-role roster" / "All 24 baseline roles are active"; the IARI baseline lists 25 active roles. Numerical discrepancy only — no role omitted, reassigned, or merged. | Reconcile roster count to 25. |
-| 2 | Vision | F1 | Minor | Constraints section lists 17 of 22 declared constraints; CON-020/CON-021/CON-022 relegated to Assumptions table (A-003..A-005). | List CON-020..CON-022 in Constraints, or cross-reference the Assumptions table. |
-| 3 | Vision | F2 | Minor | Use-case diagram omits the Time actor and uses slightly different UC names than the Use-Case Model. | Align Vision diagram with UCM (add Time actor, identical UC names) or note it as a simplified subset. |
-| 4 | Use-Case Model | F1 | Minor | UC-019 primary actor "(business)" and UC-021 primary actor "(system)" are placeholders, not proper actors. | Name the proper actor for UC-019 (likely STK-003); for UC-021 consider modeling as an alternative flow of UC-004 or name the triggering actor. |
-| 5 | Software Architecture Document | F1 | Minor | UC-016 (Record Rate Adjustments, FR-023, Volatility: High) not mapped to any subsystem in the traceability table. | Add UC-016 to COMP-002 or COMP-001 trace row, or note it as a sub-flow to be detailed in Elaboration. |
-| 6 | Test Plan | F1 | Minor | "Testing is 30–50% of project cost" is an unsourced quantitative claim. | Mark as [ASSUMPTION — requires validation] with basis, or cite source. |
-| 7 | Iteration Plan | F1 | Minor | Gantt chart time-boxes iterations ("lasts 1 days") while text cost-boxes them (750k tokens); contradicts the cost-boxing mandate. | Replace durations with cost-box annotations or mark Gantt as sequence-only. |
-
----
-
-### Business Modeling Lens (Business Reviewer)
-
-**Verdict: [BR-NEEDS-REWORK] — Business Modeling active (BPL=true); derivation bridge incomplete on entity + rules side**
-
-**Scenario assessment (Heuristic 1):** The engagement is a **Revamp** — the system replaces an organically-grown legacy brokerage (220 representatives, 9 call centers) whose business process is the subject of the system, not merely its context. The BPA did NOT state this scenario explicitly; the review applies Revamp standards (full realization depth expected in Elaboration, business object model required).
-
-**Business-process-led signal:** Confirmed by Development Case §4 (`isBusinessProcessLed: true`) and by the presence of a "Business Use Cases" section in the Use-Case Model. Business Modeling discipline is correctly ACTIVE.
-
-#### BUC Completeness Coverage Map
-
-```plantuml
-@startuml
-skinparam class {
-  BackgroundColor #FEFECE
-  BorderColor #A80036
-}
-title Business Use-Case Completeness Map — Business Modeling Lens (Inception I1)
-
-class "BUC-001 Onboard Worker" as B1 #LightGreen
-class "BUC-002 Onboard Contractor" as B2 #LightGreen
-class "BUC-003 Manage Project Lifecycle" as B3 #LightGreen
-class "BUC-004 Broker Worker to Project" as B4 #LightGreen
-class "BUC-005 Manage Assignment" as B5 #LightGreen
-class "BUC-006 Capture Hours & Compute Wages" as B6 #LightGreen
-class "BUC-007 Process Payments" as B7 #LightYellow
-class "BUC-008 Manage Membership & Fees" as B8 #LightGreen
-class "BUC-009 Track CE & Certifications" as B9 #LightGreen
-class "BUC-010 Produce Regulatory Reports" as B10 #LightGreen
-class "BUC-011 Handle Exceptions & Fallback" as B11 #LightGreen
-class "BUC-012 Detect Fraud & Enforce Membership" as B12 #LightPink
-
-note right of B7
-  PARTIAL: actor classification
-  (scheduled run, not Ext-initiated)
-end note
-
-note right of B12
-  FAIL: no business actor
-  (Business Actor(s) = "—")
-end note
-
-note bottom of B1
-  Legend: Green = PASS (actor-initiated, value-delivering, end-to-end)
-  Yellow = PARTIAL (minor defect)
-  Pink = FAIL (completeness test violated)
-end note
-@enduml
-```
-
-#### Defect Distribution — Business Modeling Lens
-
-```plantuml
-@startuml
-skinparam object {
-  BackgroundColor #FEFECE
-  BorderColor #A80036
-}
-title Defect Distribution — Business Modeling Lens (Inception I1)
-
-object "Use-Case Model\n(Business Use Cases section)" as UCM {
-  Major = 5
-  Minor = 1
-}
-
-note bottom of UCM
-  Total: 5 Major, 1 Minor, 0 Critical
-  Disposition: Needs Rework (business lens)
-  No LCO blocker — but derivation bridge
-  is incomplete on entity + rules side
-end note
-@enduml
-```
-
-#### Finding Detail — Business Modeling Lens
-
-| # | Key | Severity | Finding | Remediation |
-|---|---|---|---|---|
-| 1 | F1 | Major | Scenario not stated. The BPA never identifies which of the six BM scenarios applies (clearly Revamp). | Add explicit "Scenario: Revamp" statement anchoring the review standard and Elaboration realization depth. |
-| 2 | F2 | Major | BUC-012 "Detect Fraud & Enforce Membership" has Business Actor(s) = "—" — no initiating actor, violating the BUC completeness test. | Model BUC-012 as Time-initiated (like UC-017), or fold into BUC-008, or name the worker-reporting trigger. Do not leave the actor column empty. |
-| 3 | F3 | Minor | BUC-007 "Process Payments" lists External Integration Partners as actor, but payment is a scheduled financial-intermediary process (CON-004); AP integration (FR-017) is nice-to-have. | Reclassify BUC-007's initiating actor as Time (scheduled run), consistent with UC-012. |
-| 4 | F4 | Major | No business entities modeled — no entity→analysis-class annotations; the entity half of the derivation bridge is missing. | Add a Business Object Model (class diagram) of core entities (Worker, Contractor, Project, Assignment, Certification, Membership, Payment, Hours, Rate) with candidate analysis-class disposition. |
-| 5 | F5 | Major | Business rules not formalized. CON-003..CON-019 are business rules but lack unique IDs, sources, worker/entity attachment, and testable conditions. | Produce a Business Rules section formalizing each rule (BR-NNN, source, constrained worker/entity, testable condition); prioritize CON-006, CON-013, CON-008, CON-009, CON-015. |
-| 6 | F6 | Major | No business object model diagram — the structural complement to the behavioral use-case diagram is absent. | Add a business object model class diagram showing workers and entities with associations. |
+| 1 | Risk List | F1 | Minor | The Risk Register lacks a Status column and a Trend column. It tracks P, I, Exposure, Magnitude, Strategy, and Owner, but not whether a risk is open/mitigating/retired nor whether its trend is improving/stable/worsening since the last review. Without these, risk retirement — the core of RUP's risk-driven approach — cannot be verified at future milestones (LCA/IOC/PR). R002 (HIGH, exposure 16) currently carries no trend line. | Add a Status column (open/mitigating/retired) and a Trend column (improving/stable/worsening) to the Risk Register, and update both at every major review so high-magnitude risks show a decreasing trend line rather than a static list. |
+| 2 | Iteration Plan | F1 | Minor | The coarse-roadmap Gantt chart time-boxes iterations ("lasts 1 days" each), while the plan text cost-boxes them ("Iteration budget box: 750k tokens"). The IARI baseline (§8.1) mandates cost-boxing, not time-boxing; the "1 days" placeholder contradicts this and reads as a fabricated duration. | Replace the "1 days" durations with cost-box annotations (token budgets) or mark the Gantt as a coarse sequence-only roadmap with no duration semantics. |
 
 ## Resolutions and Actions
 
-No prior-iteration findings exist (this is iteration 1, cycle 1). All seven findings above are newly recorded this iteration.
+No prior-iteration management-lens findings exist (this is iteration 1, cycle 1). Both findings above are newly recorded this iteration.
 
-**Open action items:** all seven Minor findings are open. None block LCO. They are recommended corrections for the authors to apply before or during Elaboration; none require stakeholder escalation.
+**Stakeholder sanction: REFUSED.** The stakeholder declined to sanction advancement past LCO and directed: *"You do need to fix all findings even if they are minors before move to the next phase."*
+
+**Open action items (all lenses, all blocking per stakeholder directive):**
+- 5 Major (business lens) — BM scenario unstated; BUC-012 no actor; no business entities; business rules not formalized; no business object model.
+- 7 Minor (technical lens) — DC roster count; Vision constraints; Vision diagram; UCM actor placeholders; SAD UC-016 mapping; Test Plan unsourced cost figure; Iteration Plan Gantt time-boxing.
+- 2 Minor (management lens) — Risk List Status/Trend columns; Iteration Plan Gantt time-boxing (overlaps technical lens F1).
 
 ## Disposition
-**Approved with Changes (technical lens).**
 
-The Inception artifacts collectively satisfy the LCO exit criteria:
-- **Vision clarity** — problem statement, root cause, product position, and success criteria are clear and measurable (AC-001, AC-003, AC-004, AC-005).
-- **Initial risk identification** — Risk List classifies R001–R006 with strategies, mitigations, and contingencies; the three declared risks (R001, R002, R003) plus three derived risks (R004, R005, R006) are all addressed.
-- **Use-case survey level** — 21 system UCs surveyed, 4 architecturally significant UCs detailed (UC-004, UC-012, UC-013, UC-014); all 26 declared FRs are covered by at least one UC.
-- **Stakeholder agreement on scope and feasibility** — declared scope is respected as the ceiling; no scope expansion detected; cross-cutting mechanisms correctly placed in Supplementary Spec; money mechanism (ADR-004) faithfully captures the stakeholder's mandatory decision.
+**No-Go (Conditional).** The LCO milestone is NOT sanctioned for advancement to Elaboration.
 
-The seven Minor findings are non-blocking corrections. No Critical or Major findings exist, so no stakeholder escalation is required and the LCO gate is not blocked by this lens.
+The Inception artifacts are substantively sound — scope is agreed and respected as the ceiling, risks are identified with magnitude ratings, and the approach (modular monolith, Node.js/TS + PostgreSQL, cost-boxed) is feasible. However, the stakeholder has explicitly refused sanction and directed that **all findings — including the Minor ones — be resolved before the phase advances**. This elevates every open finding to blocking status.
 
----
-
-**Needs Rework (business modeling lens).**
-
-The business modeling contribution is directionally sound: 12 BUCs correctly model the brokerage at the organization boundary, the business actor/worker classification is largely correct (STK-003 correctly identified as internal business worker), the BUC→UC derivation bridge is present on the worker side (automation disposition annotated for every BUC), and the volatility annotations correctly flag BUC-004/BUC-007/BUC-010/BUC-012 as architectural input.
-
-However, the derivation bridge is **incomplete**: no business entities are modeled (no entity→analysis-class annotations), and business rules are not formalized (no BR-NNN with source/attachment/testable condition). These are the entity and rules halves of the bridge the Requirements discipline needs to derive system classes and enforce business invariants. The scenario selection is also unstated, which leaves the realization-depth expectation unanchored.
-
-**LCO gate impact:** No Critical findings — the business lens does not block LCO. The five Major findings are Elaboration-bound corrections; the BPA should address them at the start of Elaboration before full realizations are produced.
+**Conditions to close before LCO can be sanctioned:**
+1. All 5 Major (business lens) findings resolved.
+2. All 7 Minor (technical lens) findings resolved.
+3. All 2 Minor (management lens) findings resolved.
+4. Re-review by all three lenses confirming resolution.
+5. Stakeholder re-consulted for sanction.
 
 ## Traceability
+
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Review Record (I1) | Vision, Use-Case Model, Supplementary Specification, SAD, Development Case, Risk List, Iteration Plan, Test Plan, Deployment Model, Glossary | DependsOn | LCO milestone |
-| Development Case#F1 | IARI baseline (25-role roster) | DependsOn | Development Case |
-| Vision#F1 | CON-020, CON-021, CON-022 | DependsOn | Vision |
-| Vision#F2 | Use-Case Model (Time actor, UC names) | DependsOn | Vision |
-| Use-Case Model#F1 | FR-024, FR-026 | DependsOn | Use-Case Model |
-| Software Architecture Document#F1 | FR-023, UC-016 | DependsOn | Software Architecture Document |
-| Test Plan#F1 | (unsourced cost figure) | DependsOn | Test Plan |
-| Iteration Plan#F1 | IARI cost-boxing mandate | DependsOn | Iteration Plan |
-| Use-Case Model#F1 (BR) | BM scenario (Revamp) | DependsOn | Use-Case Model (Business Use Cases section) |
-| Use-Case Model#F2 (BR) | BUC-012, FR-016, CON-005 | DependsOn | Use-Case Model (Business Use Cases section) |
-| Use-Case Model#F3 (BR) | BUC-007, CON-004, FR-017 | DependsOn | Use-Case Model (Business Use Cases section) |
-| Use-Case Model#F4 (BR) | Derivation bridge (entity side) | DependsOn | Use-Case Model (Business Use Cases section) |
-| Use-Case Model#F5 (BR) | CON-003..CON-019 | DependsOn | Use-Case Model (Business Use Cases section) |
-| Use-Case Model#F6 (BR) | Business object model | DependsOn | Use-Case Model (Business Use Cases section) |
+| Risk List#F1 (MR) | R001..R006 | DependsOn | Risk List |
+| Iteration Plan#F1 (MR) | IARI cost-boxing mandate (§8.1) | DependsOn | Iteration Plan |
+| Stakeholder sanction (REFUSED) | LCO milestone | DependsOn | Elaboration (blocked) |
