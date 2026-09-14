@@ -4,6 +4,7 @@
 | Phase | Inception |
 | Status | Draft — iteration 3 |
 | Milestone Target | End-of-Inception review |
+
 ## Deployment Topology
 
 **Deployment mode: Custom-built** (a bespoke system deployed to the company's own cloud infrastructure, not shrink-wrapped or downloadable). This is the only mode consistent with the declared scope: the system is a financial intermediary (CON-004) operating jurisdiction-specific compliance (CON-007), deployed to a small number of long-lived country-level environments (CON-017).
