@@ -45,7 +45,6 @@
 | STK-005 | External Integration Partners | Low | Consume system outputs: contractors' AP systems, third-party credential validators, fraud-detection capability |
 
 ## Product Overview
-
 **In scope:** worker and contractor records (identity, skills, certifications, geographic availability, rates, project history); active and historical project records; contractor requests for workers with automated matching and assignment; assignment tracking (arrival/departure); hours tracking and wage computation; payment processing (contractor pays system, system pays worker); regulatory reporting by jurisdiction; basic continuing-education tracking; membership tracking with recurring annual fees.
 
 **Not in scope:**
@@ -70,50 +69,53 @@ actor "Regulator\n(STK-004)" as Regulator
 actor "External Integration Partners\n(STK-005)" as Ext
 
 rectangle "TradeMe Marketplace" {
-  usecase "Register with Marketplace" as UC1
-  usecase "Create Project Listing" as UC3
-  usecase "Request Workers for Project" as UC4
-  usecase "Track Assignment (Arrive/Depart)" as UC5
-  usecase "Record Hours Worked" as UC6
-  usecase "Complete Certification Course" as UC8
-  usecase "Maintain Membership" as UC10
-  usecase "Resolve Exception Case" as UC12
-  usecase "Assist via Fallback Channel" as UC13
-  usecase "Process Payments" as UC14
-  usecase "Produce Regulatory Reports" as UC15
-  usecase "Match Worker to Request" as UC18
-  usecase "Assign Worker to Project" as UC19
-  usecase "Terminate Worker Assignment" as UC20
-  usecase "Close Project" as UC21
-  usecase "Convert Currencies" as UC22
-  usecase "Record Rate Adjustments" as UC23
-  usecase "Integrate with AP Systems" as UC17
-  usecase "Detect Fraudulent Patterns" as UC16
+  usecase "UC-001 Register as Worker" as UC1
+  usecase "UC-002 Register as Contractor" as UC2
+  usecase "UC-003 Create Project Listing" as UC3
+  usecase "UC-004 Request Workers for Project" as UC4
+  usecase "UC-005 Track Assignment (Arrive/Depart)" as UC5
+  usecase "UC-006 Record Hours Worked" as UC6
+  usecase "UC-007 Complete Certification Course" as UC7
+  usecase "UC-008 Maintain Membership" as UC8
+  usecase "UC-009 Process Recurring Membership Fees" as UC9
+  usecase "UC-010 Resolve Exception Case" as UC10
+  usecase "UC-011 Assist via Fallback Channel" as UC11
+  usecase "UC-012 Process Payments" as UC12
+  usecase "UC-013 Produce Regulatory Reports" as UC13
+  usecase "UC-014 Terminate Worker Assignment" as UC14
+  usecase "UC-015 Close Project" as UC15
+  usecase "UC-016 Record Rate Adjustments" as UC16
+  usecase "UC-017 Detect Fraudulent Patterns" as UC17
+  usecase "UC-018 Integrate with AP Systems" as UC18
+  usecase "UC-019 Project Demand Projection" as UC19
+  usecase "UC-020 Priority Capacity Allocation" as UC20
+  usecase "UC-021 Delayed Assignment with Commitment" as UC21
 }
 
 Worker --> UC1
 Worker --> UC5
 Worker --> UC6
+Worker --> UC7
 Worker --> UC8
-Worker --> UC10
-Contractor --> UC1
+Worker --> UC16
+Contractor --> UC2
 Contractor --> UC3
 Contractor --> UC4
-Contractor --> UC10
-Contractor --> UC21
-Rep --> UC12
-Rep --> UC13
-Regulator --> UC15
-Ext --> UC17
-Ext --> UC16
+Contractor --> UC5
+Contractor --> UC8
+Contractor --> UC14
+Contractor --> UC15
+Contractor --> UC16
+Contractor --> UC20
+Rep --> UC10
+Rep --> UC11
+Rep --> UC14
+Regulator --> UC13
+Ext --> UC18
 
-UC4 ..> UC18 : <<include>>
-UC18 ..> UC19 : <<include>>
-UC21 ..> UC20 : <<include>>
-UC14 ..> UC22 : <<include>>
+UC15 ..> UC14 : <<include>>
 @enduml
 ```
-
 ## Features
 
 | ID | Feature | Source | Priority | Volatility |
