@@ -14,7 +14,6 @@
 4. Assess Lifecycle Objectives (LCO) readiness: stakeholders agree on scope, the project is viable, and initial risks are identified.
 
 ## Plan and Milestones
-
 ### Coarse Roadmap (cross-iteration)
 
 ```plantuml
@@ -22,54 +21,60 @@
 hide footbox
 -- Inception --
 [I1 Conceive & Plan] lasts 1 days
-[LCO] happens at [I1 Conceive & Plan]'s end
+[I2 Remediation] lasts 1 days
+[LCO] happens at [I2 Remediation]'s end
 -- Elaboration --
-[I2] lasts 1 days
 [I3] lasts 1 days
 [I4] lasts 1 days
-[LCA] happens at [I4]'s end
--- Construction --
 [I5] lasts 1 days
+[LCA] happens at [I5]'s end
+-- Construction --
 [I6] lasts 1 days
 [I7] lasts 1 days
-[IOC] happens at [I7]'s end
--- Transition --
 [I8] lasts 1 days
+[IOC] happens at [I8]'s end
+-- Transition --
 [I9] lasts 1 days
-[PR] happens at [I9]'s end
+[I10] lasts 1 days
+[PR] happens at [I10]'s end
 @endgantt
 ```
 
 **Sequence-only, not a calendar.** The Gantt above expresses the *ordering* of iterations and the *position* of the four milestones (LCO, LCA, IOC, PR) — nothing more. The `lasts 1 days` bars are PlantUML placeholders required to render the sequence; they are **not** time-boxes and carry no calendar meaning. Iterations are bounded by their **token budget box** (see Fine Plan below), never by a duration. No iteration is sized in days, weeks, or person-time — units this system does not measure.
 
-**Iteration count rationale:** 9 iterations total, within the "6 ± 3" rule's high extreme [1, 3, 3, 2]. Justified by the risk profile: R003 (multi-jurisdiction regulatory complexity) and R001 (legacy replacement failures) demand a full 3-iteration Elaboration to retire architectural and compliance risk before Construction; R002 (leadership tension) argues for a lean but complete process. The rubber profile (Inception ~5%) is stretched to a single Inception iteration because the scope is already well-declared by the stakeholder and Business Modeling is active.
+**Iteration count rationale:** 10 iterations total, within the "6 ± 3" rule's high extreme [1, 3, 3, 2] stretched by one Inception remediation iteration. The remediation iteration (I2) was forced by the stakeholder's directive to fix ALL findings — including Minors — before advancing past LCO. Justified by the risk profile: R003 (multi-jurisdiction regulatory complexity) and R001 (legacy replacement failures) demand a full 3-iteration Elaboration to retire architectural and compliance risk before Construction; R002 (leadership tension) argues for a lean but complete process.
 
-**Milestone sequence:** LCO (end of I1) → LCA (end of I4) → IOC (end of I7) → PR (end of I9).
+**Milestone sequence:** LCO (end of I2) → LCA (end of I5) → IOC (end of I8) → PR (end of I10).
 
-### Fine Plan — Inception Iteration 1 (critical chain)
+### Fine Plan — Inception Iteration 2 (remediation)
 
 ```plantuml
 @startuml
 start
-:Business Modeling (BPA)\nBusiness Use Cases — 150k tokens;
-:Requirements (System Analyst)\nVision, UC Model, Supp Spec, Glossary — 250k tokens;
-:Analysis & Design (Software Architect)\nSoftware Architecture Document — 200k tokens;
-:Project Management\nRisk List, Iteration Plan — 100k tokens;
-:Review (ReviewCoordinator)\nLCO milestone gate — 50k tokens;
+:Remediation (all roles)\nresolve 14 findings from I1 — 200k tokens;
+:Re-review (3 lenses)\nReviewer, BusinessReviewer, ManagementReviewer — 100k tokens;
+:Stakeholder re-consultation\nLCO sanction gate — 50k tokens;
 stop
 @enduml
 ```
 
-**Iteration budget box:** 750k tokens (agent work), measured elapsed time reported at iteration close. Human gates (stakeholder questionnaires) are quoted separately in days of queue time and never summed with agent time.
+**Iteration budget box — measured, not assumed.** Iteration 1's box (750k tokens) was an explicit assumption with no measured actual to size against; it did not hold (measured actual 2,871,727 tokens, 3.8× overspend). That box is now **iteration-1 historical** and is superseded. The iteration-2 remediation box is sized from the measured iteration-1 actual:
 
 | Work Item | Owner | Token Budget |
 |---|---|---|
-| Business Use Cases (BUC section of Use-Case Model) | Business Process Analyst | 150k |
-| Vision, Use-Case Model, Supplementary Specification, Glossary | System Analyst | 250k |
-| Software Architecture Document | Software Architect | 200k |
-| Risk List + Iteration Plan | Project Manager | 100k |
-| LCO milestone review | Review Coordinator | 50k |
+| Resolve 14 findings (5 Major + 9 Minor) | Business Process Analyst, System Analyst, Software Architect, Project Manager, Deployment Manager, Process Engineer | 2,000k |
+| Re-review by three lenses | Reviewer, BusinessReviewer, ManagementReviewer | 500k |
+| Stakeholder re-consultation (LCO sanction) | Review Coordinator | 300k |
+| **Iteration-2 box total** | — | **2,800k** |
 
+**Measured actuals (the basis for every subsequent forecast):**
+
+| Iteration | Token spend (agent work) | Agent elapsed time | Human queue time (waiting) |
+|---|---|---|---|
+| I1 (conceive & plan) | 2,871,727 | 1:23:17 | 0:04:38 |
+| I2 (remediation) | 3,014,457 | 0:43:29 | 0:00:00 |
+
+Spend is dominated by reasoning over the accumulated artifact surface (12 artifacts) and re-reading it across roles — not by the volume the phase emits. The measured shape replaces every assumed share in every forecast made afterwards.
 ## Resources
 
 **Agent role profile (Inception I1):** Business Process Analyst, System Analyst, Software Architect, Project Manager, Review Coordinator. Business Modeling is ACTIVE per the Development Case (business-process-led).
