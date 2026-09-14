@@ -400,10 +400,19 @@ The prototype is validated against the following declared acceptance criteria an
 `[ASSUMPTION — requires validation]` Low technical literacy (REQ-010) is an out-of-cycle open question; the prototype does not yet commit to a low-literacy design treatment until the stakeholder answers it.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| UI Prototype — Worker Registration storyboard | UC-001, FR-001 | Derives | UC-001 |
-| UI Prototype — Request Workers storyboard | UC-004, FR-004, FR-018, FR-019 | Derives | UC-004 |
+| UI Prototype — Worker Registration storyboard (SB-1) | UC-001, FR-001 | Derives | UC-001 |
+| UI Prototype — Contractor Registration storyboard (SB-2) | UC-002, FR-002 | Derives | UC-002 |
+| UI Prototype — Create Project Listing storyboard (SB-3) | UC-003, FR-003 | Derives | UC-003 |
+| UI Prototype — Request Workers storyboard (SB-4) | UC-004, FR-004, FR-018, FR-019 | Derives | UC-004 |
+| UI Prototype — Track Arrival/Departure storyboard (SB-5) | UC-005, FR-005 | Derives | UC-005 |
+| UI Prototype — Record Hours storyboard (SB-6) | UC-006, FR-006, FR-007 | Derives | UC-006 |
+| UI Prototype — Complete Certification Course storyboard (SB-7) | UC-007, FR-008, FR-009 | Derives | UC-007 |
+| UI Prototype — Maintain Membership storyboard (SB-8) | UC-008, FR-010 | Derives | UC-008 |
+| UI Prototype — Terminate Assignment storyboard (SB-9) | UC-014, FR-020 | Derives | UC-014 |
+| UI Prototype — Close Project storyboard (SB-10) | UC-015, FR-021 | Derives | UC-015 |
+| UI Prototype — Wireframes W-1..W-4 | SB-1, SB-4, SB-6 | Refines | UC-001, UC-004, UC-006 |
 | UI Prototype — Navigation Flow | NFR-002, NFR-001, REQ-008 | Derives | UC-001..UC-016 |
 | UI Prototype — Channel equivalence | NFR-006 | Derives | UC-011 |
+
