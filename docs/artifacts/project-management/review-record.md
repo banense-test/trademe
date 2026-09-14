@@ -206,7 +206,6 @@ end note
 - **Deployment Model** — Traceability, UML richness pass. Document Control bumped to iteration 3 (F1 resolved).
 - **Development Case** — DC baseline conformance and optional-trigger justification pass (25-role roster, no ownership reassignment, no CORE omission, all FIRED triggers justified on settled ground). One Minor: stale Document Control (F3).
 ## Resolutions and Actions
-
 **Iteration 1 (cycle 1):** No prior-iteration findings existed. All 14 findings were newly recorded and OPEN.
 
 **Stakeholder sanction: REFUSED.** The stakeholder declined to sanction advancement past LCO and directed: *"You do need to fix all findings even if they are minors before move to the next phase."*
@@ -240,6 +239,24 @@ end note
 | 2 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
 | 3 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 
+---
+
+### Iteration 3 — Technical lens (Reviewer) resolutions
+
+**Technical-lens closure (iteration 3): 2 prior findings of this lens resolved.**
+
+| Artifact | Key | Prior Severity | Lens | Resolution | Evidence |
+|---|---|---|---|---|---|
+| Development Case | F2 | Minor | Reviewer | Resolved | UI Prototype trigger re-justified on settled ground: "NFR-001 (mobile access is a must-have) and NFR-002 (self-service channel replacing 220 representatives across 9 call centers) make the self-service UX the primary front door." The 'low-technical-literacy' phrase is dropped entirely. |
+| Deployment Model | F1 | Minor | Reviewer | Resolved | Document Control status bumped to "Draft — iteration 3". |
+
+**Technical-lens new finding (iteration 3):** 1 Minor — Development Case#F3 (stale Document Control, "Draft — iteration 2" vs iteration-3 baseline). Owner: Process Engineer.
+
+**Technical-lens action item (iteration 3):**
+
+| Priority | Action | Owner | Deadline |
+|---|---|---|---|
+| 1 | Fix Development Case#F3 (bump Document Control to "Draft — iteration 3") | Process Engineer | Before re-review |
 ## Disposition
 
 **No-Go — iteration 2, consolidated across lenses.**
