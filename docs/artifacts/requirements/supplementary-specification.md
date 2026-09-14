@@ -62,12 +62,10 @@ UC17 ..> Fraud
 | REQ-010 | Low technical literacy is a design concern | deferred — out-of-cycle open question | Out-of-cycle open question; returns to stakeholder when cycle closes |
 
 ## Reliability
-
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
-| REQ-011 | Availability race condition resolution without losing worker record or contractor request | NFR-008, AC-005 | Concurrency on worker availability |
+| REQ-011 | Availability race condition resolution without losing worker record or contractor request | NFR-008, AC-005 | **Quantified threshold:** the match→verify→assign sequence (UC-004) MUST be atomic under concurrent access. When a worker is matched to one project and, in the moment between match and assignment, is picked up by a different request, the system MUST (a) lose neither the worker's record nor either contractor's request, and (b) produce no inconsistent state — exactly one assignment is committed, the other request reverts to matching. Verified by AC-005. Concurrency control on worker availability is the mechanism; data integrity under concurrent access is the acceptance bar. |
 | REQ-012 | Availability target and recovery expectation for payment processing | deferred | Deferred — out-of-cycle open question; not designed for this cycle |
-
 ## Performance
 
 | ID | Requirement | Source | Notes |
