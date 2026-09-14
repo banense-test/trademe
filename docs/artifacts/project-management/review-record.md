@@ -205,12 +205,19 @@ All 8 prior Business Reviewer findings on the Use-Case Model (F1–F8, Inception
 | 8 | Update Test Case CI run ID to 34886064517 (Test Case F1) | Test Designer | This iteration |
 
 ## Disposition
-
 ### Technical-lens verdict (Reviewer)
 
 The architecture is **well-formed and internally consistent**. The SAD presents a complete 4+1 model with every subsystem interface specified, every design mechanism derived from its analysis mechanism, and five ADRs that are coherent and traceable. The Design Model realizes all four architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) with full class signatures and interface contracts. The Data Model correctly enforces ADR-004 (Money as NUMERIC(19,4) + CHAR(3), append-only tables, retention, residency). The Deployment Model satisfies AC-002 (two topologies). The Test Plan defines measurable LCA acceptance criteria (LCA-T1..T7).
 
 **Technical-lens findings: 0 Critical, 1 Major, 3 Minor.** The single Major (Design Model O/R mapping ID collision) is a traceability defect, not an architectural defect — it does not undermine the architecture's soundness but must be corrected before Construction to avoid ambiguity in the O/R bridge.
+
+### Business-modeling-lens verdict (Business Reviewer)
+
+The business model is **complete and derivation-ready**. The BPA has produced a full Revamp-scenario business model: 12 well-formed business use cases with complete swimlane realizations (including the As-Is → To-Be gap for the core brokerage process BUC-004), a Business Object Model with 10 entities and 3 control classes (the volatile policy encapsulation targets), 16 formalized business rules each with ID/source/attachment/testable condition, and a derivation bridge that anchors every Must-priority system use case (UC-001..UC-015) to a business use case.
+
+The derivation bridge is **Ready** for the Requirements discipline: every worker has an automation disposition, every entity has an analysis-class disposition, and the volatile processes (matching policy, pricing model, regulatory reporting, fraud detection) are explicitly flagged for architectural encapsulation.
+
+**Business-modeling-lens findings: 0 Critical, 0 Major, 2 Minor.** The two Minor findings (UC-016 orphaned in the bridge; Internal Representative absent from the BOM) are traceability/completeness defects, not derivation-blocking defects. They do not prevent the Requirements discipline from deriving system use cases, and they do not block the LCA milestone. They should be corrected before Construction to keep the bridge complete.
 
 ### Overall LCA disposition: SANCTION WITHHELD
 
