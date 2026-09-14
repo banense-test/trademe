@@ -1,11 +1,9 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review |
-
 ## Use-Case Diagram
 ```plantuml
 @startuml
