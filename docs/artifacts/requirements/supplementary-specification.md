@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 2 |
+| Status | Draft — iteration 3 |
 | Milestone Target | End-of-Inception review |
 
 ## Functionality
@@ -102,6 +102,7 @@ UC17 ..> Fraud
 | CON-020 | Legacy operates alongside; no historical data migration | declared |
 | CON-021 | Throughput not binding | declared |
 | CON-022 | Operable by small team | declared |
+| REQ-029 | Implementation constraint — technology stack: Node.js on the current LTS line with TypeScript (application runtime); PostgreSQL latest (persistence). Identity provider is Keycloak over OIDC (see REQ-001). | Stakeholder decision (iteration 1) |
 
 ## Interfaces
 
@@ -143,3 +144,4 @@ UC17 ..> Fraud
 | REQ-024 | STK-005 | Derives | UC-001 |
 | REQ-025 | FR-016 | Derives | UC-017 |
 | REQ-028 | CON-004, FR-022 | Derives | UC-006, UC-009, UC-012 |
+| REQ-029 | CON-022 (small-team operable) | Derives | (all UCs — implementation-wide) |
