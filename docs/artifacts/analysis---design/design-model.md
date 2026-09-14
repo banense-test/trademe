@@ -788,6 +788,245 @@ This section (owned by the Database Designer) specifies the O/R mapping from the
 
 The `availability` table is the serialized race point. The ORM exposes a single operation — `lockAvailability(workerId)` — that issues `SELECT ... FOR UPDATE` on the worker's availability row inside the assignment transaction. No other code path reads or writes `availability.status` outside this lock. This is the one place the ORM exposes a raw lock; everywhere else it uses the repository abstraction.
 
+## Boundary Classes and Navigation Map
+
+This section (owned by the User Interface Designer) defines the user-interface realization of the use cases: the UI view/controller classes and the formal Navigation Topology. It is the bridge from the Use-Case Model's flows and the UI Prototype's storyboards to the Implementer's screens. The Designer's class-level realization (Design Packages and Classes) and the Database Designer's O/R mapping (Persistent Data Classes) are upstream; this section consumes them and adds the user-facing layer.
+
+### UI View & Controller Classes
+
+The UI layer is decomposed into `<<view>>` classes (what the user sees) and `<<controller>>` classes (what the user's actions trigger). A single `NavigationController` is the authority for screen transitions — it realizes the Navigation Topology state machine below, so every transition guard (role, authentication, race resolution) is enforced in exactly one place, never duplicated across views.
+
+```plantuml
+@startuml
+skinparam classAttributeIconSize 0
+title TradeMe — UI View & Controller Classes (Navigation Map)
+
+package "UI Views (<<view>>)" {
+  class LandingView <<view>>
+  class LoginView <<view>>
+  class WorkerRegistrationView <<view>>
+  class WorkerDashboardView <<view>>
+  class AvailableMatchesView <<view>>
+  class AssignmentDetailView <<view>>
+  class RecordHoursView <<view>>
+  class ContractorDashboardView <<view>>
+  class CreateProjectView <<view>>
+  class RequestWorkersView <<view>>
+  class RepresentativeConsoleView <<view>>
+  class ExceptionQueueView <<view>>
+}
+
+package "UI Controllers (<<controller>>)" {
+  class NavigationController <<controller>> {
+    + route(screen: Screen, event: UserAction): Screen
+  }
+  class WorkerRegistrationController <<controller>> {
+    + submitRegistration(form: WorkerRegistrationForm): void
+  }
+  class RequestWorkersController <<controller>> {
+    + submitRequest(projectId, needs, preferences): void
+  }
+  class RecordHoursController <<controller>> {
+    + submitHours(assignmentId, date, hours): void
+  }
+  class RepresentativeConsoleController <<controller>> {
+    + openCase(caseId): void
+    + mirrorOperation(operation): void
+  }
+}
+
+LandingView --> NavigationController
+LoginView --> NavigationController
+WorkerDashboardView --> NavigationController
+ContractorDashboardView --> NavigationController
+RepresentativeConsoleView --> NavigationController
+
+WorkerRegistrationController --> WorkerRegistrationView
+RequestWorkersController --> RequestWorkersView
+RecordHoursController --> RecordHoursView
+RepresentativeConsoleController --> ExceptionQueueView
+
+note right of NavigationController
+  NavigationController is the single authority
+  for screen transitions — it realizes the
+  Navigation Topology state machine. Every
+  transition guard (role, auth, race) is
+  enforced here, not in the views.
+end note
+
+note bottom of RepresentativeConsoleController
+  Channel equivalence (NFR-006): mirrorOperation
+  reuses the SAME controllers as self-service
+  (RequestWorkersController, RecordHoursController),
+  so the representative console is a superset,
+  not a divergent UI.
+end note
+@enduml
+```
+
+### UI View/Controller Responsibilities
+
+| ID | Class | Stereotype | Responsibility | Realizes |
+|---|---|---|---|---|
+| UIV-001 | LandingView | view | Entry screen; routes to login or registration | UC-001, UC-002 |
+| UIV-002 | LoginView | view | Keycloak OIDC sign-in (REQ-001) | REQ-001 |
+| UIV-003 | WorkerRegistrationView | view | 5-step worker registration (identity, trades, availability/rate, certifications, review) | UC-001 |
+| UIV-004 | WorkerDashboardView | view | Worker home: assignments, matches, hours, certifications, membership | UC-005, UC-006, UC-007, UC-008 |
+| UIV-005 | AvailableMatchesView | view | Candidate matches the worker may accept | UC-004 |
+| UIV-006 | AssignmentDetailView | view | Active assignment; arrival/departure signals | UC-005 |
+| UIV-007 | RecordHoursView | view | Hours entry against an assignment | UC-006 |
+| UIV-008 | ContractorDashboardView | view | Contractor home: projects, requests, membership | UC-003, UC-004, UC-008 |
+| UIV-009 | CreateProjectView | view | Project listing with per-period trade needs | UC-003 |
+| UIV-010 | RequestWorkersView | view | Worker request with needs + soft preferences | UC-004 |
+| UIV-011 | RepresentativeConsoleView | view | Representative home: exception queue + fallback | UC-010, UC-011 |
+| UIV-012 | ExceptionQueueView | view | Exception cases awaiting human judgment | UC-010 |
+| UIC-001 | NavigationController | controller | Single authority for screen transitions; enforces role/auth/race guards | (all user-facing UCs) |
+| UIC-002 | WorkerRegistrationController | controller | Submits registration; validates against taxonomy (CON-018) | UC-001 |
+| UIC-003 | RequestWorkersController | controller | Submits request; surfaces match/assign/race outcomes | UC-004 |
+| UIC-004 | RecordHoursController | controller | Submits hours; surfaces wage computation | UC-006 |
+| UIC-005 | RepresentativeConsoleController | controller | Opens cases; mirrors self-service operations (NFR-006) | UC-010, UC-011 |
+
+### Navigation Topology (Formal State Machine)
+
+The Navigation Topology is the formal definition of every screen in the system, the transitions between them, and the guard conditions on each transition. Every screen is a state; every user action causing a screen change is a directed edge with a guard. This model is complete — every screen is reachable, every terminal state (logout, session timeout, error) is explicit, and the race-resolution path (NFR-008) is a reversion, never a dead-end.
+
+```plantuml
+@startuml
+title TradeMe — Navigation Topology (Self-Service + Representative Console)
+
+state "Landing" as Landing
+state "Login (Keycloak OIDC)" as Login
+state "Logout" as Logout
+state "Session Timeout" as Timeout
+state "Error Terminal" as Error
+
+state "Worker Registration" as WReg {
+  state "W1 Identity" as WReg1
+  state "W2 Trades & Skills" as WReg2
+  state "W3 Availability & Rate" as WReg3
+  state "W4 Certifications" as WReg4
+  state "W5 Review & Confirm" as WReg5
+  WReg1 --> WReg2
+  WReg2 --> WReg3
+  WReg3 --> WReg4
+  WReg4 --> WReg5
+}
+
+state "Worker Dashboard" as WDash
+state "Available Matches" as WMatches
+state "Assignment Detail" as WAssign
+state "Arrival / Departure" as WArrDep
+state "Record Hours" as WHours
+state "Certifications & CE" as WCE
+state "Worker Membership" as WMember
+state "Worker Rate Adjustment" as WRate
+
+state "Contractor Registration" as CReg
+state "Contractor Dashboard" as CDash
+state "Create Project" as CProject
+state "Request Workers" as CRequest
+state "Request Result" as CResult
+state "Project Detail" as CProjectDetail
+state "Close Project" as CClose
+state "Contractor Membership" as CMember
+state "Contractor Rate Adjustment" as CRate
+
+state "Representative Console" as RepConsole
+state "Exception Queue" as RepQueue
+state "Case Detail" as RepCase
+state "Fallback Operation" as RepFallback
+
+[*] --> Landing
+Landing --> Login : "Sign in"
+Landing --> WReg : "Register as Worker" [not authenticated]
+Landing --> CReg : "Register as Contractor" [not authenticated]
+
+Login --> WDash : [role = worker]
+Login --> CDash : [role = contractor]
+Login --> RepConsole : [role = representative]
+Login --> Error : [auth failure]
+
+WReg --> WDash : [registration complete]
+CReg --> CDash : [registration complete]
+
+WDash --> WMatches : "View matches"
+WDash --> WAssign : "My assignments"
+WDash --> WHours : "Record hours"
+WDash --> WCE : "Certifications"
+WDash --> WMember : "Membership"
+WDash --> WRate : "Adjust rate"
+
+WMatches --> WAssign : [accept assignment — UC-004]
+WAssign --> WArrDep : "Signal arrival/departure" [UC-005]
+WAssign --> WHours : "Record hours" [UC-006]
+
+CDash --> CProject : "Create project" [UC-003]
+CDash --> CRequest : "Request workers" [UC-004]
+CDash --> CProjectDetail : "Project detail"
+CDash --> CMember : "Membership"
+CDash --> CRate : "Adjust rate"
+
+CProject --> CDash : [project created]
+CRequest --> CResult : [submit request]
+CResult --> CDash : [assigned | awaiting match]
+CProjectDetail --> CClose : "Close project" [UC-015]
+CProjectDetail --> CRequest : "Request more workers"
+
+RepConsole --> RepQueue : "Exception queue"
+RepConsole --> RepFallback : "Assist user" [UC-011]
+RepQueue --> RepCase : "Open case"
+RepCase --> RepQueue : [resolved | escalated]
+
+WDash --> Logout : "Sign out"
+CDash --> Logout : "Sign out"
+RepConsole --> Logout : "Sign out"
+Logout --> [*]
+
+WDash --> Timeout : [idle > session limit]
+CDash --> Timeout : [idle > session limit]
+RepConsole --> Timeout : [idle > session limit]
+Timeout --> Login : "Re-authenticate"
+Timeout --> [*]
+
+Error --> Landing : "Return"
+Error --> [*]
+
+note right of WAssign
+  Race resolution (NFR-008): if the worker is
+  taken between match and assignment, the
+  transition reverts to WMatches with a
+  "worker no longer available" notice — never
+  a dead-end.
+end note
+@enduml
+```
+
+### Navigation Topology — Completeness & Consistency Checks
+
+| Check | Result |
+|---|---|
+| Every screen reachable from Landing | Yes — all states trace to Landing via Login or registration |
+| No dead-end screens | Yes — every screen has an onward transition (back to dashboard, logout, or timeout) |
+| Terminal states explicit | Yes — Logout, Session Timeout, Error Terminal are all explicit `[*]` sinks |
+| Race-resolution path (NFR-008) | Reversion to WMatches, not a dead-end (see note) |
+| Channel equivalence (NFR-006) | Representative Console reuses the same controllers as self-service; no divergent screen set |
+| Role guards | Login branches on role (worker/contractor/representative); no cross-role screen access |
+
+### UI Patterns (absorbed from legacy UI Guidelines)
+
+Published here so the Designer (view-class detailing), Implementer (screen building), and Technical Writer (documentation) align on interaction conventions. These are the coordination contract that prevents visual entropy across the team.
+
+| Pattern | Convention | Rationale |
+|---|---|---|
+| Primary action placement | Primary action (Submit, Next, Confirm) is always bottom-right; Back is bottom-left | Consistency (Nielsen #4); Fitts's Law — primary target is the last thing the eye reaches |
+| Destructive actions | Termination, closure, and membership-lapse actions require an explicit confirm step with the consequence stated | Error prevention (Nielsen #5); CON-013 contracts-must-be-honored |
+| Race/error feedback | Match→assign race (NFR-008) surfaces as an inline notice "worker no longer available — searching again", never a modal dead-end | Visibility of system status (Nielsen #1); AC-005 |
+| Money rendering | Every monetary amount renders as amount + currency symbol, never a bare number; conversion shows the rate + moment applied | ADR-004; REQ-028 |
+| Jurisdiction data | Taxonomy, certification, and rate fields render from configuration (CON-018), never hard-coded labels | AC-001; NFR-003 |
+| Mobile-first | All screens target mobile rendering first; desktop is a superset | NFR-001, REQ-008 |
+| Latency ceiling | Every interactive transition (search/match/register/hours) completes within p95 ≤ 2s | NFR-009, REQ-013 |
+| Accessibility | If a stakeholder declares an accessibility standard, every screen honors it; none is declared this cycle, so no standard is imposed | Scope Guard — do not invent a standard |
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
@@ -850,3 +1089,22 @@ The `availability` table is the serialized race point. The ORM exposes a single 
 | TBL-016 exchange_rate | FR-022, ADR-004 | Specifies | CLS-007 |
 | TBL-017 regulatory_report | ACL-021, CON-014 | Specifies | COMP-003 |
 | TBL-018 jurisdiction_config | ACL-022, NFR-003, AC-001 | Specifies | I3 |
+| UIV-001 LandingView | UC-001, UC-002 | Derives | UIC-001 |
+| UIV-002 LoginView | REQ-001 | Derives | Keycloak OIDC |
+| UIV-003 WorkerRegistrationView | UC-001, FR-001 | Derives | UIC-002 |
+| UIV-004 WorkerDashboardView | UC-005, UC-006, UC-007, UC-008 | Derives | UIC-001 |
+| UIV-005 AvailableMatchesView | UC-004 | Derives | UIC-001 |
+| UIV-006 AssignmentDetailView | UC-005 | Derives | UIC-001 |
+| UIV-007 RecordHoursView | UC-006 | Derives | UIC-004 |
+| UIV-008 ContractorDashboardView | UC-003, UC-004, UC-008 | Derives | UIC-001 |
+| UIV-009 CreateProjectView | UC-003 | Derives | UIC-001 |
+| UIV-010 RequestWorkersView | UC-004 | Derives | UIC-003 |
+| UIV-011 RepresentativeConsoleView | UC-010, UC-011 | Derives | UIC-005 |
+| UIV-012 ExceptionQueueView | UC-010 | Derives | UIC-005 |
+| UIC-001 NavigationController | (all user-facing UCs) | Realizes | Navigation Topology |
+| UIC-002 WorkerRegistrationController | UC-001, CON-018 | Realizes | UC-001 |
+| UIC-003 RequestWorkersController | UC-004, NFR-008 | Realizes | UC-004 |
+| UIC-004 RecordHoursController | UC-006, FR-007 | Realizes | UC-006 |
+| UIC-005 RepresentativeConsoleController | UC-010, UC-011, NFR-006 | Realizes | UC-010, UC-011 |
+| Navigation Topology | NFR-002, NFR-001, REQ-008 | Derives | UC-001..UC-016 |
+| UI Patterns | NFR-006, NFR-009, ADR-004, CON-018 | Derives | (all UI views) |
