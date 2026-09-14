@@ -1,11 +1,9 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 2 |
+| Status | Draft — iteration 3 |
 | Milestone Target | End-of-Inception review |
-
 ## Evaluation Mission
 
 **Purpose.** Establish the initial test strategy for the TradeMe marketplace: what will be tested, how, with what resources, and what "acceptable" means — so that the end-of-Inception review can judge whether the test effort is scoped and resourced to de-risk the project's top risks.
