@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Phase | Inception |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Inception review |
 
 ## Functionality
@@ -20,10 +20,13 @@ package "Cross-Cutting Mechanisms (Supplementary Specification)" {
   component "Data Retention\nREQ-004" as Retention
   component "Data Residency\nREQ-005" as Residency
   component "Fraud Detection\nREQ-006" as Fraud
+  component "Money Value Object\nREQ-028" as Money
 }
 
 package "Use Cases (Use-Case Model)" {
   component "UC-004 Request Workers" as UC4
+  component "UC-006 Record Hours" as UC6
+  component "UC-009 Membership Fees" as UC9
   component "UC-012 Process Payments" as UC12
   component "UC-013 Regulatory Reports" as UC13
   component "UC-017 Detect Fraud" as UC17
@@ -31,8 +34,11 @@ package "Use Cases (Use-Case Model)" {
 
 UC4 ..> Auth
 UC4 ..> Authz
+UC6 ..> Money
+UC9 ..> Money
 UC12 ..> Audit
 UC12 ..> Retention
+UC12 ..> Money
 UC13 ..> Retention
 UC13 ..> Residency
 UC17 ..> Fraud
@@ -41,12 +47,14 @@ UC17 ..> Fraud
 
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
-| REQ-001 | Authentication for workers and contractors on the self-service channel | NFR-002 (self-service requires authentication) | Cross-cutting mechanism; included by UC-001, UC-002, UC-004, UC-006, UC-007, UC-008, UC-016. Authentication mechanism (identity provider vs greenfield) is deferred — out-of-cycle open question. |
+| REQ-001 | Authentication for workers and contractors on the self-service channel | NFR-002 (self-service requires authentication) | Cross-cutting mechanism; included by UC-001, UC-002, UC-004, UC-006, UC-007, UC-008, UC-016. Mechanism decided: Keycloak as the identity provider over OIDC, with the provider chosen at deployment time through configuration. |
 | REQ-002 | Authorization: workers and contractors access only their own records; representatives access exception cases | CON-003, CON-004 | Cross-cutting mechanism |
 | REQ-003 | Audit trail of all financial and assignment transactions (tamper-evident) | CON-014, AC-006 | Cross-cutting mechanism; included by UC-012, UC-014, UC-015 |
 | REQ-004 | Data retention honoring the longest applicable regulatory window | CON-015 | Cross-cutting mechanism |
 | REQ-005 | Personal-data residency enforcement per jurisdiction | CON-016 | Cross-cutting mechanism; deployment-topology driver (CON-017) |
 | REQ-006 | Membership-violation detection (contractor bypassing marketplace to hire directly) | CON-005, AC-007 | Cross-cutting mechanism; included by UC-008, UC-017 |
+| REQ-028 | Money value object: every monetary amount carries an exact amount and its currency; arithmetic only between same-currency Money; crossing currencies requires an explicit conversion recording the rate and the moment applied; rounding policy declared once and identical in domain, persistence, and API; no monetary amount ever exists as a bare number | CON-004, FR-022 (stakeholder decision) | Cross-cutting mechanism; included by UC-006, UC-009, UC-012. Two edges closed explicitly: (a) the database driver must not degrade an exact numeric column to floating-point on read; (b) JSON amounts crossing the API boundary must not pass through a floating-point representation. A bare floating-point number anywhere on a monetary path is a critical defect. |
+
 ## Usability
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
@@ -54,6 +62,7 @@ UC17 ..> Fraud
 | REQ-008 | Mobile accessibility — must-have | NFR-001 | Stakeholder decision: mobile access is a must-have requirement (not nice-to-have) |
 | REQ-009 | Channel equivalence: same matching, financial flow, compliance across self-service and phone | NFR-006 | |
 | REQ-010 | Low technical literacy is a design concern | deferred — out-of-cycle open question | Out-of-cycle open question; returns to stakeholder when cycle closes |
+
 ## Reliability
 
 | ID | Requirement | Source | Notes |
@@ -133,3 +142,4 @@ UC17 ..> Fraud
 | REQ-023 | FR-017 | Derives | UC-018 |
 | REQ-024 | STK-005 | Derives | UC-001 |
 | REQ-025 | FR-016 | Derives | UC-017 |
+| REQ-028 | CON-004, FR-022 | Derives | UC-006, UC-009, UC-012 |
