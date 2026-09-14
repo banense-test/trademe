@@ -265,9 +265,11 @@ The business lens re-reviewed the Use-Case Model's business sections and closed 
 | 5 | Re-review by all three lenses confirming resolution | Reviewer, BusinessReviewer, ManagementReviewer | After fixes |
 | 6 | Stakeholder re-consulted for sanction | Review Coordinator | After re-review |
 ## Disposition
-**No-Go (Conditional) — iteration 2 technical lens.**
+**No-Go (Conditional) — iteration 2, consolidated across lenses.**
 
-The technical lens (Reviewer) re-reviewed all 11 artifacts in iteration 2. Disposition from this lens:
+### Technical lens (Reviewer)
+
+The technical lens re-reviewed all 11 artifacts in iteration 2. Disposition from this lens:
 
 - **All 7 prior technical-lens findings are RESOLVED** (verified against corrected content).
 - **2 new Minor findings** recorded (Deployment Model#F1 stale Document Control status; Development Case#F2 UI Prototype justification citing an open question). Both are Approved-with-changes; neither blocks LCO on substance.
@@ -275,7 +277,17 @@ The technical lens (Reviewer) re-reviewed all 11 artifacts in iteration 2. Dispo
 
 The technical lens's verdict is **Approved with changes** (the 2 Minor findings are non-blocking on substance but must be fixed per the stakeholder's standing directive that ALL findings — including Minors — be resolved before Elaboration).
 
-**Overall LCO disposition remains No-Go** pending: (a) the BusinessReviewer lens closing its 6 Use-Case Model findings, (b) the ManagementReviewer lens closing its findings, (c) resolution of the 2 new Minor findings, and (d) stakeholder re-consultation for sanction. The technical lens has no open Critical or Major findings and does not itself block advancement.
+### Business lens (BusinessReviewer)
+
+The business lens re-reviewed the Use-Case Model's business sections in iteration 2. Disposition from this lens:
+
+- **All 6 prior business-lens findings are RESOLVED** (5 Major + 1 Minor, verified against corrected content).
+- **2 new Minor findings** recorded (Use-Case Model#F7, Use-Case Model#F8 — diagram/survey association mismatches). Both are Approved-with-changes; neither blocks LCO on substance.
+- **0 Critical, 0 Major** from the business lens this iteration.
+
+The business lens's verdict is **Approved with changes**. The business model is now a sound, traceable, and unambiguous foundation for system use-case derivation: the Revamp scenario is stated, all 12 BUCs are actor-initiated with automation dispositions, the Business Object Model (entities + control classes) is present, and Business Rules BR-001..BR-016 are formalized with testable conditions. The derivation bridge (BUC → system UC, worker → automation disposition, entity → analysis-class disposition) is complete. The 2 remaining Minor findings are diagram/survey consistency gaps that must be fixed per the stakeholder's standing directive but do not impair derivation readiness.
+
+**Overall LCO disposition remains No-Go** pending: (a) the ManagementReviewer lens closing its findings, (b) resolution of the 4 new Minor findings (Deployment Model#F1, Development Case#F2, Use-Case Model#F7, Use-Case Model#F8), and (c) stakeholder re-consultation for sanction. Neither the technical lens nor the business lens has any open Critical or Major finding, and neither blocks advancement on substance.
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
