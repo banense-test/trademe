@@ -317,10 +317,9 @@ end note
 ```
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Risk List#F2 (R002 OPEN/STABLE) | R002 | DependsOn | Stakeholder disposition |
+| Risk List#F2 (R002 OPEN/STABLE) | R002 | DependsOn | Stakeholder disposition (accepted w/ contingency) |
 | Iteration Plan#F3 (PoC unexecuted) | R001, R003, CON-001, CON-002 | DependsOn | Architectural Proof-of-Concept |
 | Design Model#F1 (O/R ID collision) | ACL-013..ACL-023 | DependsOn | Data Model |
 | Design Model#F2 (HoursEntry float64) | ADR-004 | DependsOn | Data Model |
@@ -328,4 +327,9 @@ end note
 | UCM#F10 (Rep absent from BOM) | STK-003, BG-002 | DependsOn | Use-Case Model |
 | SAD#F2 (UC-014 no sequence) | UC-014 | DependsOn | Design Model SEQ-004 |
 | Test Case#F1 (stale CI run) | ci-run-34886064517 | DependsOn | Test Case |
-| LCA verdict (No-Go) | Risk List#F2, Iteration Plan#F3, Design Model#F1 | DependsOn | Elaboration I2 |
+| Architectural PoC#F1 (analysis-only unsupported) | R001, R003, R004, R005, CON-001, CON-002 | DependsOn | Risk List |
+| Data Model#F1 (ACL ID collision) | ACL-014, ACL-023 | DependsOn | Design Model |
+| Test Evaluation Summary#F1 (stale iteration) | PR #2 | DependsOn | Test Evaluation Summary |
+| PR #2 (Money Mechanism) | R001, R003, CON-001, CON-002, ADR-004 | DependsOn | Design Model, Test Case |
+| LCA verdict (No-Go) | Design Model#F1, PoC#F1, PR #2 | DependsOn | Elaboration I3 |
+
