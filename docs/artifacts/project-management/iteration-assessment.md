@@ -2,162 +2,136 @@
 
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft — iteration 3 |
-| Milestone Target | End-of-Inception review (LCO) |
-| Milestone Verdict | LCO: no further iteration required — recorded, not declared by PM (Review Coordinator's verdict) |
+| Phase | Elaboration |
+| Status | Draft — iteration 1 |
+| Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
+| Milestone Verdict (Review Coordinator) | LCA: iteration REQUIRED (scope incomplete) |
 
 ## Iteration Objectives Reached
 
-The iteration carried four planned objectives. Disposition against the Review Record (consolidated LCO re-review, three lenses) and the iteration's facts:
+The iteration planned five objectives. Disposition against the Review Record and Test Evaluation Summary:
 
-| # | Objective | Disposition | Evidence |
-|---|---|---|---|
-| 1 | Define Project Scope | **MET** | Review Coordinator verdict "LCO: no further iteration required"; scope agreement confirmed; 0 Critical / 0 Major open |
-| 2 | Identify Critical Risks | **MET** | Risk List classifies R001–R006 with magnitude, strategy, mitigation, contingency |
-| 3 | Tailor Development Process | **MET** | Development Case present and valid; Development Case#F2 (UI Prototype trigger) resolved |
-| 4 | Establish Feasibility | **MET** | Software Architecture Document (ADR-001 modular monolith, Node.js/TS + PostgreSQL + Keycloak OIDC) |
+| Objective | Disposition | Evidence |
+|---|---|---|
+| 1. Detail all remaining Must UCs (17) | **MET** | Use-Case Model carries the full Must-UC surface; Review Record confirms "17 Must UCs detailed" (Scope GREEN) |
+| 2. Elaborate Data Model to entity level | **MET** | Data Model produced (10 entities + 3 control classes, JSONB); Design Model#F1/F2 are ID/type defects, not missing entities |
+| 3. Run Architectural PoC (R001/R003) | **NOT MET** | Iteration Plan#F3 (Major): PoC planned but unexecuted — CON-001/CON-002 unverified |
+| 4. Reappraise Risk List (R001–R006) | **PARTIAL** | Risk List#F2 (Major): R002 (HIGH, exposure 16) remains OPEN/STABLE with no retirement trend |
+| 5. Fix Development Case#F3 (metadata) | **MET** | Prior Inception findings all Resolved (Review Record "Resolutions and Actions") |
 
-**Overall:** All four planned objectives are MET. The Review Coordinator's verdict is "LCO: no further iteration required", and the stakeholder **sanctioned advancement past LCO** ("Let's move to the drafting stage"). One Minor finding (Development Case#F3 — stale Document Control metadata) remains open, explicitly deferred to Elaboration by the stakeholder's own directive. The iteration closes successfully.
-
-```plantuml
-@startuml
-title Inception I3 — Objective Disposition & LCO Sanction
-
-state "Define Project Scope" as O1
-state "Identify Critical Risks" as O2
-state "Tailor Development Process" as O3
-state "Establish Feasibility" as O4
-state "LCO Sanction" as LCO
-
-O1 --> LCO : MET
-O2 --> LCO : MET (R001-R006 classified)
-O3 --> LCO : MET (Development Case valid)
-O4 --> LCO : MET (ADR-001, Node.js/TS + PostgreSQL)
-
-LCO : GRANTED — 1 Minor deferred to Elaboration\n(stakeholder: "move to the drafting stage")
-
-note bottom of LCO
-  All 4 objectives MET; RC verdict
-  "LCO: no further iteration required".
-  Stakeholder sanction GRANTED.
-  1 Minor (Development Case#F3,
-  stale metadata) deferred to
-  Elaboration by stakeholder directive.
-end note
-@enduml
-```
+**Net:** 3 of 5 objectives met, 1 partial, 1 not met. The two unmet/partial objectives are the two Major findings that block LCA: the unexecuted PoC and the unresolved R002.
 
 ## Adherence to Plan
 
-**Budget-box variance (iteration 3):**
+**Budget-box variance — the box did not hold.** The iteration was boxed at **2,200k tokens**, sized from the measured Inception phase actual (2,186,548 tokens). Actual spend was **7,354,006 tokens** — **3.3× the box**. Agent time was **10:17:11** (vs Inception's 1.0 h); stakeholder queue was **0:43:35** (vs Inception's 0s).
 
-| Measure | Planned (I3 box) | Actual | Variance |
-|---|---|---|---|
-| Token spend (agent work) | 1,800,000 | 2,186,548 | +386,548 (+21.5%) |
-| Agent elapsed time | — | 1:00:36 | — |
-| Human queue time (waiting) | — | 0:00:00 | — |
+**Root cause of the variance:** an unplanned work item entered the iteration — the **Money value-object mechanism** (ADR-004) was implemented and committed directly to `main`, bypassing the feature-branch → PR → review → merge flow. No work item in the Fine Plan covered it; it surfaced as four code-review findings (1 Critical, 2 Major, 1 Minor) in the Test Evaluation Summary, and it is the blocking condition for the monetary-integrity test suite (TI-007). The box was sized for the planned scope; the scope grew by an unplanned implementation, and the PoC that *was* planned (350k) was left unexecuted.
 
-The iteration-3 box (1,800k, sized from the measured iteration-2 actual of 3,014,457, reduced for the smaller remediation scope of 5 Minor findings) overshot by 21.5%. Root cause: the box was reduced **proportionally to the finding count** (5 findings vs iteration 2's 14), but the re-review pass re-reads the full 12-artifact surface regardless of finding count — the re-read cost is not proportional to the finding count. The box is now anchored to three measured data points (2,871,727 / 3,014,457 / 2,186,548); the next forecast uses the 2,186,548-token actual and must NOT assume re-read cost scales with finding count.
-
-**Human gates:** 11 user interactions, 0:00:00 queue time (waiting, not work). This excludes the end-of-iteration approval gate, which is not measured. Queue time stayed well under the 14-day ceiling (R006 did not trigger).
-
-**Parallelism:** 11 agent invocations across the remediation roles — as planned. No parallelism escalation was attempted; the variance is spend-per-invocation (re-read of the accumulated artifact surface), not invocation count.
+**Correction forced in I2:** the I2 box must be re-sized from the measured I4 actual (7,354,006 tokens), not from the Inception phase actual. The I4 box was an `[ASSUMPTION — requires validation]`; it is now validated as too small by a factor of ~3.3, and the measured figure replaces it.
 
 ```plantuml
 @startuml
-title Inception I3 — Critical Chain vs Actual (variance)
+title Elaboration I1 — Critical Chain vs Actual (variance)
 
 start
-:Resolve 5 Minor findings\n(Development Case#F2, Use-Case Model#F7/F8,\nIteration Plan#F2, Deployment Model#F1);
-:Re-review (3 lenses)\nReviewer, BusinessReviewer, ManagementReviewer;
-:Stakeholder re-consultation\nLCO sanction gate;
-:LCO verdict — GRANTED\n(1 Minor deferred to Elaboration);
+:Fix Development Case#F3 — 50k;
+:Detail 17 Must UCs — 700k;
+:Realize UC-004/012/013/014 — 600k;
+:Elaborate Data Model — 300k;
+:Architectural PoC (R001/R003) — 350k;
+:Risk List + Iteration Plan — 200k;
+:LCA review gate\n(not measured);
 stop
 
 note right
-  Budget box (planned): 1,800k tokens
-  Actual token spend: 2,186,548
-  Variance: +386,548 (+21.5%)
-  Root cause: re-review re-reads the
-  full 12-artifact surface regardless
-  of finding count; box was reduced
-  proportionally to finding count (5),
-  but re-read cost is not proportional.
+  Budget box: 2,200k tokens
+  Actual spend: 7,354,006 tokens (3.3x)
+  Agent time: 10:17:11 (vs Inception 1.0h)
+  Stakeholder queue: 0:43:35 (vs Inception 0s)
+  Variance root cause: unplanned Money
+  mechanism implementation entered the
+  iteration (no work item covered it) +
+  PoC left unexecuted (Iteration Plan#F3).
 end note
 @enduml
 ```
 
 ## Use Cases and Scenarios Implemented
 
-No new use cases were detailed this iteration — correct for a remediation iteration. The four architecturally significant use cases detailed in iteration 1 (UC-004, UC-012, UC-013, UC-014) remain the Inception detail set. Remediation work this iteration corrected the Use-Case Model's business-modeling content (BUC-004/BUC-011 associations) and the Deployment Model's Document Control metadata.
+The four architecturally significant UCs (UC-004, UC-012, UC-013, UC-014) were realized end-to-end in the Design Model; the remaining 17 Must UCs were detailed in the Use-Case Model. Nice-to-have UCs (FR-016, FR-017, FR-024, FR-025, FR-026) remain deferred per the stakeholder's directive.
 
-No use case was implemented to executable code this iteration — correct for Inception, where the deliverable is the architectural baseline, not a running system.
+**No test execution occurred this iteration** — this was a test-design and planning iteration (per the Test Evaluation Summary). "Implemented" here means *designed/realized at the model level*, not *executed in code*. Full verification is Construction/Transition work.
 
 ## Results Relative to Evaluation Criteria
 
-The Iteration Plan carried two evaluation-criterion sets. Disposition of each:
-
-**(a) Declared acceptance criteria (AC-001..AC-008):**
-
-| AC | Disposition | Evidence |
+| Criterion | Result | Evidence |
 |---|---|---|
-| AC-001 | Addressed (design-level) | UC-013 + CON-007/NFR-003 configuration-driven compliance |
-| AC-002 | Addressed (design-level) | CON-017 multi/single-tenant; Deployment Model |
-| AC-003 | Addressed (design-level) | UC-004 → UC-012 end-to-end flow; NFR-002 self-service |
-| AC-004 | Addressed (design-level) | UC-012/UC-013 jurisdiction-specific tax/certification/reporting |
-| AC-005 | Addressed (design-level) | UC-004 race check (NFR-008) |
-| AC-006 | Addressed (design-level) | CON-014/CON-015 retention + Test Plan |
-| AC-007 | Addressed (design-level) | CON-005 + fraud data retention (NFR-004) |
-| AC-008 | Addressed (design-level) | NFR-005 configurable matching policy |
+| Detail all 17 remaining Must UCs | **Met** | Use-Case Model; Review Record Scope GREEN |
+| Realize UC-004/012/013/014 end-to-end | **Met** | Design Model SEQ-001..004 |
+| Data Model to entity level (10 + 3, JSONB) | **Met** | Data Model |
+| Architectural PoC validates CON-001/CON-002 | **Not met** | Iteration Plan#F3 (Major) — PoC unexecuted |
+| Development Case#F3 fixed | **Met** | Review Record — prior findings all Resolved |
+| Risk List reappraised (R001/R003/R004/R005) | **Not met** | Risk List#F2 (Major) — R002 OPEN/STABLE |
 
-All eight ACs are addressed at design level; none deferred. Full verification is Elaboration/Construction/Transition work.
+**LCA exit criteria (from Review Record):**
 
-**(b) This iteration's own exit criteria (LCO readiness):**
-
-| Criterion | Disposition | Evidence |
-|---|---|---|
-| All 5 open Minor findings resolved | **MET (4 of 5)** | Development Case#F2, Use-Case Model#F7/F8, Iteration Plan#F2, Deployment Model#F1 all RESOLVED; Development Case#F3 (new, metadata-only) deferred to Elaboration by stakeholder directive |
-| Re-review confirms resolution (0 Critical / 0 Major / 0 Minor) | **MET (0 Critical / 0 Major / 1 Minor)** | Consolidated tally: 0 Critical, 0 Major, 1 Minor (deferred) |
-| Stakeholder sanctions advancement past LCO | **MET** | Sanction GRANTED — "Let's move to the drafting stage" |
-| Vision, UC Model, Supp Spec, Glossary, DC present and consistent | **MET** | All 5 artifacts present; RC verdict "no further iteration required" |
-| Risk List classifies R001–R006 | **MET** | Risk List register complete |
-
-The iteration's exit criteria are met. The single remaining Minor finding (Development Case#F3) is a metadata-only defect (stale Document Control status) with no downstream blocking impact, and its deferral to Elaboration is explicitly authorized by the stakeholder.
+| Criterion | Status |
+|---|---|
+| Architecture stable & baselined | MET |
+| Critical risks resolved | NOT MET (R002 OPEN/STABLE; PoC unexecuted) |
+| Construction plan credible | NOT MET (coarse roadmap only) |
+| Stakeholder alignment | REFUSED (sanction "No"; close all findings incl. Minors) |
 
 ## Test Results
 
-**No test execution occurred this iteration** — correct for Inception. No Test Evaluation Summary exists (the artifact is not present in the repository), and no test cases were executed against a running system (none exists yet). This is not a gap; it is the expected state of an Inception iteration whose deliverable is the architectural baseline. The Test Plan (FIRED) establishes the risk-weighted test strategy (TI-001..TI-008) that Elaboration will execute against.
+No test execution occurred this iteration (design/planning iteration). The Test Evaluation Summary reports a **PARTIALLY MET** mission verdict: the Master Test Plan was produced with measurable LCA acceptance criteria (LCA-T1..T7), but the monetary-integrity test suite (TI-007) is **blocked** by four open code-review findings on the Money mechanism (1 Critical, 2 Major, 1 Minor). LCA-T3 and LCA-T7 cannot be satisfied until the Money mechanism is re-baselined.
+
+| Metric | Value | Goal (decision enabled) |
+|---|---|---|
+| Artifacts produced | 17 | Monitor — is the artifact surface complete for LCA? |
+| Agent invocations | 23 | Monitor — process-leanness signal (R002) |
+| User interactions | 23 | Monitor — stakeholder engagement cadence |
+| Token spend | 7,354,006 | Evaluate — budget-box adherence (3.3× over box) |
+| Avg quality | 10.0 | Monitor — reviewer-scored artifact quality |
+| Agent time | 10:17:11 | Evaluate — effort vs Inception (1.0 h) |
+| Stakeholder queue | 0:43:35 | Monitor — gate latency (R006 ceiling) |
 
 ## External Changes
 
-No external changes occurred this iteration. The declared scope (26 FRs, 9 NFRs, 22 CONs, 8 ACs, 2 BGs, 3 declared risks) is unchanged. No change requests were raised or approved.
+The stakeholder answered three questions this iteration, all recorded in the Work Order:
 
-Stakeholder answers received this iteration (all incorporated, none re-opened):
-- LCO re-review sanction: **GRANTED** — "Yes" (Management Reviewer question, iteration 3). The verdict was "Conditional (all substantive criteria MET; 1 Minor finding remains open, blocking per your standing directive)".
-- Follow-up directive: "Let's move to the drafting stage; that finding needs to be corrected during Elaboration." — the single remaining Minor finding (Development Case#F3) is explicitly deferred to Elaboration by the stakeholder's own words.
+1. **NFR-009 latency target** (Requirements Specifier): "fast enough so the representative doesn't have to wait during the call; you decide on the figure" — the Test Plan set p95 ≤ 2s for interactive channels.
+2. **LCA sanction** (Management Reviewer): **"No"** — sanction refused; directive to close all findings including Minors.
+3. **LCA consolidation** (Review Coordinator): "nothing else to add for this new iteration" — no additional requirement, correction, or priority.
+
+No change requests were approved this iteration. No scope expansion was authorized; the Money-mechanism implementation that entered the iteration was **not** an authorized scope change — it is recorded as variance (see Adherence to Plan).
 
 ## Rework Required
 
-The Review Record records **1 open Minor finding** (0 Critical, 0 Major), deferred to Elaboration by the stakeholder's explicit directive:
+The Review Record lists **8 open findings** (3 Major, 5 Minor), all blocking for LCA per the stakeholder's directive. These are the rework items for Elaboration I2:
 
-| # | Finding | Owner | Status this pass |
+| Finding | Severity | Owner | Rework |
 |---|---|---|---|
-| 1 | Development Case#F3 — Document Control status reads "Draft — iteration 2" while the rest of the iteration-3 baseline reads "Draft — iteration 3" | Process Engineer | **DEFERRED to Elaboration** (stakeholder-authorized) |
+| Risk List#F2 | Major | Project Manager | Escalate R002 to stakeholder for explicit disposition (accept with named contingency, or concrete mitigation) |
+| Iteration Plan#F3 | Major | Software Architect | Execute PoC against baselined modular-monolith skeleton; record CON-001/CON-002 results |
+| Design Model#F1 | Major | Designer | Relabel O/R Mapping to entity analysis-class IDs (ACL-013..ACL-023) |
+| UCM#F9 | Minor | System Analyst | Anchor UC-016 in BUC-004 derivation bridge |
+| UCM#F10 | Minor | System Analyst | Model Internal Representative (STK-003) in BOM |
+| SAD#F2 | Minor | Software Architect | Add UC-014 sequence diagram or deferral note |
+| Design Model#F2 | Minor | Designer | Change HoursEntry.hoursWorked to exact type (ADR-004) |
+| Test Case#F1 | Minor | Test Designer | Update cited CI run to 34886064517 |
 
-**Adjustments forced on iteration N+1 (Elaboration I4):**
-- The next iteration is the **first Elaboration iteration** — the LCO gate is passed; the milestone sequence advances to LCA (end of I6).
-- The first Elaboration action item is to fix Development Case#F3 (bump Document Control to "Draft — iteration 3") — a metadata-only correction, stakeholder-authorized for deferral.
-- The budget box for Elaboration I4 is sized from the **measured** 2,186,548-token iteration-3 actual, and must NOT assume re-read cost scales with finding count (the re-review re-reads the full 12-artifact surface regardless of finding count — this is the root cause of the +21.5% variance).
+**Additional rework surfaced by the Test Evaluation Summary** (Money mechanism, blocking TI-007): 1 Critical (committed to main, no PR/review gate), 2 Major (subtract/convert missing; white-box branches untested), 1 Minor (CONTRIBUTING.md absent).
+
+**Plus:** produce a credible fine-grained Construction plan grounded in measured Elaboration actuals (Review Record open action #7).
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Iteration Assessment (I3) | Iteration Plan (I3), Review Record (I3) | DependsOn | Iteration Plan (I4 Elaboration) |
-| Objective 1 (scope) | Vision, Use-Case Model, Supplementary Specification, Glossary | DependsOn | LCO milestone |
-| Objective 2 (risks) | R001..R006 | DependsOn | Risk List |
-| Objective 3 (process) | Development Case | DependsOn | LCO milestone |
-| Objective 4 (feasibility) | Software Architecture Document (ADR-001) | DependsOn | LCO milestone |
-| Budget variance (I3) | Iteration Plan (I3) budget box | DependsOn | Iteration Plan (I4) re-sized box |
-| Rework (1 finding) | Review Record (I3) | DependsOn | Elaboration I4 (Development Case#F3 fix) |
+| Iteration Assessment (Elaboration I1) | Iteration Plan (I4), Review Record, Test Evaluation Summary | DependsOn | Iteration Plan (I5) |
+| Risk List#F2 (R002 OPEN/STABLE) | R002 | DependsOn | Stakeholder disposition (I2) |
+| Iteration Plan#F3 (PoC unexecuted) | R001, R003, CON-001, CON-002 | DependsOn | Architectural Proof-of-Concept (I2) |
+| Money mechanism#F1..F4 | ADR-004, CON-004, FR-022 | DependsOn | TI-007 (monetary-integrity test suite) |
+| Budget-box variance (3.3×) | Iteration Plan (I4) box, measured I4 actual | DependsOn | Iteration Plan (I5) box re-size |
+| LCA verdict (iteration REQUIRED) | Risk List#F2, Iteration Plan#F3, Design Model#F1 | DependsOn | Elaboration I2 |
