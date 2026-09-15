@@ -2,7 +2,7 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Elaboration review |
 ## Functionality
 Security, licensing, and cross-cutting functional mechanisms. These are NOT use cases — they are constraints included by each dependent use case via `<<include>>`.
