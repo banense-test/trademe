@@ -222,20 +222,30 @@ end note
 **PR disposition:** PR #2 — **CHANGES REQUESTED** (review 5212508092). Blocking: F1 (select returns Candidate), F2 (duplicated arithmetic), Issue #7 (multiplyExact scale defect), plus F3/F4 Minor. The PR is the in-scope evolutionary architectural mechanism; it stays open and converges next iteration.
 
 ## Resolutions and Actions
-**Prior findings reconciliation:** All Inception findings across all lenses are `Resolved` (Development Case#F1-F3, Vision#F1-F2, Use-Case Model#F1-F8, Risk List#F1, Iteration Plan#F1-F2, SAD#F1, Test Plan#F1, Deployment Model#F1). Zero prior findings remain open.
+**Prior findings reconciliation (this lens, Elaboration I2):** 3 of 4 prior technical findings resolved:
+- **Design Model#F2 (Minor)** — HoursEntry.hoursWorked float64 → `string` (exact decimal), consistent with ADR-004 and Data Model NUMERIC(6,2). **RESOLVED.**
+- **SAD#F2 (Minor)** — UC-014 Terminate Worker Assignment now has a sequence diagram in the Logical View. **RESOLVED.**
+- **Test Case#F1 (Minor)** — stale CI run 34856326288 → current 34886064517. **RESOLVED.**
+- **Design Model#F1 (Major)** — O/R mapping ID collision **PERSISTS** in a new form (see Findings). Re-recorded under the same findingKey.
+
+All Inception findings across all lenses remain `Resolved` (Development Case#F1-F3, Vision#F1-F2, Use-Case Model#F1-F8, Risk List#F1, Iteration Plan#F1-F2, SAD#F1, Test Plan#F1, Deployment Model#F1).
 
 **Stakeholder disposition (this iteration):** Sanction **REFUSED** ("No"). Directive recorded verbatim: *"you do need to close all findings even if they are minors."* This re-affirms the standing quality bar: all findings — including Minor — are blocking for LCA advancement.
 
 **Stakeholder note (LCA consolidation, this iteration):** On the consolidation question (3 Major + 5 Minor open, prior sanction refused), the stakeholder answered: *"nothing else to add for this new iteration."* No additional requirement, correction, or priority was added; the team proceeds to close the 8 open findings as already scoped.
 
-**Open actions for Elaboration I2 (next iteration):**
-1. Execute the Architectural PoC (R001/R003) and record empirical results for CON-001/CON-002 (Iteration Plan#F3).
-2. Escalate R002 to the stakeholder for explicit disposition (Risk List#F2).
-3. Fix Design Model O/R mapping ID collision (Design Model#F1) and HoursEntry float64 (Design Model#F2).
-4. Anchor UC-016 in the derivation bridge (UCM#F9) and model the Internal Representative in the BOM (UCM#F10).
-5. Add UC-014 sequence diagram or deferral note to SAD (SAD#F2).
-6. Update Test Case CI run ID (Test Case#F1).
-7. Produce a credible fine-grained Construction plan grounded in measured Elaboration actuals.
+**Stakeholder decision (R002, this iteration):** The stakeholder **accepted R002** (leadership tension, HIGH, exposure 16) with the named contingency: if leadership tension blocks a milestone, surface the evidence trail and re-scope to the minimum viable increment leadership will accept. This retires the Risk List#F2 escalation (the disposition is now explicit).
+
+**Open actions for Elaboration I3 (next iteration):**
+1. **Design Model#F1 (Major, persists):** Assign unique ACL IDs (ACL-024..ACL-028) to Membership, Trade, Termination, RateAdjustment, ExchangeRate; add them to the Domain Model entity package; reference them in the O/R mapping. Update Data Model traceability to match (Data Model#F1 Minor).
+2. **Architectural PoC#F1 (Major, new):** Either execute the PoC empirically (availability-race mechanism + config-driven jurisdiction scenario against real PostgreSQL) or downgrade the disposition to 'mitigating, verification deferred to Construction' and mark R001/R003/R004/R005 OPEN in the Risk List.
+3. **PR #2 (Money Mechanism):** Resolve F1 (select returns Candidate), F2 (duplicated arithmetic), Issue #7 (multiplyExact scale defect), F3/F4 (Minor), then re-submit for review.
+4. **Test Evaluation Summary#F1 (Minor, new):** Update to iteration 2 (I5) — reflect PR #2 under review, note the I1 direct-to-main Critical is remediated.
+5. **Iteration Plan#F3 (Major, prior):** The PoC is now produced but its 'analysis-only' disposition is contested (PoC#F1); the Iteration Plan's claim that CON-001/CON-002 are verified must be reconciled with the PoC's actual (non-empirical) evidence.
+6. **Risk List#F2 (Major, prior):** R002 disposition now explicit (stakeholder accepted with contingency) — update the Risk List to record the acceptance.
+7. **UCM#F9/F10 (Minor, prior):** Anchor UC-016 in the derivation bridge; model the Internal Representative in the BOM.
+8. Produce a credible fine-grained Construction plan grounded in measured Elaboration actuals.
+
 ## Disposition
 **Verdict: NO-GO** — LCA not achieved. The architecture is baselined and stable (the core LCA technical criterion is met), but the milestone cannot close because (a) critical risks are not resolved (R002 OPEN/STABLE; PoC unexecuted), (b) the Construction plan is not yet credible, and (c) the stakeholder refused sanction and directed that all findings — including Minors — be closed first.
 
