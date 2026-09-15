@@ -2,9 +2,8 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 (refined against baselined SAD) |
+| Status | Draft — iteration 2 (packaging, environment configuration, and installation procedures refined) |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
-
 ## Deployment Topology
 
 **Deployment mode: Custom-built** — a bespoke system deployed to the company's own cloud infrastructure, not shrink-wrapped or downloadable. This is the only mode consistent with the declared scope: the system is a financial intermediary (CON-004) operating jurisdiction-specific compliance (CON-007), deployed to a small number of long-lived country-level environments (CON-017).
