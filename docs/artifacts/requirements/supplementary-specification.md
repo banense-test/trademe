@@ -71,7 +71,6 @@ UC17 ..> Fraud
 | REQ-013 | User-facing channel responsiveness (self-service and phone) | NFR-009 | **Quantified threshold (stakeholder decision):** interactive-channel operations (search, match, register, hours entry) MUST respond at p95 ≤ 2 seconds. Basis: the stakeholder's directive that the system be "fast enough so the representative doesn't have to wait during the call" — a phone-call interaction stalls perceptibly beyond ~2 seconds, so 2 seconds is the ceiling that keeps the fallback channel (UC-011) conversational. The same threshold applies to the self-service channel for channel equivalence (NFR-006). |
 | REQ-014 | Throughput is not a binding constraint | CON-021 | Modest transaction volume; bounded by worker supply and contractor demand. No throughput target is set; the design must not over-engineer for scale. |
 ## Supportability
-
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
 | REQ-015 | Multi-jurisdiction regulatory configuration (no per-jurisdiction code branching) | NFR-003, CON-007, AC-001 | |
@@ -79,10 +78,9 @@ UC17 ..> Fraud
 | REQ-017 | Certification frameworks configurable (authorities, names, cadences, verification) | CON-018 | |
 | REQ-018 | Matching policy configurable and explainable | NFR-005, AC-008 | |
 | REQ-019 | Pricing model evolvable | CON-019 | |
-| REQ-020 | Integration extensibility without restructuring | NFR-007 | |
+| REQ-020 | Integration extensibility without restructuring | NFR-007 | **Testable criterion:** a new integration (a new contractor AP system, a new credential validator) MUST be addable by introducing a new adapter and configuration, without modifying the core matching, financial, or compliance modules. |
 | REQ-021 | Operable by a small team, maintainable over a long horizon | CON-022 | |
-| REQ-022 | Data retention for future analytics (fraud detection, demand projection) | NFR-004 | |
-
+| REQ-022 | Data retention for future analytics (fraud detection, demand projection) | NFR-004 | **Testable criterion:** operational data (assignments, hours, payments, membership events) MUST be retained in a queryable form for the longest applicable regulatory retention window (CON-015), supporting future fraud-detection (FR-016) and demand-projection (FR-024) analytics without re-ingestion. |
 ## Design Constraints
 
 | ID | Constraint | Source |
