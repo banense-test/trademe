@@ -2,9 +2,8 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 (baselined architecture) |
+| Status | Draft — iteration 2 (UC-014 sequence diagram added; PoC dispositions recorded) |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
-
 ## Architectural Representation
 
 This document presents the **baselined architecture** for the TradeMe marketplace front door. Per RUP Elaboration, this is the complete 4+1 model — every view elaborated, every subsystem interface specified, every design mechanism derived from its analysis mechanism. The Inception candidate sketch is superseded by this baseline.
