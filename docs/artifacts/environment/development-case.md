@@ -2,7 +2,7 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
 
 ## Tailoring Overview
@@ -14,9 +14,11 @@ This Development Case is an **override delta** over the IARI DC baseline (25-rol
 - **R002** — dev/leadership tension. The process must be transparent and evidence-based (traceability, review records) so decisions are auditable.
 - **R003** — multi-jurisdiction regulatory complexity. Requirements and Test disciplines carry the highest risk weight; configuration-driven (CON-007, NFR-003) rather than code-branching.
 
-**Elaboration refinement (this iteration):** Inception closed with stakeholder sanction GRANTED and one Minor finding deferred (Development Case#F3 — stale Document Control metadata, now corrected). The architecture is baselined (SAD iteration 1). Elaboration's process focus shifts from *scope agreement* to *architecture stabilization*: the Architectural Proof-of-Concept trigger is now re-evaluated against R001/R003 (see Optional Artifact Triggers), and the Environment discipline's per-iteration loop now gates on the Lifecycle Architecture (LCA) exit criteria rather than LCO.
+**Elaboration refinement (iteration 2):** Inception closed with stakeholder sanction GRANTED. Elaboration iteration 1 closed with the LCA sanction **REFUSED** and a standing directive recorded verbatim: *"you do need to close all findings even if they are minors."* This re-affirms the quality bar for this project: **all findings — including Minor — are blocking for LCA advancement.** The process consequence is recorded in the LCA exit criteria below (no finding may remain open at the milestone, regardless of severity).
 
-**Tool assessment (updated):** `CONTRIBUTING.md` is still absent from the repository (verified this iteration). Lint config and CI workflows remain unproduced. These are owned by their discipline roles (Software Architect, Configuration Manager) and are **due during Elaboration** — the SAD's Implementation View explicitly commits the Software Architect to producing `CONTRIBUTING.md` and lint configuration this phase. The Development Case references them; it does not author them.
+The architecture is baselined (SAD iteration 1). Elaboration's process focus is *architecture stabilization*: the Architectural Proof-of-Concept trigger is FIRED against R001/R003 (see Optional Artifact Triggers), and the Environment discipline's per-iteration loop gates on the Lifecycle Architecture (LCA) exit criteria rather than LCO.
+
+**Tool assessment (updated, iteration 2):** `CONTRIBUTING.md` is still absent from the repository (verified this iteration). Lint config and CI workflows remain unproduced. These are owned by their discipline roles (Software Architect, Configuration Manager) and are **due during Elaboration** — the SAD's Implementation View explicitly commits the Software Architect to producing `CONTRIBUTING.md` and lint configuration this phase. The Development Case references them; it does not author them. Their absence is a standing LCA exit-criteria blocker (see Guidelines and Procedures).
 
 ## Disciplines and Intensity
 
@@ -36,7 +38,7 @@ All 16 CORE artifacts are produced per baseline. No CORE artifact is omitted.
 - `.github/workflows/` — CI/CD pipeline configuration (Configuration Manager). **Gap: still absent — due Elaboration.**
 - Lint configuration — per-language (Software Architect). **Gap: still absent — due Elaboration.**
 
-**Version policy (formalized this iteration):** the stakeholder declared the application runtime as **Node.js on the current LTS line, with TypeScript**. This is recorded as the authoritative framework pin (ecosystem `framework`, LTS-only floor). The Software Architect resolves the concrete LTS version against the registry; the pin governs over any registry "latest". No package-level pins were declared by the stakeholder, so none are recorded.
+**Version policy (formalized):** the stakeholder declared the application runtime as **Node.js on the current LTS line, with TypeScript**, and **Keycloak as the identity provider over OIDC** (provider chosen at deployment time through configuration). Both are recorded as authoritative framework pins (ecosystem `framework`). The Software Architect resolves the concrete LTS version against the registry; the pins govern over any registry "latest". No package-level pins were declared by the stakeholder, so none are recorded.
 
 ## Optional Artifact Triggers
 | Optional Artifact | Trigger Condition | Verdict |
@@ -61,9 +63,9 @@ All 25 baseline roles are active. Primary ownership per artifact is per the serv
 
 **Process support:** The Process Engineer serves as the process help desk across all iterations. Process questions, tool failures, and template ambiguities are resolved within one iteration cycle; blocking issues escalate immediately.
 
-**Elaboration entry/exit criteria (this iteration's refinement):**
+**Elaboration entry/exit criteria (iteration 2 refinement):**
 - **Entry:** LCO sanction granted (Inception iteration 3); architecture baselined (SAD iteration 1); all CORE artifacts present.
-- **Exit (LCA):** every active discipline has a tailoring section in this Development Case; the tool environment passes verification (CONTRIBUTING.md, lint, CI produced and working); the Architectural Proof-of-Concept empirically validates the cloud/external-integration assumptions (CON-001, CON-002) against R001/R003; the architecture is baselined and stable enough to freeze for Construction.
+- **Exit (LCA):** every active discipline has a tailoring section in this Development Case; the tool environment passes verification (CONTRIBUTING.md, lint, CI produced and working); the Architectural Proof-of-Concept empirically validates the cloud/external-integration assumptions (CON-001, CON-002) against R001/R003; the architecture is baselined and stable enough to freeze for Construction; **and zero findings remain open in the Review Record — including Minor findings, per the stakeholder's standing directive ("close all findings even if they are minors").**
 
 **Environment discipline workflow (per-iteration loop, Elaboration-gated):**
 
@@ -77,7 +79,7 @@ note right
   Re-evaluate optional-artifact triggers
   (PoC now FIRED vs R001/R003)
   Verify tool config: CONTRIBUTING.md, lint, CI
-  Confirm version policy (Node.js LTS)
+  Confirm version policy (Node.js LTS, Keycloak OIDC)
 end note
 
 :Iteration executes (all disciplines);
@@ -161,4 +163,6 @@ end note
 | UI Prototype FIRED | NFR-001, NFR-002 (self-service UX) | Derives | User-Interface Prototype |
 | Test Plan FIRED | CON-014, AC-006 (regulatory audit) | Derives | Test Plan |
 | Version policy (Node.js LTS) | stakeholder decision (runtime) | DependsOn | Software Architecture Document |
+| Version policy (Keycloak OIDC) | stakeholder decision (identity provider) | DependsOn | Software Architecture Document |
+| LCA exit: zero open findings | stakeholder directive (close all findings incl. Minor) | DependsOn | Review Record |
 | Development Case#F3 (resolved) | Review Record (Inception) | DependsOn | Document Control (this artifact) |
