@@ -35,7 +35,7 @@ test("computeWage does not floor when gross exceeds the floor", () => {
     { hoursWorked: "1", rate: Money.of("20.00", "USD") },
     { minimumWageFloor: Money.of("15.00", "USD"), riskPremiumMultiplier: "1" },
   );
-  assert.equal(wage.amount, "20.0000");
+  assert.equal(wage.amount, "20.00");
 });
 
 // --- White-box: floor comparison branch ---

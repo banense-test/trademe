@@ -20,19 +20,16 @@ export interface WageRule {
 }
 
 export function computeWage(input: WageInput, rule: WageRule): Money {
-  const hours = Money.of(input.hoursWorked, input.rate.currency);
   const gross = multiplyMoneyByScalar(input.rate, input.hoursWorked);
   const withPremium = multiplyMoneyByScalar(gross, rule.riskPremiumMultiplier);
-  const floored = withPremium.amount < rule.minimumWageFloor.amount
-    ? rule.minimumWageFloor
-    : withPremium;
-  return floored;
+  if (compareExact(withPremium.amount, rule.minimumWageFloor.amount) < 0) {
+    return rule.minimumWageFloor;
+  }
+  return withPremium;
 }
 
 /** Multiply a Money amount by an exact decimal scalar (e.g. hours, premium). */
 function multiplyMoneyByScalar(amount: Money, scalar: string): Money {
-  // Reuse the exact multiply via a same-currency conversion trick is not available;
-  // implement exact scalar multiply directly using BigInt scaling.
   const [aInt, aFrac = ""] = amount.amount.split(".");
   const [sInt, sFrac = ""] = scalar.split(".");
   const aScale = aFrac.length;
@@ -45,4 +42,16 @@ function multiplyMoneyByScalar(amount: Money, scalar: string): Money {
   const intPart = str.slice(0, str.length - scale) || "0";
   const fracPart = str.slice(str.length - scale);
   return Money.of(`${intPart}.${fracPart}`, amount.currency);
+}
+
+/** Compare two exact decimal strings numerically (BigInt-scaled). */
+function compareExact(a: string, b: string): number {
+  const [aInt, aFrac = ""] = a.split(".");
+  const [bInt, bFrac = ""] = b.split(".");
+  const scale = Math.max(aFrac.length, bFrac.length);
+  const aScaled = BigInt(aInt + aFrac.padEnd(scale, "0"));
+  const bScaled = BigInt(bInt + bFrac.padEnd(scale, "0"));
+  if (aScaled < bScaled) return -1;
+  if (aScaled > bScaled) return 1;
+  return 0;
 }
