@@ -78,49 +78,6 @@ end note
 
 **Money mechanism evaluation (TC-009).** The `add` operation is **correct**: black-box cases pass (0.10+0.20=0.30; cross-currency rejection), and the white-box branches were traced by inspection — carry propagation (0.90+0.20=1.10), integer-only path (1+2=3), mixed-scale (1.5+2=3.5) all produce exact results with no floating-point degradation. However, `subtract()`, `convert()`, and the `ExchangeRate` value object are **missing** (confirms Review Record F2), so TC-009 and TC-007 are BLOCKED.
 
-```plantuml
-@startuml
-title Test Execution Verdict — Elaboration I1 (Architecture Prototype)
-
-start
-:Smoke test — CI build status (main);
-if (CI green?) then (yes)
-  :PASS — run 34886064517;
-else (no)
-  :STOP — log blocker CR;
-  stop
-endif
-
-:Inspect architectural prototype\n(repo tree: src/domain/money.ts only);
-:Evaluate TC-009 Money integrity;
-
-if (subtract()/convert()/ExchangeRate present?) then (yes)
-  :PASS — full monetary-integrity coverage;
-else (no)
-  :BLOCKED — F2: subtract/convert/ExchangeRate missing;
-  :Log CR (severity=major);
-endif
-
-:Evaluate TC-001..TC-008, TC-010..TC-016;
-if (COMP-001..COMP-009 implemented?) then (yes)
-  :Execute scenario tests;
-else (no)
-  :BLOCKED — components not yet built\n(expected at Elaboration I1);
-endif
-
-:Record verdicts in Test Case;
-:Flag white-box test code for Implementer materialization;
-stop
-
-note right
-  Elaboration exit criterion is test readiness,
-  not full execution. The prototype (Money mechanism)
-  is present but incomplete: add() is correct,
-  subtract()/convert() are missing (F2).
-end note
-@enduml
-```
-
 | Test Case | Verdict | Evidence / Reason |
 |---|---|---|
 | TC-009 (Money value object integrity) | BLOCKED | `add` correct (black-box + white-box branches traced); `subtract`/`convert`/`ExchangeRate` missing (F2) → Issue #1 |
@@ -130,6 +87,92 @@ end note
 **Defect logged.** Issue #1 (severity=major, priority=high) — Money mechanism incomplete; confirms Review Record F2.
 
 **Test code materialization.** The white-box tests for `addExact` branches and `Money.of` validation (Review Record F3) and the `subtract`/`convert` tests (F2) are flagged for the Implementer to materialize in `tests/money.test.ts` — the Tester has no SCM push tooling this iteration, so the executable test code is specified here and handed to the Implementer for commit.
+
+### Execution Verdicts — Elaboration I2 (Architecture Test Execution)
+
+**Smoke test.** CI build `main` green (run 34886064517) and `feature/E2-money-mechanism` green (run 34935648272) — PASS. Detailed testing proceeded.
+
+**Prototype under test.** PR #2 (Money Mechanism) on `feature/E2-money-mechanism` — **not merged to main**. Contains `src/domain/money.ts` (now with `subtract`/`convert`/`ExchangeRate`), `src/domain/matching/` (service, policy, types), `src/domain/pricing/wages.ts`, plus `tests/money.test.ts`, `tests/matching.test.ts`, `tests/wages.test.ts`. Code review disposition: **REQUEST CHANGES** (F1-F4).
+
+**Money mechanism evaluation (TC-009).** `add`/`subtract`/`convert`/`ExchangeRate` are now present and exact (no bare float). However, `multiplyExact` sums the operand scales, so `Money.convert` and `computeWage` produce wrong-scale amounts (`20.00 × 7.50 = 150.0000`, not `150.00`). This is a **new defect** not flagged by the code review (which verified only "no bare float"). → Issue #7.
+
+**Wage computation evaluation (TC-006).** `computeWage` applies floor + premium correctly in the single-currency case, but (a) the floor comparison ignores currency (F3 → Issue #5), and (b) the scale defect produces `150.0000` (Issue #7). `wages.ts` also duplicates exact-arithmetic helpers from `money.ts` (F2 → Issue #4).
+
+**Matching evaluation (TC-001/TC-004/TC-005).** `IMatching.select`/`MatchingPolicy.select` return `Candidate`, diverging from Design Model INT-001/CLS-002 (`Worker`) (F1 → Issue #3). The policy strategy pattern (AC-008) is correctly injected and swappable; `FirstAcceptableMatchPolicy` and `PreferenceWeightedPolicy` are deterministic and explainable (NFR-005).
+
+```plantuml
+@startuml
+title Architecture Test Execution — Elaboration I2 (Money Mechanism PR #2)
+
+start
+:Smoke test — CI build status;
+if (main green?) then (yes)
+  :PASS — run 34886064517;
+else (no)
+  :STOP — log blocker CR;
+  stop
+endif
+
+:Inspect feature/E2-money-mechanism\n(matching + pricing + money);
+:Evaluate Money mechanism (TC-009);
+if (subtract/convert/ExchangeRate present?) then (yes)
+  :add/subtract exact, no bare float;
+else (no)
+  :BLOCKED;
+endif
+
+:Evaluate computeWage (TC-006);
+if (scale correct? currency enforced?) then (yes)
+  :PASS;
+else (no)
+  :FAIL — scale defect (150.0000 vs 150.00)\n+ floor ignores currency (F3);
+  :Log CR (severity=major);
+endif
+
+:Evaluate matching (TC-001/004/005);
+if (select returns Worker per Design Model?) then (yes)
+  :PASS;
+else (no)
+  :FAIL — F1: select returns Candidate;
+  :Log CR (severity=major);
+endif
+
+:Evaluate remaining TCs (COMP-003/007 absent);
+:BLOCKED — components not implemented;
+
+:Record verdicts in Test Case;
+:Log defects as SCM issues (canonical labels);
+stop
+
+note right
+  PR #2 (Money Mechanism) is on feature/E2-money-mechanism,
+  NOT merged to main. Code review disposition: REQUEST CHANGES
+  (F1-F4). Tester confirms F1-F4 + new scale defect.
+end note
+@enduml
+```
+
+| Test Case | Verdict | Evidence / Reason |
+|---|---|---|
+| TC-009 (Money value object integrity) | FAIL | `add`/`subtract`/`convert`/`ExchangeRate` present and exact, but `multiplyExact` sums scales → wrong-scale money (`150.0000`) → Issue #7 |
+| TC-006 (wage computation) | FAIL | floor comparison ignores currency (Issue #5); scale defect (Issue #7); duplicated arithmetic (Issue #4) |
+| TC-007 (currency conversion) | FAIL | `convert` present but produces wrong-scale amount via `multiplyExact` (Issue #7) |
+| TC-001/TC-004/TC-005 (matching) | FAIL | `select` returns `Candidate`, diverging from Design Model INT-001/CLS-002 (Issue #3) |
+| TC-002, TC-003, TC-008, TC-010..TC-016 | BLOCKED | COMP-003 (reporting), COMP-007 (assignment) not implemented; concurrency driver + PostgreSQL test instance not yet provisioned |
+
+**Defects logged (Issues #3-#7).** All carry canonical CCM labels (`change-request`, `cr:logged`, `nature:defect`, `severity:*`, `priority:*`):
+
+| Issue | Severity | Finding |
+|---|---|---|
+| #3 | Major | `IMatching.select` returns `Candidate`, diverging from Design Model INT-001/CLS-002 (F1) |
+| #4 | Major | `wages.ts` duplicates exact-decimal arithmetic from `money.ts` (F2, CON-022) |
+| #5 | Minor | `computeWage` floor comparison ignores currency (F3) |
+| #6 | Minor | `Money.subtract` non-negative invariant undocumented in Design Model CLS-008 (F4) |
+| #7 | Major | `multiplyExact` sums scales producing wrong-scale money (`150.0000` vs `150.00`) — **new finding** |
+
+**Regression note.** The I1 defect (Issue #1 — `subtract`/`convert`/`ExchangeRate` missing) is **resolved** in PR #2: all three are now present and exact. The I1 PASS on `add` is preserved (no regression). The new scale defect (Issue #7) is a latent defect in the newly-added `multiplyExact`/`convert` path, not a regression of `add`.
+
+**Test code materialization.** The executable test code (`tests/money.test.ts`, `tests/matching.test.ts`, `tests/wages.test.ts`) is authored by the Implementer on the feature branch. The Tester has no SCM push tooling this iteration; the white-box tests for the scale defect (Issue #7) and the currency-enforced floor comparison (Issue #5) are specified here for the Implementer to materialize once the defects are fixed.
 ## Test Case Catalog
 
 ### Test Automation Architecture
