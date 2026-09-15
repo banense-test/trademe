@@ -86,7 +86,6 @@ end note
 ```
 
 ## Nodes and Connectors
-
 | Node | Role | Artifacts Deployed | Notes |
 |---|---|---|---|
 | Application Node | Runs the TradeMe modular monolith (Node.js LTS + TypeScript) | Single deployable containing COMP-001..COMP-009 + Scheduler (I2) + Configuration (I3) | One per deployment; in-process orchestration (ADR-001); Scheduler and Configuration are in-process components, not separate nodes |
@@ -151,6 +150,62 @@ end note
 4. **Keycloak realm configuration is deployment-time** — the OIDC realm is provisioned per deployment, consistent with the multi/single-tenant choice (CON-017).
 5. **Money exactness is a packaging invariant** — the database driver's type-handling configuration (ADR-004) ships with the release; an exact numeric column must never degrade to a floating-point number on read. This is verified at Gate 1, not discovered in production.
 
+### Versioning and Tag-Naming Discipline
+
+The SCM release is the deployment unit; its tag is the traceable identity of everything that runs in production. The tag-naming scheme is fixed and monotonic so a rollback target is always unambiguous:
+
+| Element | Scheme | Example | Notes |
+|---|---|---|---|
+| Release tag | `release/<phase>-<iteration>-<seq>` | `release/E2-1` | Monotonic per phase; never re-tagged (a tag is immutable once cut) |
+| Baseline tag | `baseline/<phase>` | `baseline/elaboration` | Moves forward only; points at the last reviewed release |
+| Rollback target | prior `release/*` tag | `release/E2-0` | Always a prior immutable tag, never a branch head |
+
+**Rules:**
+- A tag is **immutable** once cut — a defect is fixed by cutting a new release tag, never by moving an existing one. This preserves the tamper-evident audit trail (REQ-003) across rollback.
+- The **baseline tag** advances only when a release has passed both acceptance gates; it is the "known-good" pointer the next iteration builds from.
+- The **lockfile (`package-lock.json`) is committed with the tag** — the BOM is inseparable from the release it describes.
+
+### Configuration vs. Secrets Separation
+
+Configuration and secrets are **different artifacts with different lifecycles**, and conflating them is a deployment defect:
+
+| Kind | What it holds | Where it lives | Lifecycle |
+|---|---|---|---|
+| **Configuration** | Jurisdiction rules (labor, tax, cert, reporting, currency), runtime defaults, ADR-004 driver type-handling | Versioned in SCM with the release tag | Changes with the release; reviewed like code |
+| **Secrets** | DB credentials, Keycloak client secrets, external API keys | Environment secret store (never SCM) | Rotated independently of releases; injected at deploy time |
+
+**Rule:** a secret is **never committed to SCM and never inlined in configuration**. Configuration references secrets by name; the deploy-time environment resolves them. This keeps the jurisdiction configuration (AC-001) reviewable as data while credentials stay out of the repository — a requirement for a financial intermediary (CON-004) whose audit trail must be tamper-evident (REQ-003).
+
+```plantuml
+@startuml
+title TradeMe Configuration Layering — Environment + Jurisdiction (AC-001)
+
+package "Versioned in SCM (release tag)" {
+  component "Base Configuration\n(runtime defaults, ADR-004 driver type-handling)" as BASE
+  component "Jurisdiction Configuration\n(I3 — labor, tax, cert, reporting, currency)" as JCFG
+  component "Keycloak Realm Template\n(OIDC)" as REALM
+}
+
+package "Environment Overlay (per deployment, NOT in SCM)" {
+  component "Environment Config\n(DB endpoint, Keycloak URL, log level)" as ENV
+  component "Secrets\n(DB credentials, client secrets, API keys)" as SECRET
+}
+
+BASE --> ENV : overlaid by
+JCFG --> ENV : overlaid by
+REALM --> ENV : provisioned per deployment
+ENV --> SECRET : references (never inlined)
+
+note right of SECRET
+  Secrets are injected at deploy time from the
+  environment's secret store — never committed to SCM.
+  Jurisdiction config is versioned data (AC-001);
+  secrets are environment-specific.
+end note
+@enduml
+```
+
+**Layering order (later overrides earlier):** base configuration → jurisdiction configuration → environment overlay. A jurisdiction's rules (I3) override runtime defaults; an environment's endpoint/secret references override both. No layer may contradict the ADR-004 driver type-handling invariant — that is a base-configuration floor, not an override point.
 ## Environment Mapping
 
 **Target environments** (small, long-lived — CON-017):
