@@ -77,7 +77,6 @@ The architecturally significant use cases, prioritized by risk + coverage + crit
 These four use cases exercise every architectural view: they span the self-service and fallback channels (Process), the matching/pricing/reporting subsystems (Logical), the multi/single-tenant topology (Deployment), and the retained-data store (Data). The sequence diagrams in the Logical and Process views realize UC-004, UC-012, and UC-013 end-to-end.
 
 ## Logical View
-
 The system is decomposed into **subsystems that encapsulate areas of change**, not areas of function. Each subsystem corresponds to a "Volatility: High" area identified in the Use-Case Model, or to a stable domain aggregate. Subsystems communicate only through interfaces; no subsystem depends on another's internals.
 
 ```plantuml
@@ -191,7 +190,7 @@ I4 --> APP : auth/authz
 
 ### Use-Case Realizations (sequence diagrams)
 
-The three highest-priority architecturally significant scenarios, realized end-to-end across the subsystem interfaces.
+The four highest-priority architecturally significant scenarios, realized end-to-end across the subsystem interfaces.
 
 **UC-004 — Request Workers (match→assign, race resolution):**
 
@@ -286,6 +285,41 @@ APP -> APP : deliver on cadence
 @enduml
 ```
 
+**UC-014 — Terminate Worker Assignment (contracts-must-be-honored):**
+
+```plantuml
+@startuml
+title UC-014 Terminate Worker Assignment — Contracts-Must-Be-Honored
+
+actor "Contractor\n(or Worker)" as A
+participant "Orchestration\n(APP)" as APP
+participant "Assignment\nCOMP-007" as ASSIGN
+participant "Party\nCOMP-008" as PARTY
+database "PostgreSQL" as DB
+
+A -> APP : terminateAssignment(assignment, reason)
+APP -> ASSIGN : terminate(assignment, reason)
+ASSIGN -> ASSIGN : verify termination request\n(project end / illness / walk-off / cancellation)
+ASSIGN -> DB : BEGIN
+ASSIGN -> DB : SELECT assignment FOR UPDATE
+ASSIGN -> ASSIGN : record termination reason\n(append-only, REQ-003)
+ASSIGN -> DB : UPDATE assignment → terminated
+ASSIGN -> DB : UPDATE worker → available
+ASSIGN -> DB : COMMIT
+ASSIGN --> APP : termination recorded
+APP --> A : termination confirmed
+
+note right
+  Termination is recorded append-only (REQ-003) with the
+  reason, so deviation from commitment (CON-013) is auditable.
+  The worker is made available for new matches (FR-020).
+  The design does not encourage casual termination: the reason
+  is a required, verifiable field (CON-006).
+end note
+@enduml
+```
+
+UC-014 realizes the contracts-must-be-honored rule (CON-013): termination is a recorded, append-only event carrying a verifiable reason (CON-006), and the worker is released back to availability (FR-020) through the same COMP-007 atomic path that commits assignments. The reason field is what makes deviation from commitment auditable — the system records the commitment and tracks deviation from it, but does not unilaterally re-assign a worker to a more lucrative opportunity.
 ## Process View
 
 The system has three concurrency concerns, all modest (CON-021):
