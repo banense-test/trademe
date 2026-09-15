@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Published — iteration 1 |
+| Status | Published — iteration 2 |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
 
 ## Purpose
@@ -34,7 +34,7 @@ package "iteration/C{n} — Construction integration" {
 
 package "feature/E{n}-{risk-id}[-{mechanism}]" {
   [feature/E1-R003-regulatory-config] as FE1
-  [feature/E2-R001-legacy-analysis] as FE2
+  [feature/E2-money-mechanism] as FE2
 }
 
 package "feature/C{n}-{uc-id}-{subject}" {
@@ -53,7 +53,7 @@ package "chore/{subject}" {
 MAIN <-- ITE1 : iteration-close PR (LAM)
 MAIN <-- ITC1 : iteration-close PR (IOC)
 ITE1 <-- FE1 : feature PR (APPROVED)
-ITE2 <-- FE2 : feature PR (APPROVED)
+ITE2 <-- FE2 : feature PR (in review)
 ITC1 <-- FC1 : feature PR (APPROVED)
 ITC1 <-- FC2 : feature PR (APPROVED)
 MAIN <-- HF1 : hotfix PR (express review)
@@ -145,7 +145,7 @@ The baseline identification scheme is the tag naming convention above, applied a
 
 The tag **message** (annotation) carries the audit summary that makes the tag defensible: the iteration-close PR number, the head commit SHA, the Architect's approval review ID, the `main` CI run URL at tag time, and any notable findings (naming violations, deferred items, re-tag justifications).
 
-**Elaboration iteration 1 baseline:** the architecture baseline is `baseline-elaboration-E1-v1`. It freezes the commit on `main` that carries the baselined Software Architecture Document (4+1 views, ADR-001..ADR-005) and the Elaboration iteration 1 artifacts. It is written ONLY when the `iteration/E1 → main` LAM-close PR is APPROVED and post-merge `main` CI is green.
+**Elaboration iteration 2 baseline (architecture baseline):** the architecture baseline is `baseline-elaboration-E2-v1`. It freezes the commit on `main` that carries the baselined Software Architecture Document (4+1 views, ADR-001..ADR-005) and the Elaboration iteration 2 artifacts — including the Money Mechanism PoC (`feature/E2-money-mechanism`) that retires R001/R003 and verifies CON-001 (cloud) and CON-002 (external integration). It is written ONLY when the `iteration/E2 → main` LAM-close PR is APPROVED and post-merge `main` CI is green.
 
 ## Canonical Branching Model per Phase
 
@@ -187,4 +187,4 @@ UC realizations on `feature/C{n}-{uc-id}-{subject}` based on `iteration/C{n}`; t
 | Branch topology (main/iteration/feature/hotfix) | CON-017 (multi/single-tenant), CON-020 (legacy coexistence) | Derives | Integrator, Implementer, Reviewer workflows |
 | Baseline pedigree (pre-tag gate) | CON-014 (regulatory reporting), AC-006 (audit) | Derives | Baseline tags |
 | Naming conventions | R001/R002 (lean, auditable process) | Derives | Branch/tag names |
-| Baseline identification scheme | AC-006 (audit), CON-014 (regulatory reporting) | Derives | baseline-elaboration-E1-v1 |
+| Baseline identification scheme | AC-006 (audit), CON-014 (regulatory reporting) | Derives | baseline-elaboration-E2-v1 |
