@@ -367,13 +367,13 @@ This pass re-read the four artifacts carrying open findings from this lens and c
 | Data Model | F1 (Minor) — ACL traceability collision | PERSISTS — `ACL-014 (membership)`, `ACL-023 (taxonomy)` still cited |
 | Test Evaluation Summary | F1 (Minor) — stale iteration | PERSISTS — Document Control still 'iteration 1 (I4)' |
 
-The four findings were re-recorded under their existing findingKeys (updating in place — no duplicate ledger entries). PR #2's diff was re-inspected and all CodeReviewer findings (F1, F2, Issue #7, F3, F4) remain present; the PR was re-disposed CHANGES REQUESTED (review 5214332945).
+The four findings were re-recorded under their existing findingKeys (updating in place — no duplicate ledger entries). PR #2's diff was re-inspected and all CodeReviewer findings (F1, F2, Issue #7, F3, F4) remain present; the PR was re-disposed CHANGES REQUESTED (review 5214698605).
 
 **Terminal verdicts given to in-scope PRs this iteration:**
 
 | PR | Verdict | Review |
 |---|---|---|
-| #2 (Money Mechanism) | CHANGES REQUESTED | 5214332945 |
+| #2 (Money Mechanism) | CHANGES REQUESTED | 5214698605 |
 
 **Open actions for Elaboration I3 (next iteration):**
 1. **Design Model#F1 (Major):** Assign unique ACL IDs (ACL-024..ACL-028) to Membership, Trade, Termination, RateAdjustment, ExchangeRate; add them to the Domain Model entity package; reference them in the O/R mapping. Update Data Model traceability to match (Data Model#F1 Minor).
