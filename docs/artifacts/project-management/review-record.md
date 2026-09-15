@@ -56,9 +56,9 @@ end note
 ```
 
 ## Findings
+### Consolidated open findings (prior lenses — Elaboration I1 LCA consolidation)
 
-Consolidated open findings across all three executing lenses (8 open: 0 Critical, 3 Major, 5 Minor).
-All are blocking for LCA advancement per the stakeholder's directive to close all findings including Minors.
+8 open: 0 Critical, 3 Major, 5 Minor. All blocking for LCA advancement per the stakeholder's directive to close all findings including Minors.
 
 | # | Artifact | Lens | Severity | Finding | Owner | Remediation |
 |---|---|---|---|---|---|---|
@@ -95,6 +95,67 @@ note bottom of OPEN
 end note
 @enduml
 ```
+
+### Code Review — Elaboration Iteration 2 (evolutionary architectural mechanism)
+
+**Artifact reviewed:** PR #2 `feature/E2-money-mechanism` → `iteration/E2` (Money Mechanism — R001/R003 PoC, CON-001/CON-002 verification)
+**Review type:** Code review (terminal disposition)
+**Reviewer:** Code Reviewer (Implementation discipline)
+**Build status:** success (run 34935588509)
+**Disposition:** REQUEST CHANGES (0 Critical, 2 Major, 2 Minor)
+
+```plantuml
+@startuml
+title Code Review Compliance Matrix — PR #2 (Money Mechanism)
+object "Programming Guidelines\n(CONTRIBUTING.md)" as G
+object "Dual Coverage\n(black-box + white-box)" as C
+object "SAD Conformance\n(subsystem/layer)" as S
+object "Design Model Conformance\n(signatures)" as D
+object "Traceability\n(UC trailer)" as T
+object "Build-tree Coverage\n(src/ + tests/)" as B
+object "Build Status\n(CI green)" as CI
+
+G : FAIL — no CONTRIBUTING.md in repo
+C : PASS — black-box + white-box branches
+S : PASS — src/domain matches COMP-001/COMP-002
+D : FAIL — select() returns Candidate vs Worker
+T : PARTIAL — UC trailer present, numbers imprecise
+B : PASS — all files under src/ and tests/
+CI : PASS — run 34935588509
+@enduml
+```
+
+```plantuml
+@startuml
+title Defect Distribution — PR #2 (severity × area)
+object "F1 — Major\nDesign Model signature\ndivergence (select)" as F1
+object "F2 — Major\nduplicated exact-decimal\narithmetic (wages.ts)" as F2
+object "F3 — Minor\nfloor comparison\nignores currency" as F3
+object "F4 — Minor\nsubtract negative\nundocumented invariant" as F4
+
+note bottom of F1
+  IMatching.select / MatchingPolicy.select return
+  Candidate; Design Model INT-001 / CLS-002 specify Worker.
+  Silent divergence — align code or update Design Model.
+end note
+note bottom of F2
+  wages.ts reimplements BigInt scaling (multiplyMoneyByScalar,
+  compareExact) duplicating money.ts multiplyExact/addExact.
+  Two hand-rolled exact-arithmetic paths can drift (CON-022).
+end note
+@enduml
+```
+
+| # | Severity | Location | Finding | Remediation |
+|---|---|---|---|---|
+| F1 | Major | `src/domain/matching/service.ts`, `policy.ts` | `IMatching.select` / `MatchingPolicy.select` return `Candidate`; Design Model INT-001 / CLS-002 specify `Worker`. `name` field added, not in Design Model. Silent divergence (SAD guideline 1). | Change `select` to return `Worker` (drop/document `name`), or update Design Model in the same PR chain to specify `Candidate`. |
+| F2 | Major | `src/domain/pricing/wages.ts` | Reimplements BigInt-scaled arithmetic (`multiplyMoneyByScalar`, `compareExact`) duplicating `money.ts` (`multiplyExact`, `addExact`, `subtractExact`). Two hand-rolled exact-arithmetic paths can drift (CON-022). | Add `Money.multiply(scalar)` and `Money.compare(other)` to the value object reusing existing helpers; have `wages.ts` consume them. |
+| F3 | Minor | `src/domain/pricing/wages.ts` | `computeWage` floor comparison ignores currency — cross-currency floor yields meaningless comparison. | Assert same currency before comparing (or compare via `Money.compare` that enforces it). |
+| F4 | Minor | `src/domain/money.ts` | `subtractExact` rejects negative results; non-negative invariant not documented in Design Model CLS-008 `Money.subtract`. | Document the non-negative invariant on `Money.subtract` and in Design Model CLS-008. |
+
+**Note (not a finding against the code):** `CONTRIBUTING.md` is absent (owned by Software Architect, due during Elaboration) — programming-guideline conformance could not be verified against a style guide. PR body UC trailer cites UC-014 (Terminate), which this PR does not implement; should cite UC-004 (matching), UC-012 (payments/money), FR-007/FR-022 (wages/currency).
+
+**Positive conformance evidence:** ADR-004 fully honored — `Money.amount`, `ExchangeRate.rate`, `hoursWorked`, `riskPremiumMultiplier` are exact decimal strings; no bare float on any monetary path. Dual coverage satisfied (black-box contract + white-box branch/error paths). SAD subsystem placement correct (matching → COMP-001, pricing → COMP-002). Build-tree coverage correct (all files under `src/` and `tests/`).
 
 ## Resolutions and Actions
 **Prior findings reconciliation:** All Inception findings across all lenses are `Resolved` (Development Case#F1-F3, Vision#F1-F2, Use-Case Model#F1-F8, Risk List#F1, Iteration Plan#F1-F2, SAD#F1, Test Plan#F1, Deployment Model#F1). Zero prior findings remain open.
