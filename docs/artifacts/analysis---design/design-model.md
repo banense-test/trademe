@@ -360,7 +360,6 @@ end
 - The termination is appended (deviation from commitment recorded, CON-013) and the worker's availability is released to `AVAILABLE` in the same transaction.
 
 ## Design Packages and Classes
-
 Design classes with full signatures, organized by subsystem package. Each subsystem exposes an interface; concrete classes implement it. Dependencies cross subsystem boundaries only through interfaces (SAD guideline 1).
 
 ### Matching (COMP-001) + Assignment (COMP-007)
@@ -486,7 +485,7 @@ package "pricing (COMP-002)" {
     + hoursEntryId: string
     + assignmentId: string
     + date: Date
-    + hoursWorked: number
+    + hoursWorked: string
   }
   class Rate {
     + trade: Trade
@@ -509,6 +508,8 @@ PricingService --> Payment
 Money --> ExchangeRate
 @enduml
 ```
+
+**Design note (ADR-004):** `HoursEntry.hoursWorked` is typed `string` (an exact decimal, e.g. `"7.50"`), not `number`. Hours feed directly into wage computation (`computeWages`), which is a monetary path — a bare float64 there would violate ADR-004. The Data Model stores it as `NUMERIC(6,2)`; the ORM reads it back as a decimal string, never a JavaScript `number`.
 
 ### Party (COMP-008) + Project (COMP-009) + Taxonomy (COMP-005)
 
@@ -700,7 +701,6 @@ I2 --> A1 : scheduled runs
 I4 --> A1 : auth/authz
 @enduml
 ```
-
 ## Interface Contracts
 
 The subsystem-boundary interfaces, with operation signatures and pre/postconditions. These are the formal contracts the Implementer codes against; no module depends on another's internals (SAD guideline 1).
