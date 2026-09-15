@@ -2,9 +2,8 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
-
 ## Test Scope
 This artifact specifies the **test cases** for the architecturally significant use-case scenarios, per the Test Plan's Elaboration mandate (LCA-T1..T7). Elaboration's exit criterion is **test readiness**, not execution: each test case below is fully specified (preconditions, input data, expected outcome, pass/fail criteria, automation hints, interface points, environment prerequisites) so the Tester can script and execute it in Construction without re-deriving intent.
 
