@@ -73,7 +73,7 @@ end note
 
 ### Execution Verdicts — Elaboration I1 (Architecture Test Execution)
 
-**Smoke test.** CI build `main` green (run 34856326288) — PASS. Detailed testing proceeded.
+**Smoke test.** CI build `main` green (run 34886064517) — PASS. Detailed testing proceeded.
 
 **Prototype under test.** The architectural prototype for this iteration consists of the Money mechanism only (`src/domain/money.ts` + `tests/money.test.ts`). COMP-001..COMP-009 are not yet implemented (expected later in Elaboration), so the scenario test cases are BLOCKED pending component implementation.
 
@@ -86,7 +86,7 @@ title Test Execution Verdict — Elaboration I1 (Architecture Prototype)
 start
 :Smoke test — CI build status (main);
 if (CI green?) then (yes)
-  :PASS — run 34856326288;
+  :PASS — run 34886064517;
 else (no)
   :STOP — log blocker CR;
   stop
