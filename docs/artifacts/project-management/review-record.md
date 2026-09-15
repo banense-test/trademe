@@ -157,6 +157,70 @@ end note
 
 **Positive conformance evidence:** ADR-004 fully honored — `Money.amount`, `ExchangeRate.rate`, `hoursWorked`, `riskPremiumMultiplier` are exact decimal strings; no bare float on any monetary path. Dual coverage satisfied (black-box contract + white-box branch/error paths). SAD subsystem placement correct (matching → COMP-001, pricing → COMP-002). Build-tree coverage correct (all files under `src/` and `tests/`).
 
+### Technical Review — Elaboration Iteration 2 (LCA milestone, technical lens)
+
+**Reviewer:** Reviewer (Project Management discipline, technical lens)
+**Review type:** Lifecycle Architecture Milestone review (exit-criteria lens)
+**Artifacts reviewed:** Design Model, Software Architecture Document, Test Case, Architectural Proof-of-Concept, Data Model, Deployment Model, Development Case, Test Plan, Test Evaluation Summary, PR #2 (Money Mechanism).
+
+**Prior-finding reconciliation (this lens):** 3 of 4 prior findings resolved (Design Model#F2 HoursEntry float64 → string; SAD#F2 UC-014 sequence added; Test Case#F1 CI run updated). Design Model#F1 (O/R mapping ID collision) **persists** — the relabeling fixed the CLS-009/010/011 collision but introduced new collisions.
+
+```plantuml
+@startuml
+title Compliance Matrix — Elaboration I2 Technical Review (LCA)
+object "Design Model\nO/R Mapping IDs" as DM1
+object "Design Model\nHoursEntry type" as DM2
+object "SAD\nUC-014 sequence" as SAD1
+object "Test Case\nCI run ID" as TC1
+object "Architectural PoC\nrisk retirement" as POC1
+object "PR #2\nMoney mechanism" as PR1
+
+DM1 : FAIL — ID collisions persist (ACL-014/017/023 reused)
+DM2 : PASS — hoursWorked now string (ADR-004)
+SAD1 : PASS — UC-014 sequence diagram added
+TC1 : PASS — run 34886064517 cited
+POC1 : FAIL — analysis-only disposition unsupported
+PR1 : FAIL — F1/F2 Major + Issue #7 scale defect open
+@enduml
+```
+
+```plantuml
+@startuml
+title Defect Distribution — Elaboration I2 (severity × artifact)
+object "Design Model#F1\nMajor\nO/R mapping ID collision" as F1
+object "Architectural PoC#F1\nMajor\nanalysis-only unsupported" as F2
+object "PR #2 (CodeReviewer F1)\nMajor\nselect returns Candidate" as F3
+object "PR #2 (CodeReviewer F2)\nMajor\nduplicated arithmetic" as F4
+object "PR #2 (Issue #7)\nMajor\nmultiplyExact scale defect" as F5
+
+note bottom of F1
+  Relabeling fixed CLS-009/010/011 but introduced
+  new collisions: Membership=ACL-014 (Contractor),
+  Trade=ACL-023 (Certification), Termination=ACL-017
+  (Assignment), RateAdjustment/ExchangeRate cite FR-NNN.
+end note
+note bottom of F2
+  PoC claims all 4 technical risks retire 'analysis-only',
+  but the one mechanism actually built (Money) had a latent
+  scale defect reasoning missed. Empirical evidence contradicts
+  the blanket 'no mechanism uncertain enough to prototype' claim.
+end note
+@enduml
+```
+
+**New findings (this lens, Elaboration I2):**
+
+| # | Artifact | Severity | Finding | Remediation |
+|---|---|---|---|---|
+| F1 | Design Model | Major | O/R Mapping 'Design Class' column still carries ID collisions after relabeling: Membership=ACL-014 (collides with Contractor), Trade=ACL-023 (collides with Certification), Termination=ACL-017 (collides with Assignment), RateAdjustment/ExchangeRate cite FR-NNN in a class-ID column. Five entities (Membership, Trade, Termination, RateAdjustment, ExchangeRate) lack unique analysis-class IDs. | Assign unique ACL IDs (ACL-024..ACL-028) to the five missing entities, add them to the Domain Model entity package, reference them in the O/R mapping. |
+| F1 | Architectural Proof-of-Concept | Major | PoC disposes all four technical risks (R001/R003/R004/R005) as 'analysis-only', asserting no empirical validation is warranted. Contradicted by the one mechanism actually built (Money, PR #2) which had a latent scale defect (Issue #7) reasoning missed. CON-001/CON-002 asserted 'by construction' with no executed artifact. | Either execute the PoC empirically (build/run the availability-race mechanism + a config-driven jurisdiction scenario against real PostgreSQL), or downgrade disposition to 'mitigating, verification deferred to Construction' and mark R001/R003/R004/R005 OPEN (not retired) in the Risk List. |
+| F1 | Data Model | Minor | Traceability table shares the ACL ID collision: ACL-014 cited for both Contractor (TBL-002) and Membership (TBL-003); ACL-023 for both Trade (TBL-005) and Certification (TBL-006). | Once the Designer assigns unique ACL IDs, update the Data Model traceability to reference them (TBL-003→ACL-024, TBL-005→ACL-025, TBL-012→ACL-026, TBL-015→ACL-027, TBL-016→ACL-028). |
+| F1 | Test Evaluation Summary | Minor | Stale — Document Control reads 'iteration 1 (I4)'; 'Blocking condition' describes the Money mechanism as 'committed directly to main (F1 Critical)', which is no longer true (PR #2 shows it correctly branched). Misrepresents current defect state. | Update to iteration 2 (I5): reflect PR #2 under review (REQUEST CHANGES, F1-F4 + Issue #7), note the I1 direct-to-main Critical is remediated, and the current blocker is the open Major findings. |
+
+**Artifacts with no findings (Approved from this lens):** Software Architecture Document (F2 resolved), Test Case (F1 resolved), Deployment Model, Development Case (conforms to IARI baseline), Test Plan.
+
+**PR disposition:** PR #2 — **CHANGES REQUESTED** (review 5212508092). Blocking: F1 (select returns Candidate), F2 (duplicated arithmetic), Issue #7 (multiplyExact scale defect), plus F3/F4 Minor. The PR is the in-scope evolutionary architectural mechanism; it stays open and converges next iteration.
+
 ## Resolutions and Actions
 **Prior findings reconciliation:** All Inception findings across all lenses are `Resolved` (Development Case#F1-F3, Vision#F1-F2, Use-Case Model#F1-F8, Risk List#F1, Iteration Plan#F1-F2, SAD#F1, Test Plan#F1, Deployment Model#F1). Zero prior findings remain open.
 
