@@ -173,7 +173,6 @@ end note
 6. Update Test Case CI run ID (Test Case#F1).
 7. Produce a credible fine-grained Construction plan grounded in measured Elaboration actuals.
 ## Disposition
-
 **Verdict: NO-GO** — LCA not achieved. The architecture is baselined and stable (the core LCA technical criterion is met), but the milestone cannot close because (a) critical risks are not resolved (R002 OPEN/STABLE; PoC unexecuted), (b) the Construction plan is not yet credible, and (c) the stakeholder refused sanction and directed that all findings — including Minors — be closed first.
 
 ```plantuml
@@ -194,6 +193,10 @@ note bottom
 end note
 @enduml
 ```
+
+### Code Review Disposition — Elaboration Iteration 2
+
+**PR #2** (`feature/E2-money-mechanism` → `iteration/E2`, Money Mechanism): **REQUEST CHANGES** — 0 Critical, 2 Major (F1 Design Model signature divergence; F2 duplicated exact-decimal arithmetic), 2 Minor (F3 currency-ignoring floor comparison; F4 undocumented non-negative subtract invariant). Build green (run 34935588509). The money mechanism correctly implements ADR-004 (no bare float on any monetary path) and satisfies dual coverage; the two Major findings must be resolved before the Integrator may merge. No other `ready-for-review` branches were present this iteration.
 
 ## Traceability
 
