@@ -1102,7 +1102,7 @@ stop
 
 ### Business Object Model
 
-The structural complement to the behavioral use-case diagram. Entities carry the analysis-class disposition (`<<entity>>` for persistent business objects, `<<control>>` for the volatile policy/decision processes the SoftwareArchitect must encapsulate).
+The structural complement to the behavioral use-case diagram. Entities carry the analysis-class disposition (`<<entity>>` for persistent business objects, `<<control>>` for the volatile policy/decision processes the SoftwareArchitect must encapsulate). The Internal Representative (STK-003) is modeled as a `<<business worker>>` — an internal actor whose manual matching/data-entry work is being automated away (BG-002), leaving a residual role in exception handling and fallback (FR-012, FR-013).
 
 ```plantuml
 @startuml
@@ -1110,6 +1110,11 @@ skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
 
 package "TradeMe Brokerage — Business Object Model" {
+
+  class InternalRepresentative <<business worker>> {
+    repId
+    role
+  }
 
   class Worker <<entity>> {
     workerId
@@ -1209,6 +1214,15 @@ package "TradeMe Brokerage — Business Object Model" {
   Project --> RegulatoryReport
   Payment --> RegulatoryReport
   Certification --> RegulatoryReport
+
+  InternalRepresentative ..> MatchingPolicy : <<business worker>>\nhand-tuned policy source (FR-018)
+  InternalRepresentative ..> Assignment : <<business worker>>\nexception handling (FR-012, FR-013)
+
+  note bottom of InternalRepresentative
+    STK-003 — being automated away (BG-002):
+    footprint shrinks to a single small backup
+    call center for exception handling and fallback.
+  end note
 }
 @enduml
 ```
@@ -1251,7 +1265,7 @@ The business process is the **brokerage** — matching workers to contractors fo
 | BUC-001 Onboard Worker | Full | UC-001 | Worker self-service registration |
 | BUC-002 Onboard Contractor | Full | UC-002 | Contractor self-service registration |
 | BUC-003 Manage Project Lifecycle | Full | UC-003, UC-015 | Project creation and closure |
-| BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019) | The core brokerage process; matching/assignment are sub-flows |
+| BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019), UC-016 | The core brokerage process; matching/assignment are sub-flows; rate adjustments (FR-023) are recorded when a project or worker sits idle awaiting a match |
 | BUC-005 Manage Assignment | Full | UC-005, UC-014 | Arrival/departure tracking and termination |
 | BUC-006 Capture Hours & Compute Wages | Full | UC-006 (incl. wage computation FR-007) | Hours and wage computation |
 | BUC-007 Process Payments | Full | UC-012 (incl. currency FR-022), UC-018 | Financial intermediary flow; AP integration is a downstream consumer |
@@ -1277,7 +1291,7 @@ The following business processes are annotated **Volatility: High** and are arch
 | BUC-001 | FR-001 | Derives | UC-001 |
 | BUC-002 | FR-002 | Derives | UC-002 |
 | BUC-003 | FR-003, FR-021 | Derives | UC-003, UC-015 |
-| BUC-004 | FR-004, FR-018, FR-019 | Derives | UC-004 |
+| BUC-004 | FR-004, FR-018, FR-019, FR-023 | Derives | UC-004, UC-016 |
 | BUC-005 | FR-005, FR-020 | Derives | UC-005, UC-014 |
 | BUC-006 | FR-006, FR-007 | Derives | UC-006 |
 | BUC-007 | FR-014, FR-022, FR-017 | Derives | UC-012, UC-018 |
@@ -1302,7 +1316,6 @@ The following business processes are annotated **Volatility: High** and are arch
 | BR-014 | CON-016 | Refines | Worker, Contractor |
 | BR-015 | CON-018 | Refines | Worker, Certification |
 | BR-016 | CON-019 | Refines | PricingModel |
-
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
