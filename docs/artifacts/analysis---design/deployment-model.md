@@ -285,7 +285,6 @@ end note
 
 **Legacy coexistence:** The legacy system continues to operate alongside the new system (CON-020); no historical data migration. The new system serves new geographies and channels only.
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Multi-tenant topology | CON-017, AC-002 | DependsOn | SAD Deployment View |
@@ -298,3 +297,5 @@ end note
 | Scheduler (I2) in-process | UC-009, UC-012, UC-013, UC-017 | DependsOn | SAD Process View |
 | Configuration (I3) in-process | AC-001, NFR-003, CON-007 | DependsOn | SAD Logical View |
 | Packaging (SCM release + lockfile BOM) | ADR-001, ADR-004 | DependsOn | SAD Implementation View |
+| Versioning & tag-naming discipline | REQ-003 (tamper-evident audit) | DependsOn | SCM release |
+| Configuration vs. secrets separation | CON-004, REQ-003 | DependsOn | I3, Security (I4) |
