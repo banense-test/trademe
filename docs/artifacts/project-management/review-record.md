@@ -250,7 +250,7 @@ All Inception findings across all lenses remain `Resolved` (Development Case#F1-
 
 ```plantuml
 @startuml
-title Project Health Scorecard — Elaboration I1 (LCA)
+title Project Health Scorecard — Elaboration I2 (LCA)
 class "Scope" as S
 class "Schedule" as SCH
 class "Cost" as C
@@ -269,7 +269,7 @@ end note
 
 ### Code Review Disposition — Elaboration Iteration 2
 
-**PR #2** (`feature/E2-money-mechanism` → `iteration/E2`, Money Mechanism): **REQUEST CHANGES** — 0 Critical, 2 Major (F1 Design Model signature divergence; F2 duplicated exact-decimal arithmetic), 2 Minor (F3 currency-ignoring floor comparison; F4 undocumented non-negative subtract invariant). Build green (run 34935588509). The money mechanism correctly implements ADR-004 (no bare float on any monetary path) and satisfies dual coverage; the two Major findings must be resolved before the Integrator may merge. No other `ready-for-review` branches were present this iteration.
+**PR #2** (`feature/E2-money-mechanism` → `iteration/E2`, Money Mechanism): **REQUEST CHANGES** — 0 Critical, 2 Major (F1 Design Model signature divergence; F2 duplicated exact-decimal arithmetic), 2 Minor (F3 currency-ignoring floor comparison; F4 undocumented non-negative subtract invariant), plus Issue #7 (Major, multiplyExact scale defect). Build green (run 34935588509). The money mechanism correctly implements ADR-004 (no bare float on any monetary path) and satisfies dual coverage; the Major findings must be resolved before the Integrator may merge. No other `ready-for-review` branches were present this iteration.
 
 ### Technical Review Disposition — Elaboration Iteration 2 (LCA, technical lens)
 
@@ -316,6 +316,34 @@ end note
 @enduml
 ```
 
+### Re-review Confirmation — Elaboration Iteration 2 (this pass)
+
+This pass re-read the four artifacts carrying open findings from this lens and confirmed **none of the remediations have been applied** — the defects persist unchanged:
+
+| Artifact | Finding | Status this pass |
+|---|---|---|
+| Design Model | F1 (Major) — O/R ID collision | PERSISTS — `Membership (ACL-014)`, `Trade (ACL-023)`, `Termination (ACL-017)`, `RateAdjustment (FR-023)`, `ExchangeRate (FR-022)` still present |
+| Architectural Proof-of-Concept | F1 (Major) — analysis-only disposition | PERSISTS — all four risks still 'analysis-only', no executed artifact |
+| Data Model | F1 (Minor) — ACL traceability collision | PERSISTS — `ACL-014 (membership)`, `ACL-023 (taxonomy)` still cited |
+| Test Evaluation Summary | F1 (Minor) — stale iteration | PERSISTS — Document Control still 'iteration 1 (I4)' |
+
+The four findings were re-recorded under their existing findingKeys (updating in place — no duplicate ledger entries). PR #2's diff was re-inspected and all CodeReviewer findings (F1, F2, Issue #7, F3, F4) remain present; the PR was re-disposed CHANGES REQUESTED (review 5214332945).
+
+**Terminal verdicts given to in-scope PRs this iteration:**
+
+| PR | Verdict | Review |
+|---|---|---|
+| #2 (Money Mechanism) | CHANGES REQUESTED | 5214332945 |
+
+**Open actions for Elaboration I3 (next iteration):**
+1. **Design Model#F1 (Major):** Assign unique ACL IDs (ACL-024..ACL-028) to Membership, Trade, Termination, RateAdjustment, ExchangeRate; add them to the Domain Model entity package; reference them in the O/R mapping. Update Data Model traceability to match (Data Model#F1 Minor).
+2. **Architectural PoC#F1 (Major):** Either execute the PoC empirically (availability-race mechanism + config-driven jurisdiction scenario against real PostgreSQL) or downgrade the disposition to 'mitigating, verification deferred to Construction' and mark R001/R003/R004/R005 OPEN in the Risk List.
+3. **PR #2 (Money Mechanism):** Resolve F1 (select returns Candidate), F2 (duplicated arithmetic), Issue #7 (multiplyExact scale defect), F3/F4 (Minor), then re-submit for review.
+4. **Test Evaluation Summary#F1 (Minor):** Update to iteration 2 (I5) — reflect PR #2 under review, note the I1 direct-to-main Critical is remediated.
+5. **Iteration Plan#F3 (Major, prior):** The PoC is now produced but its 'analysis-only' disposition is contested (PoC#F1); the Iteration Plan's claim that CON-001/CON-002 are verified must be reconciled with the PoC's actual (non-empirical) evidence.
+6. **Risk List#F2 (Major, prior):** R002 disposition now explicit (stakeholder accepted with contingency) — update the Risk List to record the acceptance.
+7. **UCM#F9/F10 (Minor, prior):** Anchor UC-016 in the derivation bridge; model the Internal Representative in the BOM.
+8. Produce a credible fine-grained Construction plan grounded in measured Elaboration actuals.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
