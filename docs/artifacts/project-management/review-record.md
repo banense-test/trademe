@@ -262,6 +262,51 @@ end note
 
 **PR #2** (`feature/E2-money-mechanism` → `iteration/E2`, Money Mechanism): **REQUEST CHANGES** — 0 Critical, 2 Major (F1 Design Model signature divergence; F2 duplicated exact-decimal arithmetic), 2 Minor (F3 currency-ignoring floor comparison; F4 undocumented non-negative subtract invariant). Build green (run 34935588509). The money mechanism correctly implements ADR-004 (no bare float on any monetary path) and satisfies dual coverage; the two Major findings must be resolved before the Integrator may merge. No other `ready-for-review` branches were present this iteration.
 
+### Technical Review Disposition — Elaboration Iteration 2 (LCA, technical lens)
+
+**LCA disposition (technical lens): SANCTION WITHHELD.** The architecture is baselined and stable, and three of four prior technical findings are resolved. However, the milestone cannot close from the technical lens because:
+
+1. **Design Model#F1 (Major)** — the O/R mapping ID collision persists in a new form (ACL-014/017/023 reused across distinct entities; FR-NNN cited in a class-ID column). The Designer must assign unique ACL IDs (ACL-024..ACL-028) to the five missing entities.
+2. **Architectural Proof-of-Concept#F1 (Major)** — the PoC disposes all four technical risks as 'analysis-only' with no executed artifact, a claim contradicted by the latent scale defect (Issue #7) that reasoning alone missed in the one mechanism actually built.
+3. **PR #2 (Money Mechanism)** — carries 3 Major findings (F1 select-returns-Candidate, F2 duplicated arithmetic, Issue #7 scale defect) and 2 Minor; CHANGES REQUESTED.
+
+Per the stakeholder's standing directive ("close all findings even if they are minors"), all findings — including the Minor findings on Data Model and Test Evaluation Summary — are blocking for LCA advancement.
+
+```plantuml
+@startuml
+title LCA Disposition — Elaboration I2 (Technical Lens)
+object "Design Model" as DM
+object "Software Architecture Document" as SAD
+object "Test Case" as TC
+object "Architectural PoC" as POC
+object "Data Model" as DTM
+object "Deployment Model" as DEP
+object "Development Case" as DC
+object "Test Plan" as TP
+object "Test Evaluation Summary" as TES
+object "PR #2 (Money Mechanism)" as PR
+
+DM : NEEDS REWORK — F1 Major (O/R ID collision persists)
+SAD : APPROVED — F2 resolved (UC-014 sequence added)
+TC : APPROVED — F1 resolved (CI run updated)
+POC : NEEDS REWORK — F1 Major (analysis-only unsupported)
+DTM : APPROVED w/ Minor — F1 (ACL ID collision)
+DEP : APPROVED — no findings
+DC : APPROVED — conforms to IARI baseline
+TP : APPROVED — no findings
+TES : APPROVED w/ Minor — F1 (stale iteration)
+PR : CHANGES REQUESTED — F1/F2 Major + Issue #7
+
+note bottom of POC
+  LCA disposition: SANCTION WITHHELD.
+  2 Major findings open (Design Model#F1, PoC#F1)
+  + PR #2 carries 3 Major (F1, F2, Issue #7).
+  Per stakeholder directive, ALL findings (incl. Minor)
+  must close before LCA can advance.
+end note
+@enduml
+```
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
