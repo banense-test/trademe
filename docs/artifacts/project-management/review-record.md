@@ -1,11 +1,10 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 (LCA consolidation) |
+| Status | Draft — iteration 2 (LCA technical review) |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
-| Review Type | Lifecycle Milestone Review (LCA) — cross-lens consolidation |
+| Review Type | Lifecycle Milestone Review (LCA) — cross-lens consolidation + technical lens |
 | Coordinator | Review Coordinator |
 | Date | 2026-09-15 |
 
@@ -13,9 +12,9 @@
 
 | Lens | Status |
 |---|---|
-| Technical / Reviewer | EXECUTED |
-| Business / BusinessReviewer | EXECUTED |
-| Management / ManagementReviewer | EXECUTED |
+| Technical / Reviewer | EXECUTED (iteration 2) |
+| Business / BusinessReviewer | EXECUTED (iteration 1) |
+| Management / ManagementReviewer | EXECUTED (iteration 1) |
 
 ## Review Scope and Criteria
 
