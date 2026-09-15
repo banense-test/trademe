@@ -220,6 +220,46 @@ end note
 
 **PR disposition:** PR #2 — **CHANGES REQUESTED** (review 5212508092). Blocking: F1 (select returns Candidate), F2 (duplicated arithmetic), Issue #7 (multiplyExact scale defect), plus F3/F4 Minor. The PR is the in-scope evolutionary architectural mechanism; it stays open and converges next iteration.
 
+### Re-review Confirmation — Elaboration Iteration 2 (technical lens, this pass)
+
+This pass re-read the four artifacts carrying open findings from this lens and confirmed **none of the remediations have been applied** — the defects persist unchanged:
+
+| Artifact | Finding | Status this pass |
+|---|---|---|
+| Design Model | F1 (Major) — O/R ID collision | PERSISTS — `Membership (ACL-014)`, `Trade (ACL-023)`, `Termination (ACL-017)`, `RateAdjustment (FR-023)`, `ExchangeRate (FR-022)` still present |
+| Architectural Proof-of-Concept | F1 (Major) — analysis-only disposition | PERSISTS — all four risks still 'analysis-only', no executed artifact |
+| Data Model | F1 (Minor) — ACL traceability collision | PERSISTS — `ACL-014 (membership)`, `ACL-023 (taxonomy)` still cited |
+| Test Evaluation Summary | F1 (Minor) — stale iteration | PERSISTS — Document Control still 'iteration 1 (I4)' |
+
+The four findings were re-recorded under their existing findingKeys (updating in place — no duplicate ledger entries). PR #2's diff was re-inspected and all CodeReviewer findings (F1, F2, Issue #7, F3, F4) remain present; the PR was re-disposed CHANGES REQUESTED (review 5214698605).
+
+```plantuml
+@startuml
+title Compliance Matrix — Elaboration I2 Technical Review (LCA re-pass)
+object "Design Model\nO/R Mapping IDs" as DM1
+object "Architectural PoC\nrisk retirement" as POC1
+object "Data Model\ntraceability IDs" as DM2
+object "Test Evaluation Summary\ncurrency" as TES1
+object "PR #2\nMoney mechanism" as PR1
+
+DM1 : FAIL — ACL-014/017/023 collisions persist
+POC1 : FAIL — analysis-only disposition persists
+DM2 : FAIL — ACL-014/023 shared IDs persist
+TES1 : FAIL — stale I4 + direct-to-main persists
+PR1 : FAIL — F1/F2 Major + Issue #7 open
+@enduml
+```
+
+```plantuml
+@startuml
+title Defect Distribution — Elaboration I2 (severity × artifact)
+object "Design Model#F1\nMajor\nO/R ID collision" as F1
+object "Architectural PoC#F1\nMajor\nanalysis-only" as F2
+object "Data Model#F1\nMinor\ntraceability ID" as F3
+object "Test Evaluation Summary#F1\nMinor\nstale" as F4
+object "PR #2 (CodeReviewer)\nMajor\nselect/arithmetic" as F5
+@enduml
+```
 ## Resolutions and Actions
 **Prior findings reconciliation (this lens, Elaboration I2):** 3 of 4 prior technical findings resolved:
 - **Design Model#F2 (Minor)** — HoursEntry.hoursWorked float64 → `string` (exact decimal), consistent with ADR-004 and Data Model NUMERIC(6,2). **RESOLVED.**
