@@ -57,10 +57,9 @@ UC17 ..> Fraud
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
 | REQ-007 | Self-service channel for workers and contractors | NFR-002 | Replaces representative-mediated interaction |
-| REQ-008 | Mobile accessibility — must-have | NFR-001 | Stakeholder decision: mobile access is a must-have requirement (not nice-to-have) |
-| REQ-009 | Channel equivalence: same matching, financial flow, compliance across self-service and phone | NFR-006 | |
+| REQ-008 | Mobile accessibility — must-have | NFR-001 | Stakeholder decision: mobile access is a must-have requirement (not nice-to-have). **Quantified scope:** every self-service flow (UC-001..UC-008, UC-014, UC-015) MUST be operable on a mobile device; the register/browse/accept-from-phone experience is the must-have baseline. |
+| REQ-009 | Channel equivalence: same matching, financial flow, compliance across self-service and phone | NFR-006 | **Testable criterion:** for the same worker-and-contractor scenario, the self-service channel and the phone fallback channel (UC-011) MUST produce identical business outcomes — the same match, the same wage computation, the same compliance checks. Verified by executing the same scenario through both channels and comparing results. |
 | REQ-010 | Low technical literacy is a design concern | deferred — out-of-cycle open question | Out-of-cycle open question; returns to stakeholder when cycle closes |
-
 ## Reliability
 | ID | Requirement | Source | Notes |
 |---|---|---|---|
