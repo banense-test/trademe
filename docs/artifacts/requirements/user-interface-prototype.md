@@ -261,6 +261,35 @@ stop
 @enduml
 ```
 
+### Storyboard 11 — Record Rate Adjustments (UC-016)
+
+```plantuml
+@startuml
+title TradeMe Self-Service — Record Rate Adjustments Storyboard (UC-016)
+
+|Worker / Contractor|
+start
+:Screen 1 — View idle status\n(worker idle / project idle awaiting match);
+
+|System|
+:Detect idle state (no active match);
+
+|Worker / Contractor|
+if (Worker idle?) then (yes)
+  :Screen 2 — Lower expected rate\n(attract matches, FR-023);
+else (contractor — project idle)
+  :Screen 2 — Raise offered rate\n(attract candidates, FR-023);
+endif
+:Screen 3 — Review & confirm adjustment;
+
+|System|
+:Record rate adjustment (FR-023);
+:Apply to matching policy inputs (NFR-005);
+:Confirm — "Rate adjustment recorded";
+stop
+@enduml
+```
+
 ### Wireframes — Primary Screens (Salt)
 
 The following Salt wireframes render the primary screens for the highest-frequency flows. They are the tangible realization of the storyboards above and the basis the Implementer builds from.
@@ -348,8 +377,7 @@ title Worker Dashboard (post-login)
 
 ### Storyboard Coverage Note
 
-The storyboards above cover all Must-priority self-service use cases (UC-001..UC-008, UC-014, UC-015). The remaining Must-priority use cases are system-triggered (UC-009 membership fees, UC-012 payments, UC-013 regulatory reports — Time actor) or representative-mediated (UC-010 exception, UC-011 fallback) and do not require self-service storyboards; they are covered by the Navigation Flow and the channel-equivalence validation below. Nice-to-have use cases (UC-016..UC-021) remain at survey level pending stakeholder prioritization and are out of prototype scope.
-
+The storyboards above cover all Must-priority self-service use cases (UC-001..UC-008, UC-014, UC-015) plus the Should-priority rate-adjustment flow (UC-016). The remaining Must-priority use cases are system-triggered (UC-009 membership fees, UC-012 payments, UC-013 regulatory reports — Time actor) or representative-mediated (UC-010 exception, UC-011 fallback) and do not require self-service storyboards; they are covered by the Navigation Flow and the channel-equivalence validation below. Nice-to-have use cases (UC-017..UC-021) remain at survey level pending stakeholder prioritization and are out of prototype scope.
 ## Navigation Flow
 The authoritative navigation model is the **Navigation Topology** — a formal state machine in the Design Model's "Boundary Classes and Navigation Map" section. Every screen is a state; every user action causing a screen change is a directed edge with a guard condition. The prototype's storyboards (SB-1..SB-10) are the screen-by-screen realizations of the transitions in that state machine.
 
