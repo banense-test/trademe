@@ -2,9 +2,8 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Elaboration review |
-
 ## Prototype Scope and Goals
 
 The User-Interface Prototype is triggered (UX-critical) because the self-service channel (NFR-002) replaces 220 representatives across 9 call centers (BG-002) — the front-door user experience is the single largest determinant of whether workers and contractors (STK-001, STK-002) can move off the phone channel. Mobile accessibility is a must-have (NFR-001, REQ-008).
