@@ -2,9 +2,12 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 (Design stage) |
+| Status | Draft — iteration 2 (Design stage) |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
 
+**Iteration 2 finding resolution (Design Model#F1 / #F3, #F2 / #F7):**
+- O/R Mapping "Design Class" column relabeled to entity analysis-class IDs (ACL-013..ACL-023), aligned with the Data Model Traceability — no service-class (CLS) IDs remain in the persistent-class column.
+- `HoursEntry.hoursWorked` typed `string` (exact decimal), never `float64` — consistent with ADR-004 and the Data Model's `NUMERIC(6,2)`.
 ## Design Overview
 
 This Design Model realizes the architecturally significant use cases identified in the Software Architecture Document (SAD) Use-Case View: **UC-004 Request Workers**, **UC-012 Process Payments**, **UC-013 Produce Regulatory Reports**, **UC-014 Terminate Worker Assignment**. These four use cases exercise every architectural view and are the validation anchor for the design.
