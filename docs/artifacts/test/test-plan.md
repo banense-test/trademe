@@ -2,25 +2,25 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 |
+| Status | Draft — iteration 2 |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
 
 ## Evaluation Mission
 
 **Purpose.** Evolve the Inception test strategy into a **Master Test Plan** that sizes, schedules, and resources the test effort against the now-baselined architecture (SAD, ADR-001..005, COMP-001..009), so the end-of-Elaboration review (LCA) can judge whether the test effort is sufficient to de-risk the project's top risks before Construction.
 
-**Objectives (Elaboration iteration 1).**
+**Objectives (Elaboration iteration 2).**
 1. Anchor the test effort to the **baselined architecture**, not a generic coverage target: the four architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) and the mechanisms they exercise (matching policy COMP-001, pricing/settlement COMP-002, regulatory reporting COMP-003, assignment/availability COMP-007, Money value object ADR-004) carry the highest test weight.
 2. Define **measurable acceptance thresholds** per quality attribute — the Inception plan deferred these; Elaboration must set them so the LCA review has go/no-go criteria, not prose.
 3. Specify the **test types** (functional, concurrency, config-driven, monetary-integrity, audit, performance, security) and the technique for each, at a depth sufficient to hand to the Test Designer.
 4. Produce a **detailed schedule** (Elaboration design → Construction execution → Transition regression) and a **resource plan** (roles, environments, budget) sized from the measured Inception actuals.
 5. Define the **architecture-milestone (LCA) acceptance criteria** — the specific, measurable conditions the test effort must satisfy for the architecture to be judged stable enough to enter Construction.
 
-**Scope.** The test effort covers the 21 system use cases (UC-001..UC-021) and the cross-cutting mechanisms the baselined architecture defines (REQ-001..REQ-006, REQ-013, REQ-022, ADR-004 Money). Testing is **risk-weighted**: R003 (multi-jurisdiction, exposure 12), R004 (matching-policy capture, 12), R005 (availability race, 12) are the SIGNIFICANT risks the test effort must de-risk first; R002 (leadership tension, 16, HIGH) is a process risk mitigated by evidence-based traceability, not by test cases. Nice-to-have capabilities (UC-017..UC-021) are tested only to the extent their retained-data support (NFR-004) is verified.
+**Scope.** The test effort covers the 21 system use cases (UC-001..UC-021) and the cross-cutting mechanisms the baselined architecture defines (REQ-001..REQ-006, REQ-013, REQ-022, ADR-004 Money). Testing is **risk-weighted**: R003 (multi-jurisdiction, exposure 12), R004 (matching-policy capture, 12), R005 (availability race, 12) are the SIGNIFICANT risks the test effort must de-risk first; R002 (leadership tension, 16, HIGH) is a process risk — **accepted by the stakeholder this iteration** with the named contingency (if leadership tension blocks a milestone, surface the evidence trail and re-scope to the minimum viable increment leadership will accept) — and is mitigated by evidence-based traceability, not by test cases. Nice-to-have capabilities (UC-017..UC-021) are tested only to the extent their retained-data support (NFR-004) is verified.
 
 **Resource strategy.** Testing is lifecycle-wide, not Construction-concentrated. Elaboration allocates effort to test design for the architecturally significant flows and environment provisioning; Construction carries the bulk of execution; Transition carries regression and acceptance. Every iteration includes regression of prior increments (no undiscovered defect debt). The test effort is sized at 30–50% of project cost ([ASSUMPTION — requires validation: basis = RUP planning heuristic / industry-standard test-effort proportion; not yet validated against this project's actuals]).
 
-**Monitoring.** Test progress is measured against the Evaluation Mission per iteration, reported in the Test Evaluation Summary, and grounded in SCM defect metrics (issue tracker) and CI build status — never in prose assertions. The Money mechanism (ADR-004) currently carries open code-review findings (Review Record: 1 Critical, 2 Major, 1 Minor) and is **blocked from baseline** until re-routed through the feature-branch → PR → review → merge flow; the test effort must not treat it as baselined until those findings close.
+**Monitoring.** Test progress is measured against the Evaluation Mission per iteration, reported in the Test Evaluation Summary, and grounded in SCM defect metrics (issue tracker) and CI build status — never in prose assertions. The Money mechanism (ADR-004) is under active code review this iteration: PR #2 (`feature/E2-money-mechanism`) was reviewed with disposition **REQUEST CHANGES** (0 Critical, 2 Major, 2 Minor — findings F1..F4), build success (run 34935588509). The mechanism is **not yet baselined**; the test effort must not treat it as baselined until those findings close. The current main build is run 34886064517 (success).
 
 ```plantuml
 @startuml
@@ -53,7 +53,7 @@ stop
 | TI-007 | Money value object integrity (no bare floats on monetary paths) | ADR-004, CON-004, FR-022 | High | Must |
 | TI-008 | Nice-to-have capabilities (UC-017..UC-021) — retained-data support only | FR-016, FR-017, FR-024..FR-026, NFR-004 | Low | Could |
 
-**Risk weighting rationale.** R003 (12), R004 (12), R005 (12) are the SIGNIFICANT risks the test effort must de-risk first; R002 (16, HIGH) is a process risk mitigated by evidence-based traceability, not by test cases. The Money value object (TI-007, ADR-004) is the stakeholder-declared mandatory mechanism — a bare floating-point number anywhere on a monetary path is a critical defect, not a style preference. TI-007 is currently **blocked from baseline** pending closure of the Money-mechanism code-review findings (Review Record F1..F4).
+**Risk weighting rationale.** R003 (12), R004 (12), R005 (12) are the SIGNIFICANT risks the test effort must de-risk first; R002 (16, HIGH) is a process risk **accepted by the stakeholder this iteration** and mitigated by evidence-based traceability, not by test cases. The Money value object (TI-007, ADR-004) is the stakeholder-declared mandatory mechanism — a bare floating-point number anywhere on a monetary path is a critical defect, not a style preference. TI-007 is currently **under code review** (PR #2, REQUEST CHANGES — 0 Critical, 2 Major, 2 Minor); its white-box tests become part of the permanent regression set once the mechanism is re-baselined.
 
 ## Test Approach
 
@@ -72,7 +72,7 @@ stop
 
 **Security testing (REQ-001, REQ-002).** Authentication via Keycloak OIDC (ADR-005) and authorization scoped to own records. Test that workers/contractors see only their own records, and that the provider is a deployment-time configuration choice (CON-017).
 
-**Regression.** Every iteration re-runs the prior increment's test set. Regression coverage is explicitly identified per iteration in the Iteration Plan; no iteration ships without it. The Money mechanism's white-box tests (Review Record F3) become part of the permanent regression set once the mechanism is re-baselined.
+**Regression.** Every iteration re-runs the prior increment's test set. Regression coverage is explicitly identified per iteration in the Iteration Plan; no iteration ships without it. The Money mechanism's white-box tests (PR #2 findings F3, F4) become part of the permanent regression set once the mechanism is re-baselined.
 
 ## Entry and Exit Criteria
 
@@ -97,7 +97,7 @@ stop
 | LCA-T4 | The two-jurisdiction configuration set is provisioned and a config-driven test demonstrates jurisdiction-specific output (AC-001, AC-004). | AC-001, AC-004 | 2 jurisdictions configured; 1 equivalence test designed |
 | LCA-T5 | The audit mechanism (REQ-003, AC-006) has a tamper-evidence test designed (append-only, correctly-ordered). | AC-006 | 1 audit-simulation test designed |
 | LCA-T6 | The interactive-channel responsiveness constraint (NFR-009, REQ-013) has a test designed with the p95 ≤ 2s threshold. | NFR-009 | 1 responsiveness test designed with p95 ≤ 2s |
-| LCA-T7 | The Money-mechanism code-review findings (Review Record F1..F4) are closed and the mechanism is re-baselined. | Baseline integrity | 0 open Critical/Major findings on Money |
+| LCA-T7 | The Money-mechanism code-review findings (PR #2 F1..F4) are closed and the mechanism is re-baselined. | Baseline integrity | 0 open Critical/Major findings on Money |
 
 **Elaboration-specific note.** Elaboration's exit criterion is **test readiness**, not test execution: the test cases for the architecturally significant flows are designed, the environments are provisioned, and the acceptance thresholds are set. Full execution is Construction's work. The LCA-T1..T7 criteria above are the measurable form of that readiness.
 
@@ -125,9 +125,9 @@ stop
 
 **Cost awareness.** Testing is estimated at 30–50% of project cost ([ASSUMPTION — requires validation: basis = RUP planning heuristic / industry-standard test-effort proportion; not yet validated against this project's actuals]). The environment count above is the minimum the architecture implies (two topologies + a two-jurisdiction config set + an OIDC realm); no additional environments are justified at Elaboration depth.
 
-**Resource plan (sized from measured Inception actuals).** The Inception phase closed at 2,186,548 tokens / 1.0 h agent time / 0s stakeholder queue / 11 agent runs / 12 artifacts (measured, not estimated). No per-iteration velocity is quotable (iterations inside a phase are not recorded separately). The test effort is sized as a proportion of the Elaboration I4 iteration box (2,200k tokens, per the Iteration Plan): test design for the architecturally significant flows is allocated ~15–20% of the iteration box ([ASSUMPTION — requires validation: basis = test-effort proportion of the iteration box; no test-specific actual has closed yet]). The test roles are: Test Manager (this role — strategy, mission, monitoring) and Test Designer (test-case design, activated for the architecturally significant flows this iteration).
+**Resource plan (sized from measured Inception actuals).** The Inception phase closed at 2,186,548 tokens / 1.0 h agent time / 0s stakeholder queue / 11 agent runs / 12 artifacts (measured, not estimated). No per-iteration velocity is quotable (iterations inside a phase are not recorded separately). Elaboration I5 is a **remediation** iteration (box 610k tokens, per the Iteration Plan) — its test work is the Test Case#F1 CI-run-ID correction (Test Designer, 20k), not new test surface. The test roles are: Test Manager (this role — strategy, mission, monitoring) and Test Designer (test-case design, activated for the architecturally significant flows). Test design for the architecturally significant flows is allocated ~15–20% of a full iteration box ([ASSUMPTION — requires validation: basis = test-effort proportion of the iteration box; no test-specific actual has closed yet]).
 
-**Schedule.** The test effort is distributed across the lifecycle, aligned to the Iteration Plan's coarse roadmap:
+**Schedule.** The test effort is distributed across the lifecycle, aligned to the Iteration Plan's baselined coarse roadmap (Elaboration I4/I5/I6 → Construction I7/I8/I9 → Transition I10/I11). Elaboration is test *readiness* (design + environment provisioning); Construction is test *execution*; Transition is regression + acceptance.
 
 ```plantuml
 @startgantt
@@ -135,9 +135,9 @@ hide footbox
 title TradeMe — Test Effort Schedule (Elaboration → Transition)
 -- Elaboration --
 [I4 Test Plan + ASF test design] lasts 1 days
-[I5 Remaining Must-UC test design + env setup] lasts 1 days
-[I6 LCA test readiness] lasts 1 days
-[LCA] happens at [I6 LCA test readiness]'s end
+[I5 Test readiness consolidation + env setup] lasts 1 days
+[I6 LCA test readiness gate] lasts 1 days
+[LCA] happens at [I6 LCA test readiness gate]'s end
 -- Construction --
 [I7 Core brokerage test execution] lasts 1 days
 [I8 Financial + reporting test execution] lasts 1 days
