@@ -379,7 +379,7 @@ title Worker Dashboard (post-login)
 
 The storyboards above cover all Must-priority self-service use cases (UC-001..UC-008, UC-014, UC-015) plus the Should-priority rate-adjustment flow (UC-016). The remaining Must-priority use cases are system-triggered (UC-009 membership fees, UC-012 payments, UC-013 regulatory reports — Time actor) or representative-mediated (UC-010 exception, UC-011 fallback) and do not require self-service storyboards; they are covered by the Navigation Flow and the channel-equivalence validation below. Nice-to-have use cases (UC-017..UC-021) remain at survey level pending stakeholder prioritization and are out of prototype scope.
 ## Navigation Flow
-The authoritative navigation model is the **Navigation Topology** — a formal state machine in the Design Model's "Boundary Classes and Navigation Map" section. Every screen is a state; every user action causing a screen change is a directed edge with a guard condition. The prototype's storyboards (SB-1..SB-10) are the screen-by-screen realizations of the transitions in that state machine.
+The authoritative navigation model is the **Navigation Topology** — a formal state machine in the Design Model's "Boundary Classes and Navigation Map" section. Every screen is a state; every user action causing a screen change is a directed edge with a guard condition. The prototype's storyboards (SB-1..SB-11) are the screen-by-screen realizations of the transitions in that state machine.
 
 The Navigation Topology is reproduced here for prototype validation convenience; the Design Model copy is authoritative.
 
@@ -519,7 +519,7 @@ end note
 | SB-8 Maintain Membership (UC-008) | WDash → WMember / CDash → CMember |
 | SB-9 Terminate Assignment (UC-014) | WAssign (termination path) |
 | SB-10 Close Project (UC-015) | CProjectDetail → CClose |
-
+| SB-11 Record Rate Adjustments (UC-016) | WDash → WRate / CDash → CRate |
 ## Validation Feedback
 The prototype is validated against the following declared acceptance criteria and NFRs:
 
