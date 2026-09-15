@@ -207,7 +207,6 @@ end note
 
 **Layering order (later overrides earlier):** base configuration → jurisdiction configuration → environment overlay. A jurisdiction's rules (I3) override runtime defaults; an environment's endpoint/secret references override both. No layer may contradict the ADR-004 driver type-handling invariant — that is a base-configuration floor, not an override point.
 ## Environment Mapping
-
 **Target environments** (small, long-lived — CON-017):
 
 | Environment | Purpose | Topology | Jurisdictions |
@@ -216,6 +215,17 @@ end note
 | Staging (acceptance gate 1) | Pre-production verification on the development site | Mirrors production topology | Representative jurisdiction set |
 | Production — multi-tenant | Live brokerage (default) | Multi-tenant | UK, Ireland, Canada + existing footprint |
 | Production — single-tenant | Residency-constrained jurisdiction(s) | Single-tenant | As required by CON-016 |
+
+**Environment configuration matrix** — what differs per environment, and what is invariant:
+
+| Setting | Development | Staging | Production | Invariant? |
+|---|---|---|---|---|
+| Data store | Ephemeral PostgreSQL | Mirrors production schema | Production PostgreSQL | Schema identical (migrations versioned) |
+| Jurisdiction config | Synthetic test jurisdictions | Representative set | Live jurisdictions | Same I3 format (AC-001) |
+| Secrets | Dev-only credentials | Staging credentials | Production credentials | Never in SCM (any environment) |
+| ADR-004 driver type-handling | Enforced | Enforced | Enforced | **Invariant — never overridden** |
+| Log level | Debug | Info | Info | — |
+| Scheduler (I2) cadence | Accelerated (test) | Real cadence | Real cadence | Cadence is jurisdiction config |
 
 **Installation procedure (configuration-first rollout):**
 
@@ -229,6 +239,7 @@ start
 :Apply database migrations\n(schema + jurisdiction seed);
 :Provision Keycloak realm\n(OIDC, deployment-time);
 :Load jurisdiction configuration\n(I3 — labor, tax, cert, reporting, currency);
+:Inject environment secrets\n(from secret store, never SCM);
 
 if (Gate 1 — development/staging site?) then (pass)
   :Deploy to production install site;
@@ -253,6 +264,17 @@ end note
 @enduml
 ```
 
+**Step-by-step installation (per environment):**
+
+1. **Cut the release tag** — `release/<phase>-<iteration>-<seq>`; the lockfile (`package-lock.json`) is committed with it (BOM inseparable from release).
+2. **Provision the environment** — Application Node, Data Node, Identity Node per the topology (multi-tenant default, single-tenant where CON-016 requires).
+3. **Apply database migrations** — schema + jurisdiction seed, idempotent, versioned with the release.
+4. **Provision the Keycloak realm** — OIDC realm from the versioned realm template, overlaid with the environment's provider endpoint.
+5. **Load jurisdiction configuration** — I3 reads labor, tax, certification, reporting, and currency rules (AC-001); no code change.
+6. **Inject environment secrets** — DB credentials, client secrets, API keys from the environment secret store; never committed, never inlined.
+7. **Verify Gate 1** — functional + compliance verification on staging, including the money-exactness check (ADR-004) and the availability-race test (NFR-008, AC-005).
+8. **Deploy to the install site and verify Gate 2** — per-jurisdiction smoke + compliance checks before declaring live.
+
 **Rollout approach:** Jurisdiction-by-jurisdiction, configuration-first. A new jurisdiction is added by describing its labor law, certification framework, tax rules, reporting requirements, and currency in deployment configuration (AC-001) — no code change. Each jurisdiction is brought online independently, so a defect in one jurisdiction's configuration does not affect others already live.
 
 **Two-gate acceptance (mandatory):**
@@ -262,7 +284,6 @@ end note
 **Rollback criteria:** A production deployment is rolled back when (a) a jurisdiction's regulatory reporting fails to produce complete, on-time output (CON-014), (b) the availability race produces an inconsistent state (NFR-008, AC-005), or (c) a monetary path exhibits a bare floating-point amount (ADR-004 — critical defect). Rollback restores the prior SCM release (versioned, tagged, traceable); the tamper-evident audit trail (REQ-003) is preserved across rollback.
 
 **Legacy coexistence:** The legacy system continues to operate alongside the new system (CON-020); no historical data migration. The new system serves new geographies and channels only.
-
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
