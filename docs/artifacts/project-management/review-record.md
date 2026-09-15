@@ -3,247 +3,118 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — iteration 1 (LCA technical review + code review) |
+| Status | Draft — iteration 1 |
 | Milestone Target | End-of-Elaboration review (Lifecycle Architecture Milestone) |
-| Review Type | Lifecycle Architecture Milestone (LCA) — technical lens + code review |
-| Reviewers | Reviewer (technical), Code Reviewer (evolutionary mechanism) |
+| Review Type | Lifecycle Milestone Review (LCA) + Project Planning Review |
+| Reviewer | Management Reviewer (Project Review Authority) |
 | Date | 2026-09-14 |
 
 ## Review Scope and Criteria
 
-This Review Record consolidates two lenses exercised at the end-of-Elaboration (LCA) review point:
+This review exercises the LCA gate — the highest-stakes milestone in RUP. Two-part review:
 
-1. **Code Review** (Code Reviewer) — the evolutionary architectural mechanism (Money value object, ADR-004), the stakeholder-declared mandatory mechanism.
-2. **Technical review** (Reviewer) — the full technical artifact surface: Software Architecture Document, Design Model, Data Model, Deployment Model, Test Plan, Test Case, Test Evaluation Summary, Use-Case Model, Supplementary Specification, Vision, Development Case, User-Interface Prototype, Glossary, Risk List, Iteration Plan.
+1. **Project Planning Review** — is the Iteration Plan (coarse roadmap + fine plan) feasible and acceptable?
+2. **LCA Milestone** — is the architecture stable and are critical risks resolved?
 
-**LCA review lens applied:** EXIT CRITERIA — "Do the artifacts collectively satisfy the conditions for phase transition?" The architecture must be baselined and stable enough to freeze for Construction.
-
-### Code-review checklist (per §1.1, Money mechanism)
-
-| Checklist Item | Result | Evidence |
-|---|---|---|
-| Programming guidelines conformance (CONTRIBUTING.md) | FAIL | `CONTRIBUTING.md` absent from repo tree |
-| Dual coverage — black-box | PASS | `money.test.ts`: exact add, cross-currency rejection |
-| Dual coverage — white-box | FAIL | `addExact` scale/carry branches, `Money.of` validation-reject untested |
-| SAD / Design Model conformance | FAIL | CLS-008 `subtract()`/`convert()` missing |
-| Traceability trailer (risk-id / UC-NNN) | FAIL | No PR, no trailer |
-| Build status (CI) | PASS | `main` CI green |
-| Build-tree coverage | PASS | `src/domain/money.ts`, `tests/money.test.ts` in build tree |
-
-### Technical-review checklist (per artifact type)
+**LCA exit criteria assessed:**
 
 ```plantuml
 @startuml
-title TradeMe LCA — Compliance Matrix (Technical Lens)
-
-object "SAD — 4+1 views complete" as c1
-object "SAD — NFRs addressed via mechanisms" as c2
-object "SAD — subsystem interfaces specified" as c3
-object "SAD — UC-014 sequence diagram" as c4
-object "Design Model — UC realizations 4/4" as c5
-object "Design Model — class signatures complete" as c6
-object "Design Model — O/R mapping IDs consistent" as c7
-object "Design Model — hours exactness (no float)" as c8
-object "Data Model — Money NUMERIC(19,4)" as c9
-object "Data Model — append-only tables" as c10
-object "Deployment — 2 topologies (AC-002)" as c11
-object "Test Plan — LCA-T1..T7 defined" as c12
-object "Test Case — ASF coverage 16 TCs" as c13
-object "Test Case — CI run ID current" as c14
-
-c1 : PASS
-c2 : PASS
-c3 : PASS
-c4 : FAIL
-c5 : PASS
-c6 : PASS
-c7 : FAIL
-c8 : FAIL
-c9 : PASS
-c10 : PASS
-c11 : PASS
-c12 : PASS
-c13 : PASS
-c14 : FAIL
-
-note bottom
-  14 checklist items: 10 PASS, 4 FAIL.
-  No Critical findings from the technical lens.
+title LCA Compliance Table — Elaboration I4
+class "LCA Exit Criteria" as LCA {
+  Architecture stable & baselined : MET
+  Critical risks resolved : NOT MET
+  Construction plan credible : NOT MET
+  Stakeholder alignment : REFUSED
+}
+note right of LCA
+  Verdict: NO-GO
+  Stakeholder refused sanction.
+  Directive: close ALL findings,
+  including Minors, before LCA.
 end note
 @enduml
 ```
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Architecture stable & baselined | MET | SAD baselined: ADR-001..005, complete 4+1 views, subsystem interfaces (COMP-001..009), design mechanisms derived from analysis mechanisms |
+| Critical risks resolved | NOT MET | R002 (HIGH, exp 16) OPEN/STABLE; PoC (R001/R003) planned but unexecuted — CON-001/CON-002 unverified |
+| Construction plan credible | NOT MET | Coarse roadmap only; fine-grained Construction planning deferred to "when Elaboration closes" |
+| Stakeholder alignment | REFUSED | Stakeholder answered "No" to sanction; directive to close all findings including Minors |
 
 ## Findings
-### Consolidated finding tally (Elaboration iteration 1)
 
-**Code review (Money mechanism):** 1 Critical, 2 Major, 1 Minor.
-**Technical review (artifact surface):** 0 Critical, 1 Major, 3 Minor.
-**Business modeling (Use-Case Model business sections):** 0 Critical, 0 Major, 2 Minor.
+Two Major findings recorded this iteration (0 Critical, 2 Major). Both are blocking for LCA advancement per the stakeholder's directive.
 
 ```plantuml
 @startuml
-title TradeMe LCA — Defect Distribution (severity × artifact)
+title Risk Retirement State Machine — Inception → Elaboration I4
+state "R001 Legacy replacement (SIGNIFICANT)" as R1
+state "R002 Leadership tension (HIGH)" as R2
+state "R003 Multi-jurisdiction (SIGNIFICANT)" as R3
+state "R004 Matching policy (SIGNIFICANT)" as R4
+state "R005 Availability race (SIGNIFICANT)" as R5
+state "R006 Human-gate queue (MODERATE)" as R6
 
-object "Design Model\nO/R mapping ID collision" as f1
-object "Design Model\nhoursWorked float64" as f2
-object "SAD\nUC-014 no sequence diagram" as f3
-object "Test Case\nstale CI run ID" as f4
-object "Use-Case Model\nUC-016 orphaned in bridge" as f5
-object "Use-Case Model\nRep absent from BOM" as f6
+R1 : OPEN → MITIGATING (IMPROVING)\nPoC planned, not executed
+R2 : OPEN (STABLE) — NO retirement
+R3 : OPEN → MITIGATING (IMPROVING)\nconfig baselined, PoC pending
+R4 : OPEN → MITIGATING (IMPROVING)\nCOMP-001 baselined
+R5 : OPEN → MITIGATING (IMPROVING)\nCOMP-007 baselined
+R6 : OPEN (STABLE)
 
-f1 : severity = Major
-f2 : severity = Minor
-f3 : severity = Minor
-f4 : severity = Minor
-f5 : severity = Minor
-f6 : severity = Minor
-
-note bottom
-  Technical lens: 4 findings (1 Major, 3 Minor), no Critical.
-  Code-review lens: 1 Critical, 2 Major, 1 Minor (Money mechanism).
-  Business-modeling lens: 2 Minor (derivation bridge completeness), no Critical/Major.
-  LCA disposition driver: Money mechanism (ADR-004) not baselined —
-  Issue #1 open (severity=major, cr:approved), LCA-T7 not met.
+note bottom of R2
+  HIGH magnitude (exposure 16) remains
+  OPEN/STABLE — highest risk shows no
+  retirement progress. MAJOR finding.
 end note
 @enduml
 ```
 
-### Open Findings — Code Review (Money mechanism)
-
-| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
-|---|---|---|---|---|---|---|---|
-| 1 | Money mechanism (src/domain/money.ts) | F1 | Code Reviewer | Critical | The Money mechanism (ADR-004) was committed **directly to `main`**, bypassing the Elaboration mechanism review flow. No `ready-for-review` label, no feature branch, no PR, no review gate. | Re-route through feature branch → PR (base `iteration/E1`) → review → merge. | Implementer |
-| 2 | Money mechanism (src/domain/money.ts) | F2 | Code Reviewer | Major | CLS-008 `Money.subtract()` and `Money.convert()` (with `ExchangeRate`) missing. | Implement `subtract`/`convert` + `ExchangeRate` per CLS-008. | Implementer |
-| 3 | Money mechanism (tests/money.test.ts) | F3 | Code Reviewer | Major | White-box branches untested (`addExact` scale/carry, `Money.of` validation-reject). | Add white-box tests. | Implementer |
-| 4 | Repository (CONTRIBUTING.md) | F4 | Code Reviewer | Minor | `CONTRIBUTING.md` absent; guideline conformance unverifiable. | Software Architect produces `CONTRIBUTING.md` + lint config. | Software Architect |
-
-### Open Findings — Technical Review (artifact surface)
-
-| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
-|---|---|---|---|---|---|---|---|
-| 5 | Design Model | F1 | Reviewer | Major | The 'Persistent Data Classes' O/R Mapping table's 'Design Class' column mislabels entity classes with service-class IDs that collide with the traceability table: Worker/Contractor/Membership all labeled 'CLS-009' (PartyService), Project 'CLS-010' (ProjectService), Trade/Certification 'CLS-011' (TaxonomyService). The entities have their own analysis-class IDs (ACL-013..ACL-023) the Data Model correctly uses. | Relabel the O/R Mapping 'Design Class' column to each entity's analysis-class ID (ACL-013..ACL-023), aligning with the Data Model's traceability. | Designer |
-| 6 | Design Model | F2 | Reviewer | Minor | `HoursEntry.hoursWorked: number` (float64) feeds wage computation (computeWages → Money), but the Data Model maps `hours_worked` to NUMERIC(6,2). A float64 hours value can introduce floating-point error into the monetary path, contradicting ADR-004. | Change `hoursWorked` to an exact type (string decimal or scaled integer) consistent with NUMERIC(6,2). | Designer |
-| 7 | Software Architecture Document | F2 | Reviewer | Minor | UC-014 is listed architecturally significant (priority 4) but has no sequence diagram in the SAD's Logical View (only UC-004/012/013 are realized there; UC-014 appears only in Design Model SEQ-004). | Add a UC-014 sequence diagram to the SAD Logical View, or note its realization is deferred to SEQ-004. | Software Architect |
-| 8 | Test Case | F1 | Reviewer | Minor | The Test Case cites CI build 'run 34856326288' as smoke-test evidence, but the current main build is 'run 34886064517' (success). Stale run ID. | Update the cited CI run ID to 34886064517. | Test Designer |
-
-### Open Findings — Business Modeling (Use-Case Model business sections)
-
-| # | Artifact | Key | Lens | Severity | Finding | Remediation | Owner |
-|---|---|---|---|---|---|---|---|
-| 9 | Use-Case Model | F9 | Business Reviewer | Minor | UC-016 "Record Rate Adjustments" (FR-023, Should) is orphaned in the derivation bridge — no BUC anchors it, though BUC-004's To-Be flow references "Contractor may raise offered rate (FR-023)". | Add UC-016 to BUC-004's "Derives System UC(s)" column, or model rate adjustment as an explicit sub-flow of BUC-004/BUC-006. | Business Process Analyst |
-| 10 | Use-Case Model | F10 | Business Reviewer | Minor | Internal Representative (business worker, STK-003) absent from the Business Object Model class diagram, though it participates in BUC-004/005/011/012. | Add `<<business worker>>` class to BOM, or note the worker is being automated away (BG-002) and modeled only in the survey. | Business Process Analyst |
-
-### Business Modeling coverage map (Business Reviewer)
-
-```plantuml
-@startuml
-title TradeMe LCA — Business Modeling Coverage Map (BUC realization + derivation bridge)
-
-object "BUC-001 Onboard Worker" as b1
-object "BUC-002 Onboard Contractor" as b2
-object "BUC-003 Manage Project Lifecycle" as b3
-object "BUC-004 Broker Worker to Project" as b4
-object "BUC-005 Manage Assignment" as b5
-object "BUC-006 Capture Hours & Wages" as b6
-object "BUC-007 Process Payments" as b7
-object "BUC-008 Manage Membership & Fees" as b8
-object "BUC-009 Track CE & Certifications" as b9
-object "BUC-010 Produce Regulatory Reports" as b10
-object "BUC-011 Handle Exceptions & Fallback" as b11
-object "BUC-012 Detect Fraud & Enforce Membership" as b12
-
-object "UC-016 Record Rate Adjustments\n(FR-023, Should)" as uc16 #FFB3B3
-object "UC-019/020/021\n(Could, deferred)" as uc19 #FFE0B3
-
-b1 : realization = PASS
-b2 : realization = PASS
-b3 : realization = PASS
-b4 : realization = PASS (As-Is + To-Be)
-b5 : realization = PASS
-b6 : realization = PASS
-b7 : realization = PASS
-b8 : realization = PASS
-b9 : realization = PASS
-b10 : realization = PASS
-b11 : realization = PASS
-b12 : realization = PASS
-
-uc16 : ORPHANED — no BUC anchor in bridge
-uc19 : deferred — no BUC anchor (nice-to-have)
-
-note bottom
-  12/12 BUCs have complete realizations (activity swimlanes + BOM class diagram).
-  Derivation bridge: all Must UCs (UC-001..UC-015) anchored to a BUC.
-  Gap: UC-016 (Should) orphaned; UC-019/020/021 (Could) deferred.
-end note
-@enduml
-```
-
-### Resolved findings (this iteration)
-
-- **Development Case#F3** (stale Document Control metadata) — resolved: Document Control now reads "Draft — iteration 1" with Phase = Elaboration.
-
-### Prior-phase findings carried forward
-
-The Inception LCO review closed with 0 Critical, 0 Major, 1 Minor (Development Case#F3), deferred to Elaboration by stakeholder directive. That finding is now resolved. No Inception findings remain open.
-
-All 8 prior Business Reviewer findings on the Use-Case Model (F1–F8, Inception) are **Resolved** — scenario statement, BUC-012 actor, BUC-007 actor, business entities, business rules, BOM diagram, and BUC-004/BUC-011 diagram associations all corrected in Inception iterations 2–3.
+| # | Artifact | Severity | Finding | Remediation |
+|---|---|---|---|---|
+| 1 | Iteration Plan | Major | Architectural PoC (R001/R003) planned but not executed; CON-001 (cloud) and CON-002 (external integration) remain unverified, so R001/R003 cannot be retired at LCA | Execute the PoC against the baselined modular-monolith skeleton and record results before LCA can close |
+| 2 | Risk List | Major | R002 (HIGH, exposure 16) remains OPEN/STABLE with no retirement progress; highest-magnitude risk shows no decreasing trend line | Escalate R002 to the stakeholder for explicit disposition (accept with named contingency, or concrete mitigation) |
 
 ## Resolutions and Actions
 
-### Action items
+**Prior findings reconciliation:** All prior Management Reviewer findings (Iteration Plan#F1, #F2; Risk List#F1) were already `Resolved` in Inception — no closure work this iteration. Zero prior MR findings remained open.
 
-| Priority | Action | Owner | Deadline |
-|---|---|---|---|
-| 1 | Re-route Money mechanism through feature branch → PR (base `iteration/E1`) → review → merge (Code Review F1, Critical) | Implementer | This iteration |
-| 2 | Implement `Money.subtract()` + `Money.convert()` + `ExchangeRate` per CLS-008 (Code Review F2) | Implementer | This iteration |
-| 3 | Add white-box tests for `addExact` branches and `Money.of` validation (Code Review F3) | Implementer | This iteration |
-| 4 | Produce `CONTRIBUTING.md` + lint config (Code Review F4) | Software Architect | This iteration |
-| 5 | Relabel Design Model O/R Mapping 'Design Class' column to analysis-class IDs (Design Model F1, Major) | Designer | This iteration |
-| 6 | Change `HoursEntry.hoursWorked` to an exact type (Design Model F2) | Designer | This iteration |
-| 7 | Add UC-014 sequence diagram or deferral note to SAD Logical View (SAD F2) | Software Architect | This iteration |
-| 8 | Update Test Case CI run ID to 34886064517 (Test Case F1) | Test Designer | This iteration |
+**Stakeholder disposition (this iteration):** Sanction **REFUSED** ("No"). Directive recorded verbatim: *"you do need to close all findings even if they are minors."* This re-affirms the standing quality bar: all findings — including Minor — are blocking for LCA advancement.
+
+**Open actions for Elaboration I5:**
+1. Execute the Architectural PoC (R001/R003) and record empirical results for CON-001/CON-002.
+2. Escalate R002 to the stakeholder for explicit disposition.
+3. Produce a credible Construction plan (fine-grained) grounded in measured Elaboration actuals.
 
 ## Disposition
-### Technical-lens verdict (Reviewer)
 
-The architecture is **well-formed and internally consistent**. The SAD presents a complete 4+1 model with every subsystem interface specified, every design mechanism derived from its analysis mechanism, and five ADRs that are coherent and traceable. The Design Model realizes all four architecturally significant use cases (UC-004, UC-012, UC-013, UC-014) with full class signatures and interface contracts. The Data Model correctly enforces ADR-004 (Money as NUMERIC(19,4) + CHAR(3), append-only tables, retention, residency). The Deployment Model satisfies AC-002 (two topologies). The Test Plan defines measurable LCA acceptance criteria (LCA-T1..T7).
+**Verdict: NO-GO** — LCA not achieved. The architecture is baselined and stable (the core LCA technical criterion is met), but the milestone cannot close because (a) critical risks are not resolved (R002 OPEN/STABLE; PoC unexecuted), (b) the Construction plan is not yet credible, and (c) the stakeholder refused sanction and directed that all findings — including Minors — be closed first.
 
-**Technical-lens findings: 0 Critical, 1 Major, 3 Minor.** The single Major (Design Model O/R mapping ID collision) is a traceability defect, not an architectural defect — it does not undermine the architecture's soundness but must be corrected before Construction to avoid ambiguity in the O/R bridge.
-
-### Business-modeling-lens verdict (Business Reviewer)
-
-The business model is **complete and derivation-ready**. The BPA has produced a full Revamp-scenario business model: 12 well-formed business use cases with complete swimlane realizations (including the As-Is → To-Be gap for the core brokerage process BUC-004), a Business Object Model with 10 entities and 3 control classes (the volatile policy encapsulation targets), 16 formalized business rules each with ID/source/attachment/testable condition, and a derivation bridge that anchors every Must-priority system use case (UC-001..UC-015) to a business use case.
-
-The derivation bridge is **Ready** for the Requirements discipline: every worker has an automation disposition, every entity has an analysis-class disposition, and the volatile processes (matching policy, pricing model, regulatory reporting, fraud detection) are explicitly flagged for architectural encapsulation.
-
-**Business-modeling-lens findings: 0 Critical, 0 Major, 2 Minor.** The two Minor findings (UC-016 orphaned in the bridge; Internal Representative absent from the BOM) are traceability/completeness defects, not derivation-blocking defects. They do not prevent the Requirements discipline from deriving system use cases, and they do not block the LCA milestone. They should be corrected before Construction to keep the bridge complete.
-
-### Overall LCA disposition: SANCTION WITHHELD
-
-The architecture is sound, but the **Money mechanism (ADR-004) — the stakeholder-declared mandatory mechanism that constrains every other mechanism derived from it — is NOT baselined.** The Code Reviewer's Critical finding (F1: committed directly to `main`, no review gate) remains open, and Issue #1 (severity=major, cr:approved) is open in the SCM tracker. This means:
-
-- **LCA-T7** (0 open Critical/Major findings on Money) is **not met**.
-- **LCA-T3** (Money dual coverage, no bare float) is **blocked** — the mechanism is not baselined, so the monetary-integrity test suite cannot be designed against it.
-
-The LCA milestone is **NOT YET ACHIEVED**. Sanction to proceed to Construction is withheld until the Money mechanism is re-routed through the feature-branch → PR → review → merge flow and re-baselined, and the technical-lens Major finding (Design Model F1) is corrected.
-
-**No open pull requests exist** to carry a terminal SCM disposition — the Money mechanism was committed directly to `main` (Code Review F1), so there is no PR to approve or request changes on. The disposition is recorded here; the remediation is the Implementer's re-routing action.
+```plantuml
+@startuml
+title Project Health Scorecard — Elaboration I4 (LCA)
+class "Scope" as S
+class "Schedule" as SCH
+class "Cost" as C
+class "Quality" as Q
+S : GREEN — 17 Must UCs detailed
+SCH : AMBER — coarse roadmap only
+C : GREEN — 2,200k box, measured basis
+Q : AMBER — architecture baselined, PoC unexecuted
+note bottom
+  Two AMBER dimensions (schedule, quality)
+  driven by unexecuted PoC and deferred
+  Construction fine-planning.
+end note
+@enduml
+```
 
 ## Traceability
+
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Money mechanism (src/domain/money.ts) | ADR-004, CON-004, FR-022 | Implements | CLS-008 (Design Model) |
-| Money mechanism#F1 | BRANCHING_STRATEGY.md (Elaboration mechanism flow) | DependsOn | feature/E1-{risk-id}-{mechanism} |
-| Money mechanism#F2 | CLS-008 (subtract/convert) | DependsOn | Design Model |
-| Money mechanism#F3 | Dual-coverage checklist (§1.1) | DependsOn | tests/money.test.ts |
-| Money mechanism#F4 | SAD Implementation View (CONTRIBUTING.md commitment) | DependsOn | Software Architect |
-| Design Model#F1 | Data Model traceability (TBL-001..TBL-018) | DependsOn | Design Model O/R Mapping |
-| Design Model#F2 | ADR-004 (no bare float on monetary path) | DependsOn | Data Model (NUMERIC(6,2)) |
-| Software Architecture Document#F2 | UC-014 (architecturally significant) | DependsOn | Design Model SEQ-004 |
-| Test Case#F1 | CI build (main) | DependsOn | run 34886064517 |
-| Use-Case Model#F9 | FR-023 (rate adjustments), BUC-004 derivation bridge | DependsOn | UC-016 |
-| Use-Case Model#F10 | STK-003 (Internal Representative), BUC-004/005/011/012 | DependsOn | Business Object Model |
-| Issue #1 | Money mechanism incomplete (subtract/convert/ExchangeRate) | DependsOn | TC-009, TC-007 |
-| LCA-T7 | 0 open Critical/Major findings on Money | DependsOn | Money mechanism re-baseline |
-
+| Iteration Plan#F3 (PoC unexecuted) | R001, R003, CON-001, CON-002 | DependsOn | Architectural Proof-of-Concept |
+| Risk List#F2 (R002 OPEN/STABLE) | R002 | DependsOn | Stakeholder disposition |
+| LCA verdict (No-Go) | Iteration Plan#F3, Risk List#F2 | DependsOn | Elaboration I5 |
