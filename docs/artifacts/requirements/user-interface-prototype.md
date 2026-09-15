@@ -546,7 +546,7 @@ The prototype is validated against the following declared acceptance criteria an
 | UI Prototype — Maintain Membership storyboard (SB-8) | UC-008, FR-010 | Derives | UC-008 |
 | UI Prototype — Terminate Assignment storyboard (SB-9) | UC-014, FR-020 | Derives | UC-014 |
 | UI Prototype — Close Project storyboard (SB-10) | UC-015, FR-021 | Derives | UC-015 |
+| UI Prototype — Record Rate Adjustments storyboard (SB-11) | UC-016, FR-023 | Derives | UC-016 |
 | UI Prototype — Wireframes W-1..W-4 | SB-1, SB-4, SB-6 | Refines | UC-001, UC-004, UC-006 |
 | UI Prototype — Navigation Flow | NFR-002, NFR-001, REQ-008 | Derives | UC-001..UC-016 |
 | UI Prototype — Channel equivalence | NFR-006 | Derives | UC-011 |
-
