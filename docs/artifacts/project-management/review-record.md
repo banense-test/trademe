@@ -400,4 +400,3 @@ The four findings were re-recorded under their existing findingKeys (updating in
 | Test Evaluation Summary#F1 (stale iteration) | PR #2 | DependsOn | Test Evaluation Summary |
 | PR #2 (Money Mechanism) | R001, R003, CON-001, CON-002, ADR-004 | DependsOn | Design Model, Test Case |
 | LCA verdict (No-Go) | Design Model#F1, PoC#F1, PR #2 | DependsOn | Elaboration I3 |
-
