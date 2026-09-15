@@ -752,31 +752,32 @@ The subsystem-boundary interfaces, with operation signatures and pre/postconditi
 | verifyCertification | `verifyCertification(workerId: string, cert: Certification): VerificationResult` | worker and cert present | Returns verification result; verification strategy deferred (out-of-cycle) |
 
 ## Persistent Data Classes
-
 This section (owned by the Database Designer) specifies the O/R mapping from the persistent design classes to the physical tables in the Data Model. It is the bridge the Implementer codes the ORM layer against. Every persistent class maps to exactly one table; identity strategy, loading policy, and type conversions are explicit.
 
 ### O/R Mapping Table
 
+The **Design Class** column references the *entity* analysis class (ACL-013..ACL-023) that owns the persistent state — never a service/control class. Service classes (CLS-001..CLS-011) are stateless orchestrators and are not persisted; they are the consumers of these entities, not the entities themselves. This alignment matches the Data Model's Traceability exactly.
+
 | Design Class | Table | Identity Strategy | Loading Policy | Type Conversions |
 |---|---|---|---|---|
-| Worker (CLS-009) | worker (TBL-001) | UUID, application-generated | Eager: trades, certifications (via junction); Lazy: membership | `expectedRate` → `expected_rate_amount` NUMERIC(19,4) + `expected_rate_currency` CHAR(3) (Money value object, ADR-004) |
-| Contractor (CLS-009) | contractor (TBL-002) | UUID, application-generated | Lazy: projects | — |
-| Membership (CLS-009) | membership (TBL-003) | UUID, application-generated | Lazy | `fee` → `fee_amount` + `fee_currency` (Money) |
-| Project (CLS-010) | project (TBL-004) | UUID, application-generated | Lazy: assignments | `billRate` → `bill_rate_amount` + `bill_rate_currency` (Money); `location` → JSONB (GeoArea value object) |
-| Trade (CLS-011) | trade (TBL-005) | UUID, application-generated | Lazy | — |
-| Certification (CLS-011) | certification (TBL-006) | UUID, application-generated | Lazy | `renewalCadence` → `renewal_cadence` INTERVAL |
-| WorkerTrade (junction) | worker_trade (TBL-007) | Composite (worker_id, trade_id) | Eager from Worker | — |
-| WorkerCertification (junction) | worker_certification (TBL-008) | Composite (worker_id, certification_id) | Eager from Worker | — |
-| WorkerRequest (CLS-001) | worker_request (TBL-009) | UUID, application-generated | Lazy: assignments | `needs`/`preferences` → JSONB |
-| Assignment (CLS-003) | assignment (TBL-010) | UUID, application-generated | Lazy: hours, terminations | `status` → ENUM (state machine, CON-013) |
-| Availability (CLS-004) | availability (TBL-011) | UUID, application-generated | Eager (single row per worker) | `status` → ENUM |
-| Termination (CLS-003) | termination (TBL-012) | UUID, application-generated | Lazy | `verifiable` → BOOLEAN |
-| HoursEntry (CLS-005) | hours_entry (TBL-013) | UUID, application-generated | Lazy | `hoursWorked` → NUMERIC(6,2) |
-| Payment (CLS-005) | payment (TBL-014) | UUID, application-generated | Lazy | `amount` → NUMERIC(19,4) + `currency` CHAR(3) (Money, ADR-004) |
-| RateAdjustment (CLS-005) | rate_adjustment (TBL-015) | UUID, application-generated | Lazy | `oldRate`/`newRate` → NUMERIC(19,4) + `currency` (Money) |
-| ExchangeRate (CLS-007) | exchange_rate (TBL-016) | UUID, application-generated | Lazy | `rate` → NUMERIC(19,8) |
-| RegulatoryReport (COMP-003) | regulatory_report (TBL-017) | UUID, application-generated | Lazy | `content` → JSONB |
-| JurisdictionConfig (I3) | jurisdiction_config (TBL-018) | UUID, application-generated | Eager (cached) | `rules` → JSONB |
+| Worker (ACL-013) | worker (TBL-001) | UUID, application-generated | Eager: trades, certifications (via junction); Lazy: membership | `expectedRate` → `expected_rate_amount` NUMERIC(19,4) + `expected_rate_currency` CHAR(3) (Money value object, ADR-004) |
+| Contractor (ACL-014) | contractor (TBL-002) | UUID, application-generated | Lazy: projects | — |
+| Membership (ACL-014) | membership (TBL-003) | UUID, application-generated | Lazy | `fee` → `fee_amount` + `fee_currency` (Money) |
+| Project (ACL-015) | project (TBL-004) | UUID, application-generated | Lazy: assignments | `billRate` → `bill_rate_amount` + `bill_rate_currency` (Money); `location` → JSONB (GeoArea value object) |
+| Trade (ACL-023) | trade (TBL-005) | UUID, application-generated | Lazy | — |
+| Certification (ACL-023) | certification (TBL-006) | UUID, application-generated | Lazy | `renewalCadence` → `renewal_cadence` INTERVAL |
+| WorkerTrade (ACL-013) | worker_trade (TBL-007) | Composite (worker_id, trade_id) | Eager from Worker | — |
+| WorkerCertification (ACL-013) | worker_certification (TBL-008) | Composite (worker_id, certification_id) | Eager from Worker | — |
+| WorkerRequest (ACL-016) | worker_request (TBL-009) | UUID, application-generated | Lazy: assignments | `needs`/`preferences` → JSONB |
+| Assignment (ACL-017) | assignment (TBL-010) | UUID, application-generated | Lazy: hours, terminations | `status` → ENUM (state machine, CON-013) |
+| Availability (ACL-018) | availability (TBL-011) | UUID, application-generated | Eager (single row per worker) | `status` → ENUM |
+| Termination (ACL-017) | termination (TBL-012) | UUID, application-generated | Lazy | `verifiable` → BOOLEAN |
+| HoursEntry (ACL-019) | hours_entry (TBL-013) | UUID, application-generated | Lazy | `hoursWorked` → NUMERIC(6,2) (exact decimal, never float — ADR-004) |
+| Payment (ACL-020) | payment (TBL-014) | UUID, application-generated | Lazy | `amount` → NUMERIC(19,4) + `currency` CHAR(3) (Money, ADR-004) |
+| RateAdjustment (FR-023) | rate_adjustment (TBL-015) | UUID, application-generated | Lazy | `oldRate`/`newRate` → NUMERIC(19,4) + `currency` (Money) |
+| ExchangeRate (FR-022) | exchange_rate (TBL-016) | UUID, application-generated | Lazy | `rate` → NUMERIC(19,8) |
+| RegulatoryReport (ACL-021) | regulatory_report (TBL-017) | UUID, application-generated | Lazy | `content` → JSONB |
+| JurisdictionConfig (ACL-022) | jurisdiction_config (TBL-018) | UUID, application-generated | Eager (cached) | `rules` → JSONB |
 
 ### Binding O/R Rules (ADR-004 — Money)
 
@@ -787,7 +788,6 @@ This section (owned by the Database Designer) specifies the O/R mapping from the
 ### Availability Race Mapping (NFR-008, AC-005)
 
 The `availability` table is the serialized race point. The ORM exposes a single operation — `lockAvailability(workerId)` — that issues `SELECT ... FOR UPDATE` on the worker's availability row inside the assignment transaction. No other code path reads or writes `availability.status` outside this lock. This is the one place the ORM exposes a raw lock; everywhere else it uses the repository abstraction.
-
 ## Boundary Classes and Navigation Map
 
 This section (owned by the User Interface Designer) defines the user-interface realization of the use cases: the UI view/controller classes and the formal Navigation Topology. It is the bridge from the Use-Case Model's flows and the UI Prototype's storyboards to the Implementer's screens. The Designer's class-level realization (Design Packages and Classes) and the Database Designer's O/R mapping (Persistent Data Classes) are upstream; this section consumes them and adds the user-facing layer.
