@@ -97,10 +97,11 @@ end note
 ```
 
 ## Resolutions and Actions
-
 **Prior findings reconciliation:** All Inception findings across all lenses are `Resolved` (Development Case#F1-F3, Vision#F1-F2, Use-Case Model#F1-F8, Risk List#F1, Iteration Plan#F1-F2, SAD#F1, Test Plan#F1, Deployment Model#F1). Zero prior findings remain open.
 
 **Stakeholder disposition (this iteration):** Sanction **REFUSED** ("No"). Directive recorded verbatim: *"you do need to close all findings even if they are minors."* This re-affirms the standing quality bar: all findings — including Minor — are blocking for LCA advancement.
+
+**Stakeholder note (LCA consolidation, this iteration):** On the consolidation question (3 Major + 5 Minor open, prior sanction refused), the stakeholder answered: *"nothing else to add for this new iteration."* No additional requirement, correction, or priority was added; the team proceeds to close the 8 open findings as already scoped.
 
 **Open actions for Elaboration I2 (next iteration):**
 1. Execute the Architectural PoC (R001/R003) and record empirical results for CON-001/CON-002 (Iteration Plan#F3).
@@ -110,7 +111,6 @@ end note
 5. Add UC-014 sequence diagram or deferral note to SAD (SAD#F2).
 6. Update Test Case CI run ID (Test Case#F1).
 7. Produce a credible fine-grained Construction plan grounded in measured Elaboration actuals.
-
 ## Disposition
 
 **Verdict: NO-GO** — LCA not achieved. The architecture is baselined and stable (the core LCA technical criterion is met), but the milestone cannot close because (a) critical risks are not resolved (R002 OPEN/STABLE; PoC unexecuted), (b) the Construction plan is not yet credible, and (c) the stakeholder refused sanction and directed that all findings — including Minors — be closed first.
