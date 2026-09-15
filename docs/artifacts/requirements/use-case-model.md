@@ -1262,10 +1262,10 @@ The business process is the **brokerage** — matching workers to contractors fo
 
 | Business UC | Automation | Derives System UC(s) | Notes |
 |---|---|---|---|
-| BUC-001 Onboard Worker | Full | UC-001 | Worker self-service registration |
+| BUC-001 Onboard Worker | Full | UC-001, UC-016 | Worker self-service registration; worker-side rate adjustments (lowering expected rate when idle, FR-023) trace to UC-016 |
 | BUC-002 Onboard Contractor | Full | UC-002 | Contractor self-service registration |
 | BUC-003 Manage Project Lifecycle | Full | UC-003, UC-015 | Project creation and closure |
-| BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019), UC-016 | The core brokerage process; matching/assignment are sub-flows; rate adjustments (FR-023) are recorded when a project or worker sits idle awaiting a match |
+| BUC-004 Broker Worker to Project | Full | UC-004 (incl. matching FR-018, assignment FR-019), UC-016 | The core brokerage process; contractor-side rate adjustments (raising offered rate when project idle, FR-023) trace to UC-016 |
 | BUC-005 Manage Assignment | Full | UC-005, UC-014 | Arrival/departure tracking and termination |
 | BUC-006 Capture Hours & Compute Wages | Full | UC-006 (incl. wage computation FR-007) | Hours and wage computation |
 | BUC-007 Process Payments | Full | UC-012 (incl. currency FR-022), UC-018 | Financial intermediary flow; AP integration is a downstream consumer |
@@ -1274,6 +1274,8 @@ The business process is the **brokerage** — matching workers to contractors fo
 | BUC-010 Produce Regulatory Reports | Full | UC-013 | Jurisdiction-specific reporting |
 | BUC-011 Handle Exceptions & Fallback | Partial | UC-010, UC-011 | Human judgment retained; channel equivalence (NFR-006) |
 | BUC-012 Detect Fraud & Enforce Membership | Partial | UC-017 | Detection in scope; enforcement deferred |
+
+> **UC-016 anchoring note (resolves UCM#F9):** UC-016 (Record Rate Adjustments, FR-023) is a two-directional System UC. The contractor-side adjustment (raising the offered rate when a project sits idle awaiting a match) traces to BUC-004; the worker-side adjustment (lowering the expected rate when a worker sits idle) traces to BUC-001. Both directions are now anchored in the derivation bridge above.
 
 ### Volatility → Architectural Input
 
@@ -1288,7 +1290,7 @@ The following business processes are annotated **Volatility: High** and are arch
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| BUC-001 | FR-001 | Derives | UC-001 |
+| BUC-001 | FR-001, FR-023 | Derives | UC-001, UC-016 |
 | BUC-002 | FR-002 | Derives | UC-002 |
 | BUC-003 | FR-003, FR-021 | Derives | UC-003, UC-015 |
 | BUC-004 | FR-004, FR-018, FR-019, FR-023 | Derives | UC-004, UC-016 |
