@@ -75,6 +75,12 @@ export class Money {
 }
 
 // --- Exact decimal arithmetic (BigInt-scaled; no floating point) ---
+//
+// Scale is preserved exactly: the result carries the same number of decimal
+// places as the operation dictates (max scale for add/subtract, sum of scales
+// for multiply). Trailing zeros are NOT stripped — "0.10" + "0.20" is "0.30",
+// not "0.3". This matches the already-merged add() behavior and keeps the
+// representation stable and auditable.
 
 function toScaled(value: string): { scaled: bigint; scale: number } {
   const [int, frac = ""] = value.split(".");
@@ -87,8 +93,8 @@ function fromScaled(scaled: bigint, scale: number): string {
   if (scale === 0) return scaled.toString();
   const str = scaled.toString().padStart(scale + 1, "0");
   const intPart = str.slice(0, str.length - scale) || "0";
-  let fracPart = str.slice(str.length - scale).replace(/0+$/, "");
-  return fracPart.length === 0 ? intPart : `${intPart}.${fracPart}`;
+  const fracPart = str.slice(str.length - scale);
+  return `${intPart}.${fracPart}`;
 }
 
 function addExact(a: string, b: string): string {

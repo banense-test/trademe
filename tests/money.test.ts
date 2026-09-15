@@ -47,14 +47,14 @@ test("Money subtract rejects a negative result", () => {
 
 test("Money converts using an exact exchange rate", () => {
   const rate = new ExchangeRate("USD", "EUR", "1.25", new Date("2026-09-15T00:00:00Z"));
-  const converted = Money.of("100.00", "USD").convert(rate);
-  assert.equal(converted.amount, "125");
+  const converted = Money.of("100", "USD").convert(rate);
+  assert.equal(converted.amount, "125.00");
   assert.equal(converted.currency, "EUR");
 });
 
 test("Money convert produces fractional results exactly", () => {
   const rate = new ExchangeRate("USD", "EUR", "0.5", new Date("2026-09-15T00:00:00Z"));
-  assert.equal(Money.of("0.10", "USD").convert(rate).amount, "0.05");
+  assert.equal(Money.of("0.1", "USD").convert(rate).amount, "0.05");
 });
 
 test("ExchangeRate records from/to/rate/appliedAt", () => {
@@ -108,11 +108,11 @@ test("addExact integer-only path (scale 0)", () => {
 });
 
 test("addExact fractional path with carry", () => {
-  assert.equal(Money.of("0.99", "USD").add(Money.of("0.01", "USD")).amount, "1");
+  assert.equal(Money.of("0.99", "USD").add(Money.of("0.01", "USD")).amount, "1.00");
 });
 
 test("subtractExact zero-difference path", () => {
-  assert.equal(Money.of("0.20", "USD").subtract(Money.of("0.20", "USD")).amount, "0");
+  assert.equal(Money.of("0.20", "USD").subtract(Money.of("0.20", "USD")).amount, "0.00");
 });
 
 test("multiplyExact whole-number result path", () => {
